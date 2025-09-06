@@ -1,11 +1,11 @@
 ---
+import Head from '@/components/partials/Head.astro';
 import '@/styles/global.css';
 ---
 
-<html
-  lang="en"
-  class="bg-background text-foreground"
->
+<html lang="en" class="bg-background text-foreground">
+  <Head />
+
   <!-- Prevent flash of incorrect theme -->
   <script is:inline>
     // Apply theme immediately
@@ -15,6 +15,7 @@ import '@/styles/global.css';
         (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
     );
   </script>
+
   <body class="bg-background text-foreground relative pb-12">
     <main class="pt-24">
       <slot />

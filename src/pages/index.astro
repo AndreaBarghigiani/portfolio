@@ -1,11 +1,22 @@
 ---
-import Drops from '@/components/Drops.astro';
+import Container from '@/components/Container.astro';
+import Drops from '@/components/partials/Drops.astro';
 import BaseLayout from '@/layout/BaseLayout.astro';
-import { UserIcon } from "@lucide/astro";
+import { getEntry, render } from 'astro:content';
+
+const home = await getEntry('pages', 'homepage');
+
+if (!home) {
+  throw new Error('Homepage not found');
+}
+
+const { Content } = await render(home);
 ---
 
 <BaseLayout>
-	<h1>Astro</h1>
-	<UserIcon />
-	<Drops />
+  <Drops />
+
+  <Container>
+    <Content />
+  </Container>
 </BaseLayout>

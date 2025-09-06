@@ -33,5 +33,5 @@ const pageCollection = defineCollection({
 });
 
 export const collections = {
-  page: pageCollection,
+  pages: pageCollection,
 };

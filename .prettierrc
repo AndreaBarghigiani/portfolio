@@ -9,7 +9,7 @@
   "bracketSameLine": false,
   "arrowParens": "always",
   "endOfLine": "lf",
-  "singleAttributePerLine": true,
+  "singleAttributePerLine": false,
   "astroAllowShorthand": true,
   "htmlWhitespaceSensitivity": "css",
   "quoteProps": "as-needed",

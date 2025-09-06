@@ -1,5 +1,8 @@
 ---
 import Head from '@/components/partials/Head.astro';
+import Header from '@/components/partials/Header.astro';
+import Footer from '@/components/partials/Footer.astro';
+import '@fontsource-variable/figtree';
 import '@/styles/global.css';
 ---
 
@@ -17,8 +20,10 @@ import '@/styles/global.css';
   </script>
 
   <body class="bg-background text-foreground relative pb-12">
+    <Header />
     <main class="pt-24">
       <slot />
     </main>
+    <Footer />
   </body>
 </html>

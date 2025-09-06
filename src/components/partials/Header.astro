@@ -1,0 +1,76 @@
+---
+import Container from '@/components/Container.astro';
+import ThemeToggle from '@/components/ThemeToggle.astro';
+// import { DEFAULT_CONFIGURATION } from '@/lib/constants';
+// import { getImage, Image } from 'astro:assets';
+
+// const { avatar } = DEFAULT_CONFIGURATION.author;
+const pathname = Astro.url.pathname;
+
+const isHomePage = pathname === '/';
+const isWritingPage = pathname.startsWith('/writing');
+// const image = await getImage({ src: avatar, format: 'avif' });
+---
+
+<Container
+  as="header"
+  class="navbar fixed flex w-full max-w-full items-center justify-center gap-8 py-5 transition-all duration-200"
+>
+  <!-- <div class="border-border shrink-0 overflow-hidden rounded-full border">
+    <Image
+      loading="eager"
+      src={image.src}
+      alt={DEFAULT_CONFIGURATION.author.name}
+      width={44}
+      height={44}
+      class="rounded-full"
+    />
+  </div> -->
+
+  <div class="bg-muted-foreground/50 border-border w-max rounded-full border p-1 backdrop-blur-md">
+    <nav class="flex items-center">
+      <ul class="flex items-center gap-1">
+        <li>
+          <a
+            href="/"
+            class:list={[
+              'block px-5 py-2 font-medium transition-colors',
+              'hover:text-headings',
+              isHomePage && 'text-coffee-100 bg-muted-foreground/40 rounded-full',
+            ]}>Home</a
+          >
+        </li>
+        <li>
+          <a
+            href="/writing"
+            class:list={[
+              'block px-5 py-2 font-medium transition-colors',
+              'hover:text-headings',
+              isWritingPage && 'text-coffee-100 bg-muted-foreground/40 rounded-full',
+            ]}>Writing</a
+          >
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <ThemeToggle />
+</Container>
+
+<script>
+  const handleScroll = () => {
+    const navbar = document.querySelector<HTMLElement>('.navbar');
+
+    if (!navbar) return;
+
+    if (window.scrollY > 0) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  };
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('scroll', handleScroll);
+  }
+</script>

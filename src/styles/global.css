@@ -54,6 +54,7 @@
 
 /* Theme configuration for Tailwind CSS v4 */
 @theme {
+  --font-sans: 'Figtree Variable', sans-serif;
   --color-background: var(--color-background);
   --color-foreground: var(--color-foreground);
   --color-headings: var(--color-headings);
@@ -72,14 +73,6 @@
   --color-coffee-800: var(--color-coffee-800);
   --color-coffee-900: var(--color-coffee-900);
   --color-coffee-950: var(--color-coffee-950);
-}
-
-/* Base styles */
-@supports (font-variation-settings: normal) {
-  :root {
-    font-family: var(--font-inter-variable), sans-serif;
-    font-optical-sizing: auto;
-  }
 }
 
 /* Prose Coffee */

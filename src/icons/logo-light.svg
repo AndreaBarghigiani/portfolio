@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Coffee cup -->
+  <path d="M60 90h80c5 0 10 5 10 10v20c0 20-20 40-50 40s-50-20-50-40V100c0-5 5-10 10-10z" fill="#E2C2A8"/>
+  <path d="M140 100h10c8 0 15 7 15 15s-7 15-15 15h-10" stroke="#E2C2A8" stroke-width="6" fill="none"/>
+
+  <!-- Coffee code dots/lines inside cup -->
+  <circle cx="75" cy="110" r="3" fill="#5C4033"/>
+  <rect x="85" y="108" width="25" height="5" rx="2.5" fill="#5C4033"/>
+
+  <rect x="70" y="125" width="15" height="5" rx="2.5" fill="#5C4033"/>
+  <circle cx="90" cy="128" r="3" fill="#5C4033"/>
+  <rect x="100" y="125" width="25" height="5" rx="2.5" fill="#5C4033"/>
+
+  <circle cx="80" cy="145" r="3" fill="#5C4033"/>
+  <rect x="90" y="143" width="35" height="5" rx="2.5" fill="#5C4033"/>
+
+  <!-- Steam (smoke) -->
+  <path d="M85 50c10 15-10 20 0 35" stroke="oklch(0.952 0.012 75.4)" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <path d="M100 40c12 18-12 25 0 45" stroke="oklch(0.867 0.035 75.8)" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <path d="M115 50c10 15-10 20 0 35" stroke="oklch(0.748 0.069 76.1)" stroke-width="6" stroke-linecap="round" fill="none"/>
+</svg>

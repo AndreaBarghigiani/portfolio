@@ -1,0 +1,49 @@
+---
+import { BookDashed } from "@lucide/astro";
+---
+
+<div class="drop-icon">
+    <BookDashed />
+</div>
+
+<script>
+  // Import motion directly in the client-side script
+  import { animate, stagger } from 'motion';
+
+  const icons = document.querySelectorAll('.drop-icon');
+  const stain = document.querySelector('.stain-icon');
+
+  animate(
+    icons,
+    {
+      // @ts-expect-error: don't understand why Motion sees an error here...
+      opacity: [0, 1, 1],
+      scale: [1.5, 0.95, 1.1, 1],
+      filter: ['blur(4px)', 'blur(0px)', 'blur(0px)'],
+    },
+    {
+      delay: stagger(0.25, { startDelay: 0.2 }),
+      duration: 0.2,
+      easing: [0.16, 1, 0.3, 1],
+    }
+  );
+
+  if (stain) {
+    animate(
+      stain,
+      {
+        // @ts-expect-error: don't understand why Motion sees an error here...
+        opacity: [0, 1, 1],
+        //   scale: [1.5, 0.95, 1.1, 1],
+        rotate: [-110, -120, -115],
+        // filter: ['blur(4px)', 'blur(0px)', 'blur(0px)'],
+      },
+      {
+        delay: 2,
+        duration: 0.5,
+        easing: 'ease-in-out',
+      }
+    );
+  }
+</script>
+

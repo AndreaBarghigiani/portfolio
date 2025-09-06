@@ -5,11 +5,14 @@ import tailwindcss from '@tailwindcss/vite';
 
 import icon from 'astro-icon';
 
-// https://astro.build/config
+import sitemap from '@astrojs/sitemap';
+
 export default defineConfig({
+  site: 'https://cupofcraft.com',
+
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
   },
 
-  integrations: [icon()]
+  integrations: [icon(), sitemap()],
 });

@@ -1,0 +1,127 @@
+---
+title: Building your own reduce array method
+date: 2025-01-02
+tags: JavaScript, GFE 75
+seo:
+  title: Building your own reduce array method
+  description: Learning how the internals of JavaScript works is a great way to master the language you use every day. Let's challenge our knowledge!
+  type: article
+  keywords: JavaScript, GFE 75
+---
+JavaScript has always amazed me with its internal workings and the built-in features that we have for free, especially with the evolutions the language has gone through in recent years.
+
+I always wanted to dive deeper into the internals of the language, but due to my busy schedule and my curiosity about new features, I always had trouble getting back to the basics.
+
+That's why I have recently focused so much on the [GreatFrontEnd challenges](https://www.greatfrontend.com/) that I want to solve. Not only does this platform give me a clear path on what I should work on to get ready for my next interview, but it also pushes me to know the tool I am using even better.
+
+Enough about the praise for GFE. Let's get real and talk about today's challenge.
+
+### Build your own `reduce` method
+
+If you have never used it, let me tell you something, you're leaving something powerful on the table.
+
+While the logic can seem hard to grasp, especially when you work with TypeScript, the power that it gives you is unmatched. The `reduce` method inside JavaScript allows you to iterate over an array, operate on its values with a callback function that **you provide**, and get a single value out of it most of the time.
+
+I've used _"most of the time_ because `reduce` is incredibly powerful. You can stretch it as you wish even though it probably could be better to use a different method provided by the language.
+
+The signature of the function is straightforward; you need to pass a callback function and an initial value to it. The callback function accepts 4 arguments:
+- `accumulator`: the value that holds the current state of your loop and that will be returned at the end of the `reduce` lifecycle.
+- `element`: the current array element you're working on.
+- `index`: that, as in any other loop method, can tell you where you are in the loop.
+- `this`: the entire array you're looping through
+ 
+More than `reduce` itself, when I explain it to a co-worker, I always find that the most challenging part to grasp about this method is the callback function 😅
+
+But today, we're here to create our own `reduce` method, and I hope everything will be clear with the following explanation.
+
+### The `reduce` signature
+
+When I opened the second task of GFE75 this was the TypeScript code I had to work with:
+
+```ts
+interface Array<T> {
+  myReduce<U>(
+    callbackFn: (
+      previousValue: U,
+      currentValue: T,
+      currentIndex: number,
+      array: T[],
+    ) => U,
+    initialValue?: U,
+  ): U;
+}
+
+Array.prototype.myReduce = function (callbackFn, initialValue) {}
+```
+
+As you can see, the TypeScript definition of the `callbackFn` is the most complex part of its signature. But at the end of the day, the `myReduce` method that we're creating (that has this name to not conflict with the `reduce` built-in method) has to return a `U` typed value, that has to be the same of `initialValue`, if provided.
+
+With the knowledge that the methods we add to the `prototype` of a standard object have access to the object that invokes them via the `this` keyword, I quickly started to code and came up with the following implementation:
+
+```ts
+Array.prototype.myReduce = function (callbackFn, initialValue) {
+  let value = initialValue !== undefined ? initialValue : this.pop()
+  
+  for(let i = 0; i < this.length; i++) {
+    value = this.at(i) ? callbackFn(value, this.at(i), i, this) : value
+  }
+  
+  return value
+};
+```
+
+While I think that this version of my code is pretty short and straightforward, when I ran the submission tests, there was one use case that failed.
+
+This was the failing test:
+
+```ts
+const add = (prev: any, curr: any) => prev + curr;
+
+test('no initial value provided and array is empty', () => {
+  expect(() => {
+    [].myReduce(add);
+  }).toThrow();
+});
+```
+
+The test was expecting to receive an error if `myReduce` method was used on an empty array without any `initialValue` specified. And that's more than correct because, based on `reduce` definition, in case we do not provide an `initialValue`, the method will use the first item in the array. However, since the array is empty, this cannot be done, and we have to return an error.
+
+This was only my first mistake, though, as you can see with the `this.pop()` part **I am mutating the array**, and while this is possible, it can lead to unintended consequences.
+
+So, while I was just an `if` away from solving this challenge, a thing that I did nonetheless. After passing all the tests, I checked the proposed solution:
+
+```ts
+Array.prototype.myReduce = function (callbackFn, initialValue) {
+  const noInitialValue = initialValue === undefined;
+  const len = this.length;
+
+  if (noInitialValue && len === 0) {
+    throw new TypeError('Reduce of empty array with no initial value');
+  }
+
+  let acc = noInitialValue ? this[0] : initialValue;
+  let startingIndex = noInitialValue ? 1 : 0;
+
+  for (let k = startingIndex; k < len; k++) {
+    if (Object.hasOwn(this, k)) {
+      acc = callbackFn(acc, this[k], k, this);
+    }
+  }
+
+  return acc;
+};
+```
+
+### What can we learn from this snippet?
+
+First and foremost, the solution implements _talking variable names_. Instead of using `initialValue === undefined` or `this.length` as I did in my code, the developer who wrote it made clear the logic behind these checks with names like `noInitialValue` and `len` (for `length`).
+
+**He also did not mutate the array**. Instead, he used a ternary operator to keep track of the `startingIndex` based on the `noInitialValue` check result.
+
+Lastly, at least the last thing that's different from my code is the check to see if a value is held by the item at the current index. In my code snippet, I just quickly checked for the presence of a positive value with [`this.at`](http://this.at)`(i)`, but you know as me that this check it can get hallucinated on falsy values.
+
+The solution creator instead relied on `Object.hasOwn(this, i)` to have a more complete check.
+
+That's because [`this.at`](http://this.at)`(i)` (or `this[i]`) will return `false` if, for example, the stored value at such index is `0`. Instead, use `Object.hasOwn` to allow us to check if the array (remember, arrays are just Objects in JavaScript) has a value at that specific `i`ndex.
+
+That value could be `0`, `undefined`, or any other falsy value. But it is still a value held by the item of our array, and as such, we need to use it inside out `callbackFn`.

@@ -32,6 +32,42 @@ const pageCollection = defineCollection({
     }),
 });
 
+const jobCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/jobs' }),
+  schema: z.object({
+    title: z.string(),
+    company: z.string(),
+    companyIntro: z.string().optional(),
+    location: z.string(),
+    from: z.number(),
+    to: z.number().or(z.enum(['Now'])),
+    url: z.string().optional(),
+  }),
+});
+
+const linkCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.yml', base: './src/content/links' }),
+  schema: z.object({
+    label: z.string(),
+    name: z.string(),
+    url: z.string(),
+  }),
+});
+
+const postCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/posts' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      date: z.date(),
+      image: image().optional(),
+      seo: seoSchema(image),
+    }),
+});
+
 export const collections = {
-  page: pageCollection,
+  pages: pageCollection,
+  jobs: jobCollection,
+  links: linkCollection,
+  posts: postCollection,
 };

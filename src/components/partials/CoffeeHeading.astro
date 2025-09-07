@@ -1,0 +1,29 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { Polymorphic } from 'astro/types';
+
+type LayoutTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+type Props<Tag extends LayoutTag> = Polymorphic<{
+  as: Tag;
+  class?: string;
+  icon?: string;
+  iconClass?: string;
+}>;
+
+const { as: Tag = 'h3', icon, iconClass, class: className } = Astro.props as Props<LayoutTag>;
+---
+
+<header class="flex items-center gap-2">
+  <Tag class:list={['text-headings flex items-start gap-2 text-xl font-semibold', className]}>
+    <slot />
+
+    {
+      icon && (
+        <Icon
+          name={icon}
+          class:list={['dark:text-coffee-800 text-coffee-200 size-3 rotate-45', iconClass]}
+        />
+      )
+    }
+  </Tag>
+</header>

@@ -1,0 +1,42 @@
+---
+import Container from '@/components/Container.astro';
+import ThemeToggle from '@/components/ThemeToggle.astro';
+import Avatar from '@/components/ui/Avatar.astro';
+import NavLink from '@/components/ui/NavLink.astro';
+---
+
+<Container
+  as="header"
+  class="navbar fixed flex w-full max-w-full items-center justify-center gap-8 py-5 transition-all duration-200"
+>
+  <Avatar class="border-border border" />
+
+  <div class="bg-muted-foreground/50 border-border w-max rounded-full border p-1 backdrop-blur-md">
+    <nav class="flex items-center">
+      <ul class="flex items-center gap-1">
+        <NavLink href="/">Home</NavLink>
+        <NavLink href="/posts">Posts</NavLink>
+      </ul>
+    </nav>
+  </div>
+
+  <ThemeToggle />
+</Container>
+
+<script>
+  const handleScroll = () => {
+    const navbar = document.querySelector<HTMLElement>('.navbar');
+
+    if (!navbar) return;
+
+    if (window.scrollY > 0) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  };
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('scroll', handleScroll);
+  }
+</script>

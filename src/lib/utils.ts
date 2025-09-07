@@ -33,3 +33,25 @@ export const sortJobsByDate = (jobs: CollectionEntry<'jobs'>[]) => {
     return nextEnd - currentEnd || next.data.from - current.data.from;
   });
 };
+
+/**
+ * Checks if the current URL path matches the given path or path pattern
+ * @param currentPath The current URL path (from Astro.url.pathname)
+ * @param targetPath The path or path pattern to match against
+ * @returns boolean indicating if the current path matches the target path/pattern
+ */
+export function isCurrent(currentPath: string, targetPath: string): boolean {
+  // Handle exact matches
+  if (targetPath === '/') {
+    return currentPath === '/';
+  }
+
+  // Handle path startsWith matches (like '/posts')
+  if (targetPath.endsWith('*')) {
+    const basePath = targetPath.slice(0, -1);
+    return currentPath === basePath || currentPath.startsWith(`${basePath}/`);
+  }
+
+  // Handle exact path matches
+  return currentPath === targetPath;
+}

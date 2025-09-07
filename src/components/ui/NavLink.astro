@@ -1,0 +1,24 @@
+---
+interface Props {
+  href: string;
+}
+
+const { href } = Astro.props;
+const { pathname } = Astro.url;
+import { isCurrent } from '@/lib/utils';
+
+const isCurrentLink = isCurrent(href, pathname);
+---
+
+<li>
+  <a
+    {href}
+    class:list={[
+      'block px-5 py-2 font-medium transition-colors',
+      'hover:text-headings',
+      isCurrentLink && 'text-coffee-100 bg-muted-foreground/40 rounded-full',
+    ]}
+  >
+    <slot />
+  </a>
+</li>

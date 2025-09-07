@@ -2,10 +2,7 @@
 import Container from '@/components/Container.astro';
 import ThemeToggle from '@/components/ThemeToggle.astro';
 import Avatar from '@/components/ui/Avatar.astro';
-const pathname = Astro.url.pathname;
-
-const isHomePage = pathname === '/';
-const isWritingPage = pathname.startsWith('/writing');
+import NavLink from '@/components/ui/NavLink.astro';
 ---
 
 <Container
@@ -17,26 +14,8 @@ const isWritingPage = pathname.startsWith('/writing');
   <div class="bg-muted-foreground/50 border-border w-max rounded-full border p-1 backdrop-blur-md">
     <nav class="flex items-center">
       <ul class="flex items-center gap-1">
-        <li>
-          <a
-            href="/"
-            class:list={[
-              'block px-5 py-2 font-medium transition-colors',
-              'hover:text-headings',
-              isHomePage && 'text-coffee-100 bg-muted-foreground/40 rounded-full',
-            ]}>Home</a
-          >
-        </li>
-        <li>
-          <a
-            href="/writing"
-            class:list={[
-              'block px-5 py-2 font-medium transition-colors',
-              'hover:text-headings',
-              isWritingPage && 'text-coffee-100 bg-muted-foreground/40 rounded-full',
-            ]}>Writing</a
-          >
-        </li>
+        <NavLink href="/">Home</NavLink>
+        <NavLink href="/posts*">Posts</NavLink>
       </ul>
     </nav>
   </div>

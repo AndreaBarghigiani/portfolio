@@ -1,8 +1,11 @@
+import avatar from '@/assets/images/me.png';
 import type { seoSchemaWithoutImage } from '@/content.config';
+import type { ImageMetadata } from 'astro';
 import type { z } from 'astro/zod';
 
 export type AuthorInfo = {
   name: string;
+  avatar: ImageMetadata;
   headline: string;
   username?: string;
   location?: string;
@@ -23,6 +26,7 @@ export const DEFAULT_CONFIGURATION: DefaultConfigurationType = {
   baseUrl: 'https://cupofcraft.dev',
   author: {
     name: 'Andrea Barghigiani',
+    avatar,
     headline: 'Frontend and Product Engineer',
     username: 'cupofcraft',
     location: 'Palermo',

@@ -34,6 +34,21 @@ export const sortJobsByDate = (jobs: CollectionEntry<'jobs'>[]) => {
   });
 };
 
+export const sortPostsByDate = (posts: CollectionEntry<'posts'>[]) =>
+  [...posts].sort((a, b) => {
+    const aTime =
+      a.data.date instanceof Date
+        ? a.data.date.getTime()
+        : new Date(a.data.date as unknown as string).getTime();
+
+    const bTime =
+      b.data.date instanceof Date
+        ? b.data.date.getTime()
+        : new Date(b.data.date as unknown as string).getTime();
+
+    return bTime - aTime; // descending: newest first
+  });
+
 /**
  * Checks if the current URL path matches the given path or path pattern
  * @param currentPath The current URL path (from Astro.url.pathname)

@@ -32,6 +32,7 @@ const { Content } = await render(entry);
         </a>
         <h1 class="text-headings text-3xl font-semibold">{entry.data.title}</h1>
       </div>
+
       {
         entry.data.image && (
           <div class="relative aspect-video overflow-hidden rounded-lg">
@@ -39,7 +40,8 @@ const { Content } = await render(entry);
           </div>
         )
       }
-      <div class="prose-coffee text-foreground">
+
+      <div class="prose prose-coffee dark:prose-invert">
         <Content />
       </div>
     </article>

@@ -1,0 +1,128 @@
+---
+title: Building the throttle function
+date: 2025-01-23
+tags: JavaScript, GFE 75
+seo:
+  title: Building the throttle function
+  description: Like debounce, the throttle function is really useful to optimize our function calls. This time, instead of importing from Lodash or any other alternative, we learn how to build our own.
+  type: article
+  keywords: JavaScript, GFE 75
+---
+Most of the time, we find the `throttle` function being compared to `debounce`, which we created as the first article in this series.
+
+That's because both function accomplish a similar task, to save resources while handling function calls based on a specific timer the user is able to set. But there is a key difference at play:
+
+- `debounce` will allow you to **postpone the function call** until there are no more event that calls them within a specified interval. Quick example: the user is typing on an `input` field and you do not want to run your function at every keystroke but each second where user stops writing.
+    
+- `throttle` instead ensures that a function executes **at most once** every interval. Quick example: you have a button that fires a complex operation, and you want to start the process as soon as the user clicks it, but you do not want to consider following clicks for a specific interval.
+    
+
+While I think you should also give the user UI feedback on what's happening, like showing a loading spinner while the `debounce`d function starts or disabling the button while the `throttle`d function is being called, let's focus on how we could implement such function.
+
+As usual, this article is part of my series, where I discuss how I've solved the challenges inside GFE 75. You can find all the information inside the GreatFrontEnd platform, go there and have a look because more than 80% of the content and features are free 😉
+
+### How I solved the challenge
+
+As I wrote in the introduction, `debounce` and `throttle` are similar because they allow us to save resources. Still, since they basically work in the opposite direction in this case, I couldn't leverage the code I had previously written. Well, not the main structure, at least.
+
+One thing `debounce` and `throttle` are similar about is that they return a function, and what taught me the latest experience with `debounce` is that we should be aware of `this`, which implies no arrow functions.
+
+```ts
+export default function throttle<T extends any[]>(
+  func: ThrottleFunction<T>,
+  wait: number,
+): ThrottleFunction<T> {
+  let waiting = false;
+  
+  return function (this: any, ...args: T) {}
+}
+```
+
+If you go back to the `debounce` article, you should see that as its base, both code snippets look similar; each takes in a `func` and a `wait` argument and returns a function that has access to `this`.
+
+But here's where the similarity ends because, as described above, each function has a different purpose, and we can understand it from the name of the first variable we see in each code block.
+
+In `debounce`, the first variable we met was an undefined numeric `timeoutId`, while the `throttle` has a boolean `waiting` already set to `false`. It should be simple to understand that while `debounce` interest is to remove previous timers we had in place waiting to call a function, with `throttle`, we are focused on **do not call the function again** if a specific time hasn't passed yet (that means that `waiting` is `true`).
+
+I've tried to make as clear as possible the similarities and differences of these functions, now it's time show you how I've implemented `throttle`.
+
+```typescript
+export default function throttle<T extends any[]>(
+  func: ThrottleFunction<T>,
+  wait: number,
+): ThrottleFunction<T> {
+  let waiting = false;
+  
+  return function (this: any, ...args: T) {
+    if(!waiting){
+      func.apply(this, args);
+      waiting = true;
+    }
+    
+    // Other code
+  }
+}
+```
+
+When the user calls the throttled function, we need to understand whether we're inside a time window where the function cannot be called. For example, as soon as the user run the returned funciton, we need to execute `func`.
+
+So in the above snippet, we first check for the `waiting` value. If we're not waiting (like first time function gets called or `wait` time expires), we run `func` attaching `this` to it **and** we set the `waiting` value to `true` since now we need to wait time expiration to call `func` again.
+
+But how do we know if enough time has passed?
+
+If we keep the function definition like so, the end user cannot run the throttled function because there's no way that `waiting` will get back to `false`. And that's why we need to add a `setTimeout` with some logic.
+
+```typescript
+// Other code
+
+setTimeout(() => {
+  if(waiting){
+    waiting = false;
+  } else {
+    func.apply(this, args);
+    waiting = true;
+  }
+}, wait)
+
+// Other code
+```
+
+Here's the entire logic. `waiting` will be `true` until the `setTimeout` function will not be fun after `wait` time expires. Once we can run the function inside it, the first thing we do is check if `waiting` is still true. If so, we just set `waiting` to `false` and call it a day.
+
+Instead, if we still had a pending `setTimeout` and `waiting` is `false`, once `wait` expires, we will execute `func` the same way we did at the beginning.
+
+My solution is nothing elegant or clever; it solves all the tests and looks straightforward. Let's check now how it compares with the proposed solutions.
+
+### Compare with proposed solutions
+
+I'm always curious to discover how people solve the challenges I just solved, there's so much to learn!
+
+In this case, the thing that I can learn is how to reflect on the question: _"How can I make this code simpler and easier to understand?"_
+
+I kept thinking about different syntax or functions I could leverage; even though `apply` does a terrific job here, the part I was missing if I compare mine with the proposed solution is **the way I was tackling the problem**.
+
+My code focused on the `waiting` state, while the code in the proposed solution is focused on `shouldThrottle`, and this, as you'll soon discover, incredibly simplifies our code!
+
+```typescript
+export default function throttle(func, wait = 0) {
+  let shouldThrottle = false;
+
+  return function (...args) {
+    if (shouldThrottle) return;
+
+    shouldThrottle = true;
+    
+    setTimeout(function () {
+      shouldThrottle = false;
+    }, wait);
+
+    func.apply(this, args);
+  };
+}
+```
+
+All we care about the solution is `shouldThrottle` state. If that's `true` we just `return` from the function stopping following executions, otherwise, we set it to `true`, we prepare the `setTimeout` to reset it to `false` once `wait` expires, and we call `func.apply(this, args)`.
+
+If you paid close attention, you've also noticed that the returned function of `throttle` **does not need** `this` as an argument, and that's because since `func` get's called immediately within the context of the wrapping function, we're able to bind `this` correctly because `this` context is kept.
+
+I kept the call to action to [GreatFrontEnd](https://www.greatfrontend.com?fpr=cupofcraft) at a minimum this time, and I want to make it clear that I am not an affiliate of it. I will earn nothing if you subscribe. But it's not for the monetary value that I want to introduce you to the platform; it's because **it is a great way to gather and show off your expertise**.

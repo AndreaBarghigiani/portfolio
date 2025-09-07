@@ -1,0 +1,180 @@
+---
+title: Flatten an array with a custom function
+date: 2025-01-13
+tags: JavaScript, GFE 75 
+seo:
+  title: Flatten an array with a custom function
+  description: Let's learn how to implement our own flat function to discover how the designer of the JavaScript language thinks and learn from their intuitions.
+  type: article
+  keywords: JavaScript, GFE 75
+---
+When it comes to arrays, JavaScript gives us plenty of options to work with them. The most common methods, maybe made famous by the need to write expressions in the JSX syntax itself, probably are `map`, `filter`, `some`, and `reduce`.
+
+But you only have to look at the [MDN Array page](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) to see how many methods and properties this kind of object provides us. I am pretty sure you'll find some old friends in there, like `concat` or `find`.
+
+If you paid attention, you probably spotted the built-in method `flat`. We will recreate this functionality in the [fourth challenge of GFE 75](https://www.greatfrontend.com/interviews/study/gfe75/questions/javascript/flatten?fpr=cupofcraft) inside the GreatFrontEnd platform.
+
+> This challenge is also one of the **many free challenges** the platform provides to gather experience and confidence. So do not hesitate and [create your account today](https://www.greatfrontend.com?fpr=cupofcraft)
+
+This task should be pretty simple, especially if you [followed along with the `classNames` article](https://cupofcraft.dev/posts/replicate-classnames-function) or if - even better - you completed the challenge by yourself.
+
+I am comparing this challenge with the one focused on reproducing the `classNames` function because we have to loop the array to work with a primitive value iteratively. Since I dislike reinventing the wheel, I decided to start with the same structure as the previous article.
+
+```ts
+function flatten(value: Array<ArrayValue>): Array<any> {
+  // Array that will hold all values to be returned
+  const result: ArrayValue = [];
+  
+  // The logic of the entire challenge, it'll be called recursively
+  function processItem(item) {}
+  
+  // Run `processItem` for the first time in the function
+  value.forEach(processItem)
+  
+  // Return the resulting array
+  return result
+}
+```
+
+As you can see, the structure is pretty simple. We have the `arr` variable that will hold the array that we need to return, and the same variable will be accessed and mutated by the `prosessItem` function that we will call recursively.
+
+After the function definition, we'll have the `forEach` that will loop any item held by the array the user will pass as an argument, and after that, we just return `arr`.
+
+All that's missing now is the logic inside `processItem`, and it's straightforward. If the `item` I'm looping is an array, I call `processItem` on each item of such array; otherwise, I just add the value to the result array.
+
+```typescript
+function processItem(item) {
+  if(Array.isArray(item)){
+    item.forEach(processItem)
+  } else {
+    result.push(item)
+  }
+}
+```
+
+That's all the logic needed to solve the entire challenge.
+
+```typescript
+function flatten(value: Array<ArrayValue>): Array<any> {
+  const result: ArrayValue = [];
+  
+  function processItem(item) {
+    if(Array.isArray(item)){
+      item.forEach(processItem)
+    } else {
+      result.push(item)
+    }
+  }
+  
+  value.forEach(processItem)
+  
+  return result
+}
+```
+
+### Compare with proposed solutions
+
+As usual, once I have ensured that my code solves all tests and that I have done my best to make it readable and performant, I tend to go to the solutions tab to explore different approaches and suggestions.
+
+I **strongly advise you to leverage the GreatFrontEnd platform**. First and foremost, most of the challenges are free (which means you can learn from the solutions), but I keep telling you to create an account on the platform because **I will not discuss each solution,** only the ones I find most interesting.
+
+But before going into the code, I have a confession to make. Once again, I got a cold shower while reading their suggestions and descriptions. That's because, once more, I forgot to think about clarifying questions.
+
+I keep forgetting that an interview is a two-way path that you and the interviewer walk on together, he has the same rights as you to ask questions, and most of the time exchange these will help you share your way of thoughts well before you touch the keyboard!
+
+Some of the questions I could ask could have been:
+- The type of data inside the array.
+- The level of nesting.
+- Return new or mutate the original array.
+- Assumption of valid input.
+- Kind of environment.
+
+Now, it's time to check the solutions they propose for this challenge. They've created **seven different solutions**, each with a specific approach and focus. One uses Generators, which I definitely need to gain some fresh experience with, while others are clever one-liners.
+
+I'm not here for cleverness. These approaches are generally unreadable and difficult to understand. However, both approaches are close to mine, and I think we can learn more about them by examining how they differ.
+
+```typescript
+type ArrayValue = any | Array<ArrayValue>;
+
+export default function flatten(value: Array<ArrayValue>): Array<any> {
+  const res = [];
+  const copy = value.slice();
+
+  while (copy.length) {
+    const item = copy.shift();
+    
+    if (Array.isArray(item)) {
+      copy.unshift(...item);
+    } else {
+      res.push(item);
+    }
+  }
+
+  return res;
+}
+```
+
+While I like recursion, it is a risky approach, depending on the number of recursions that will live inside the call stack.
+
+The above function avoids recursion altogether while leveraging built-in array methods (like `slice`, `shift`, and `unshift`) while leveraging a loop method that I do not use often (`while`).
+
+As soon as we call `flatten`, we create two arrays. `res` is the array that will hold the final array and that the function returns while `copy` is just a shallow copy of the original array that we create with `slice` and will mutate later on.
+
+After we've created `copy`, we set the `while` condition to the `length` of the array itself. This means that inside brackets, we will change the length of `copy,` mutating the array, otherwise we have an infinite loop.
+
+And once we're inside the `while` block, the first thing we do is to take out an `item` from `copy` with the `shift` method.
+
+> Remember, `shift` mutates the original array by removing and returning the first item in an array.
+
+Then we check if `item` is an array; if it is not, we add `item` to `res`; otherwise, with `unshift`, we add all the items in the array at the beginning of `copy`. So `while` the condition `copy.length` is `true,` we keep extracting the first item and move accordingly.
+
+Once `copy` has no `item` inside, the function will continue and `return` the whole array.
+
+Now that we have discovered the first proposed solution, let's move to the next one that leverages an array method that I haven't used much since ES6: `concat`.
+
+```ts
+export default function flatten(value: Array<ArrayValue>): Array<any> {
+  while (value.some(Array.isArray)) {
+    value = [].concat(...value);
+  }
+
+  return value;
+}
+```
+
+With this snippet, we're still leveraging the `while` loop, but this time, the condition aims at the presence of `some` elements that are arrays.
+
+> In this case, `some` automatically passes arguments to the callback function - `Array.isArray` in our case, exactly like `forEach`. That's why we don't need to make an explicit function like `value.some(item => Array.isArray(item))`.
+
+So `while` the array we're working with has some nested arrays. We keep leveraging the `concat` method and the spread operator, and both play a crucial role.
+
+`concat` is a powerful method that **automatically** takes any arguments you provide and behaves differently based on the tipe of each:
+- If we're passing an object or a primitive value, `concat` will simply add it to the array from which it's been called.
+- Instead, if we're passing an array, `concat` will **extract** each value in it and add it to the array from which it's been called.
+
+Sounds confusing? Here's a quick example that should clarify:
+
+```javascript
+[].concat(1); // [1]
+[].concat(1,2); // [1, 2]
+[].concat([3,4]); // [3, 4] (each item has been added individually)
+[].concat(1, 2, [3, 4]); // [1, 2, 3, 4]
+```
+
+With this example, it now should be clear why we also use the spread operator.
+
+If the condition is evaluated as `true`, we spread the entire array to make the nested array available as an argument of `concat` while also providing all the other primitive values that are added to the array that calls `concat`.
+
+The loop will keep going until the array does not have any more nested arrays in it.
+
+I hope that this deep dive into the proposed solutions is as helpful to you as they are to me. If you want to really learn all the intricacies of JavaScript, I cannot stress you enough as to challenge yourself every day.
+
+There are plenty of platforms from which you can start. I decided to get a lifetime Pro account at GreatFrontEnd because it has all the things that are strictly related to my career:
+
+- 500+ practice questions divided between Challenges, System Design, and Quiz
+- pre-defined study plans that help you speed up your path
+- time-savers collections to prepare on the most common question and have a clear path to follow
+- company-specific collections, so you can apply confidently to Microsoft
+- focus on specific areas, do you need to improve your accessibility or Design System skills? You have all you need.
+
+You're free to use any platform you wish, and you can even suggest one in the comments below. The most important thing is to keep yourself active and dedicate time to improving yourself.

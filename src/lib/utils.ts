@@ -41,17 +41,25 @@ export const sortJobsByDate = (jobs: CollectionEntry<'jobs'>[]) => {
  * @returns boolean indicating if the current path matches the target path/pattern
  */
 export function isCurrent(currentPath: string, targetPath: string): boolean {
-  // Handle exact matches
-  if (targetPath === '/') {
-    return currentPath === '/';
+  // Normalize targetPath: ensure leading slash and remove trailing slash unless root
+  let normalizedTarget = targetPath.startsWith('/') ? targetPath : `/${targetPath}`;
+  if (normalizedTarget.length > 1 && normalizedTarget.endsWith('/')) {
+    normalizedTarget = normalizedTarget.slice(0, -1);
   }
 
-  // Handle path startsWith matches (like '/posts')
-  if (targetPath.endsWith('*')) {
-    const basePath = targetPath.slice(0, -1);
-    return currentPath === basePath || currentPath.startsWith(`${basePath}/`);
+  // Normalize currentPath similarly (optional but recommended)
+  let normalizedCurrent = currentPath.startsWith('/') ? currentPath : `/${currentPath}`;
+  if (normalizedCurrent.length > 1 && normalizedCurrent.endsWith('/')) {
+    normalizedCurrent = normalizedCurrent.slice(0, -1);
   }
 
-  // Handle exact path matches
-  return currentPath === targetPath;
+  // Early return for root path
+  if (normalizedTarget === '/') {
+    return normalizedCurrent === '/';
+  }
+
+  // Return true if currentPath is exactly targetPath or starts with targetPath + '/'
+  return (
+    normalizedCurrent === normalizedTarget || normalizedCurrent.startsWith(normalizedTarget + '/')
+  );
 }

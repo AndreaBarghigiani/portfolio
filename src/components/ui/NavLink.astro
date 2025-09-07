@@ -7,7 +7,7 @@ const { href } = Astro.props;
 const { pathname } = Astro.url;
 import { isCurrent } from '@/lib/utils';
 
-const isCurrentLink = isCurrent(href, pathname);
+const isCurrentLink = isCurrent(pathname, href);
 ---
 
 <li>

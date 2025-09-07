@@ -45,7 +45,17 @@ const jobCollection = defineCollection({
   }),
 });
 
+const linkCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.yml', base: './src/content/links' }),
+  schema: z.object({
+    label: z.string(),
+    name: z.string(),
+    url: z.string(),
+  }),
+});
+
 export const collections = {
   pages: pageCollection,
   jobs: jobCollection,
+  links: linkCollection,
 };

@@ -54,8 +54,20 @@ const linkCollection = defineCollection({
   }),
 });
 
+const postCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/posts' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      date: z.date(),
+      image: image().optional(),
+      seo: seoSchema(image),
+    }),
+});
+
 export const collections = {
   pages: pageCollection,
   jobs: jobCollection,
   links: linkCollection,
+  posts: postCollection,
 };

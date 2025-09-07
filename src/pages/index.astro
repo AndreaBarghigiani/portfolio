@@ -1,5 +1,6 @@
 ---
 import Container from '@/components/Container.astro';
+import CoffeeHeading from '@/components/partials/CoffeeHeading.astro';
 import Drops from '@/components/partials/Drops.astro';
 import WorkExperience from '@/components/ui/WorkExperience.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
@@ -24,9 +25,7 @@ const sortedJobs = sortJobsByDate(jobs);
   <Drops />
 
   <Container as="section" class="flex flex-col gap-5">
-    <header>
-      <h3 class="text-headings text-xl font-semibold">About</h3>
-    </header>
+    <CoffeeHeading icon="drop-5">About</CoffeeHeading>
 
     <div class="prose prose-coffee dark:prose-invert">
       <Content />
@@ -37,9 +36,7 @@ const sortedJobs = sortJobsByDate(jobs);
     links.length > 0 && (
       <Container as="section" class="py-8">
         <div class="flex flex-col gap-5">
-          <header>
-            <h3 class="text-headings text-xl font-semibold">Where you can find me</h3>
-          </header>
+          <CoffeeHeading icon="drop-3">Where you can find me</CoffeeHeading>
 
           <ul class="flex flex-col gap-3">
             {links.map((link) => (
@@ -64,11 +61,11 @@ const sortedJobs = sortJobsByDate(jobs);
   {
     sortedJobs.length > 0 ? (
       <Container as="section" class="flex flex-col gap-5 py-6">
-        <header>
-          <h3 class="text-headings text-xl font-semibold">What I've done over the years</h3>
-        </header>
+        <CoffeeHeading icon="stain" iconClass="size-5">
+          What I've done over the years
+        </CoffeeHeading>
 
-        <ul>
+        <ul class="flex flex-col gap-8">
           {sortedJobs.map((job) => (
             <WorkExperience entry={job} />
           ))}

@@ -32,6 +32,20 @@ const pageCollection = defineCollection({
     }),
 });
 
+const jobCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/jobs' }),
+  schema: z.object({
+    title: z.string(),
+    company: z.string(),
+    companyIntro: z.string().optional(),
+    location: z.string(),
+    from: z.number(),
+    to: z.number().or(z.enum(['Now'])),
+    url: z.string().optional(),
+  }),
+});
+
 export const collections = {
   pages: pageCollection,
+  jobs: jobCollection,
 };

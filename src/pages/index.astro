@@ -1,8 +1,10 @@
 ---
 import Container from '@/components/Container.astro';
 import Drops from '@/components/partials/Drops.astro';
+import WorkExperience from '@/components/ui/WorkExperience.astro';
 import BaseLayout from '@/layout/BaseLayout.astro';
-import { getEntry, render } from 'astro:content';
+import { sortJobsByDate } from '@/lib/utils';
+import { getCollection, getEntry, render } from 'astro:content';
 
 const home = await getEntry('pages', 'homepage');
 
@@ -11,6 +13,9 @@ if (!home) {
 }
 
 const { Content } = await render(home);
+
+const jobs = await getCollection('jobs');
+const sortedJobs = sortJobsByDate(jobs);
 ---
 
 <BaseLayout>
@@ -21,4 +26,20 @@ const { Content } = await render(home);
       <Content />
     </div>
   </Container>
+
+  {
+    sortedJobs.length > 0 ? (
+      <Container as="section" class="flex flex-col gap-5 py-6">
+        <header>
+          <h3 class="text-headings text-xl font-semibold">What I've done over the years</h3>
+        </header>
+
+        <ul>
+          {sortedJobs.map((job) => (
+            <WorkExperience entry={job} />
+          ))}
+        </ul>
+      </Container>
+    ) : null
+  }
 </BaseLayout>

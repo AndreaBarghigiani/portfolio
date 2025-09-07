@@ -1,3 +1,4 @@
+import type { CollectionEntry } from 'astro:content';
 import { DEFAULT_CONFIGURATION } from './constants';
 
 export const formatDate = (date: Date) => {
@@ -21,14 +22,14 @@ export const includeDraft = (draft: boolean) => {
   return draft !== true;
 };
 
-// export const sortJobsByDate = (jobs: CollectionEntry<'jobs'>[]) => {
-//   // Convert "Now" to current year, otherwise returns the year as is
-//   const getEndYear = (job: CollectionEntry<'jobs'>) =>
-//     job.data.to === 'Now' ? new Date().getFullYear() : job.data.to;
+export const sortJobsByDate = (jobs: CollectionEntry<'jobs'>[]) => {
+  // Convert "Now" to current year, otherwise returns the year as is
+  const getEndYear = (job: CollectionEntry<'jobs'>) =>
+    job.data.to === 'Now' ? new Date().getFullYear() : job.data.to;
 
-//   return jobs.sort((current, next) => {
-//     // Compare end years first, then fall back to start years if end years are equal
-//     const [currentEnd, nextEnd] = [getEndYear(current), getEndYear(next)];
-//     return nextEnd - currentEnd || next.data.from - current.data.from;
-//   });
-// };
+  return jobs.sort((current, next) => {
+    // Compare end years first, then fall back to start years if end years are equal
+    const [currentEnd, nextEnd] = [getEndYear(current), getEndYear(next)];
+    return nextEnd - currentEnd || next.data.from - current.data.from;
+  });
+};

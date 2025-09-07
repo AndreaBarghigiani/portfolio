@@ -1,0 +1,50 @@
+---
+import { SquareArrowOutUpRightIcon } from '@lucide/astro';
+import { render, type CollectionEntry } from 'astro:content';
+interface Props {
+  entry: CollectionEntry<'jobs'>;
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<li class="py-0.5">
+  <div class="flex gap-5">
+    <div class="relative min-w-28 shrink-0">
+      <span class="text-muted-foreground text-sm">{entry.data.from} - {entry.data.to}</span>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <div class="flex flex-col gap-1">
+        <span class="text-headings font-medium">{entry.data.title}</span>
+
+        <p class="text-foreground flex items-center gap-2 text-sm">
+          {entry.data.company}
+
+          {
+            entry.data.url ? (
+              <a
+                href={entry.data.url}
+                title={`${entry.data.company} website`}
+                aria-label={`${entry.data.company} website`}
+                target="_blank"
+              >
+                <SquareArrowOutUpRightIcon class="size-3" />
+              </a>
+            ) : null
+          }
+        </p>
+
+        {
+          entry.data.companyIntro ? (
+            <span class="text-coffee-350 text-xs italic">{entry.data.companyIntro}</span>
+          ) : null
+        }
+      </div>
+
+      <div class="prose prose-sm prose-coffee dark:prose-invert">
+        <Content />
+      </div>
+    </div>
+  </div>
+</li>

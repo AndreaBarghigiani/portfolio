@@ -18,13 +18,10 @@ const sortedPosts = sortPostsByDate(posts);
 ---
 
 <BaseLayout seo={entry.data.seo}>
-  <Container as="section" class="py-6">
-    <Author {...DEFAULT_CONFIGURATION.author} />
-  </Container>
 
   <Container as="section" class="py-6">
     <div class="flex flex-col gap-6">
-        {
+      {
             sortedPosts.length === 0 ? (
                 <p>No posts found</p>
             ) : (
@@ -37,5 +34,9 @@ const sortedPosts = sortPostsByDate(posts);
             )
         }
     </div>
+  </Container>
+
+  <Container as="section" class="py-6">
+    <Author {...DEFAULT_CONFIGURATION.author} />
   </Container>
 </BaseLayout>

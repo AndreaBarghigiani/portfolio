@@ -1,0 +1,233 @@
+---
+title: Build a contact form withouth JavaScript
+date: 2025-02-18
+tags: JavaScript, form, accessibility 
+seo:
+  title: Build a contact form withouth JavaScript
+  description: Nowadays we rely on JavaScript for almost everything, but do you know we can handle a form even without and keep a nice user experience?
+  type: article
+  keywords: JavaScript, form, accessibility
+---
+Being a Frontend Engineer does not mean specializing in a single framework. Of course, you can have your preferences and work with them. But our job always involves **picking up the right tool for the job**. The ability to choose the right approach to close the ticket in front of you it probably even matters more.
+
+That's why I was delighted to see a challenge that didn't require any knowledge of JavaScript. The task's protagonist was HTML.
+
+Depending on when you started coding, maybe you did not focus much on how to structure and which elements to use when you write HTML in your apps. But let me tell you, while it is not a programming language, HTML is incredibly powerful and a great point of connection for other languages.
+
+I don't want to transform this article into an HTML deep dive, but you **must know** how powerful it is to solve this challenge elegantly.
+
+Since the challenge does not allow JavaScript, you have to **rely on the features of the language** that are most useful for you. For example, you cannot use `onClick` on the button that will send the form.
+
+On top of that, an app is not considered completed only when we tested it, and it works as expected. We also have to think about **how the user will be able to use it**, and this means having the app accessible and able to provide the correct information to our visitors.
+
+Now that we have a clearer picture of the topic for this challenge, it's time to check the starting code they provided me.
+
+```js
+import submitForm from './submitForm';
+
+export default function App() {
+  return (
+    <form
+      // Ignore the onSubmit prop, it's used by GFE to
+      // intercept the form submit event to check your solution.
+      onSubmit={submitForm}>
+      <input type="text" />
+    </form>
+  );
+}
+```
+
+Please don't start thinking something like: _"But that's a React component! Why there's a_ `onSubmit` there? I thought JavaScript wasn't allowed!
+
+Because while that's true, the fact that we use React and the `onSubmit` callback has nothing to do with our challenge.
+
+The GreatFrontEnd platform uses `onSubmit` to validate the data the form is sending, but if you open the `submitForm.js` file, you'll soon discover that it uses the native `FormData` interface to handle the data and no other React way of accessing the values sent by the `form`.
+
+Let's break down the features that we need to implement to solve this challenge:
+
+1. The `form` can collect and send all the data even if JavaScript is disabled (rely on element attributes and browser API to send them).
+2. Each `input` must have a proper `label` that will focus it if clicked.
+3. `button` must be able to `submit` the form.
+
+If you open the <a href="https://www.greatfrontend.com/interviews/study/gfe75/questions/user-interface/contact-form/react?fpr=cupofcraft" target="_blank">challenge on GreatFrontEnd</a>, you'll see that the brief includes other specs that will help you gather more information on how to solve it. However, I've listed only these three because this is where I want to focus in this article.
+
+### Sending data via HTML
+
+Even though the React component has an `onSubmit`, once you open the `submitForm.js` file you'll soon discover that there are some checks in place to make sure the `form` uses standard HTML to send the data.
+
+At line 9, it checks the URL inside the `action` attribute:
+
+```ts
+if (form.action !== SUBMIT_URL) {
+  alert("Incorrect form action value");
+  return;
+}
+```
+
+While at line 14 checks for the proper `method` that `form` uses:
+
+```ts
+if (form.method.toLowerCase() !== "post") {
+  alert("Incorrect form method value");
+  return;
+}
+```
+
+Even if the limit of _"no JavaScript allowed"_ didn't ring a bell, these checks should remind us that to make a `form` work in HTML, we must specify the `action` and `method` attributes. Well, both have defaults (`#` for `action` and `get` for `method`), but in our challenge, we need to customize both:
+
+- The value of `action` has to be set to the endpoint made available (stored as the constant `SUBMIT_URL` in `submitForm.js`).
+- A standard request from a `form` is a GET type of request, while our API only accepts POST requests.
+
+We have these checks in JavaScript, but we need to send data via standard HTML `form` with the proper attributes applied.
+
+```ts
+import submitForm, { SUBMIT_URL } from "./submitForm";
+
+export default function App() {
+  return (
+    <form
+      onSubmit={submitForm}
+      method="post"
+      action={SUBMIT_URL}
+    />
+  );
+}
+```
+
+I wanted to highlight this step (be aware `form` auto closes for brevity), but it does nothing new that we already analyzed together. We **imported** `SUBMIT_URL` from `submitForm.js` and used for the `action` attribute, and we also explicitly set the `method` to POST.
+
+### `input`s must have a `label`
+
+The code sample that we had at the beginning had only one `input`, but we need to do a bit better than that.
+
+```html
+<label htmlFor="name">Name</label>
+<input type="text" id="name" name="name" />
+
+<label htmlFor="email">Email</label>
+<input type="email" id="email" name="email" />
+
+<label htmlFor="message">Message</label>
+<textarea id="message" name="message" />
+```
+
+That's how I made the elements inside the `form` accessible and able to send the correct information to our `action`.
+
+There's nothing magic here: simple HTML attributes and elements that help our users understand what information we require for each field. Each `label` is connected to its `input` with the `htmlFor` prop (that gets converted to the standard `for` attribute during render).
+
+On top of that, we already set the correct keys for the information we need to send to the API. Each field has a `name` attribute corresponding to the endpoint provided: `name`, `email`, and `message`.
+
+### The `button` in charge of sending
+
+I've to be honest here: I lied in the section title because `button` is not the only way we can send the data in our `form`. You can also send the data collected by pressing `Enter` inside any text `input` (sorry, `textarea` goes to a new line).
+
+Users are used to seeing a functioning button at the end of each `form`, so let's make them happy:
+
+```html
+<button>Send</button>
+```
+
+That's it.
+
+We satisfied the requirement of having a _Send_ text inside a `button`, but we had nothing more to do on the element itself. Why? The standard behavior of a `button` inside a form is to `submit` the form itself.
+
+A `button` element has <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#type" target="_blank">few other values</a> for the `type` attribute, but here, the important thing to know is that the default value of this attribute is `submit`.
+
+And that's why our `form` can send the data collected even with JavaScript disabled.
+
+This is the complete code that I wrote to solve the challenge:
+
+```ts
+import submitForm, { SUBMIT_URL } from "./submitForm";
+
+export default function App() {
+  return (
+    <form
+      onSubmit={submitForm}
+      method="post"
+      action={SUBMIT_URL}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "start",
+        gap: "12px",
+      }}
+    >
+      <label htmlFor="name">Name</label>
+      <input type="text" id="name" name="name" />
+
+      <label htmlFor="email">Email</label>
+      <input type="email" id="email" name="email" />
+
+      <label htmlFor="message">Message</label>
+      <textarea id="message" name="message" />
+
+      <button>Send</button>
+    </form>
+  );
+}
+```
+
+### Comparing to the proposed solution
+
+Lucky me, both solutions are similar, which is already a success. Analyzing the code, though, I noticed that my approach was a bit different. I aimed at speed of implementation, like relying on the `style` attribute instead of leveraging the connected stylesheet, while the proposed solution has more _leverage in the basic_ approach.
+
+```ts
+export default function App() {
+  return (
+    <form
+      onSubmit={submitForm}
+      action="https://www.greatfrontend.com/api/questions/contact-form"
+      method="post">
+      <div>
+        <label htmlFor="name-input">Name</label>
+        <input id="name-input" name="name" type="text" />
+      </div>
+      <div>
+        <label htmlFor="email-input">Email</label>
+        <input id="email-input" name="email" type="email" />
+      </div>
+      <div>
+        <label htmlFor="message-input">Message</label>
+        <textarea
+          id="message-input"
+          name="message"></textarea>
+      </div>
+      <div>
+        <button>Send</button>
+      </div>
+    </form>
+  );
+}
+```
+
+The differences with my code are minimal: a hardcoded `action` and a wrapping `div` for each group of fields.
+
+But I also want to share the `styles.css` of the solution. There's nothing new there, but he reached for it while I did not, and I’m writing it to remember next time 😅
+
+```css
+body {
+  font-family: sans-serif;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+}
+
+label {
+  font-size: 12px;
+}
+
+input,
+textarea {
+  display: block;
+}
+```
+
+Clean and straightforward, leveraging only standard HTML elements.
+
+I hope you found it helpful. I shared my thought process and findings while I was working on this GFE 75 challenge because I think it will help you and me. I **mus**t understand what I am doing deeply to explain it, and maybe you will discover something new that I haven't had time to work on yet.
+
+In any case, let me remember that many of the challenges in the <a href="https://www.greatfrontend.com?fpr=cupofcraft" target="_blank">GreatFrontEnd</a> are free, and you're doing a disservice to yourself if you do not work on some challenges occasionally. I know this because I've done it in the past, but it's time for a change 😜

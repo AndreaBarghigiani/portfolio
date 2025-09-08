@@ -8,14 +8,16 @@ seo:
   type: article
   keywords: JavaScript, GFE 75
 ---
-Most of the time, we find the `throttle` function being compared to `debounce`, which we created as the first article in this series.
+
+import ExternalLink from '@/components/ui/ExternalLink.astro';
+
+Most of the time, we find the `throttle` function being compared to `debounce`, which we created as the [first article in this series](/posts/write-debounce-function).
 
 That's because both function accomplish a similar task, to save resources while handling function calls based on a specific timer the user is able to set. But there is a key difference at play:
 
 - `debounce` will allow you to **postpone the function call** until there are no more event that calls them within a specified interval. Quick example: the user is typing on an `input` field and you do not want to run your function at every keystroke but each second where user stops writing.
-    
+
 - `throttle` instead ensures that a function executes **at most once** every interval. Quick example: you have a button that fires a complex operation, and you want to start the process as soon as the user clicks it, but you do not want to consider following clicks for a specific interval.
-    
 
 While I think you should also give the user UI feedback on what's happening, like showing a loading spinner while the `debounce`d function starts or disabling the button while the `throttle`d function is being called, let's focus on how we could implement such function.
 
@@ -30,11 +32,11 @@ One thing `debounce` and `throttle` are similar about is that they return a func
 ```ts
 export default function throttle<T extends any[]>(
   func: ThrottleFunction<T>,
-  wait: number,
+  wait: number
 ): ThrottleFunction<T> {
   let waiting = false;
-  
-  return function (this: any, ...args: T) {}
+
+  return function (this: any, ...args: T) {};
 }
 ```
 
@@ -49,18 +51,18 @@ I've tried to make as clear as possible the similarities and differences of thes
 ```typescript
 export default function throttle<T extends any[]>(
   func: ThrottleFunction<T>,
-  wait: number,
+  wait: number
 ): ThrottleFunction<T> {
   let waiting = false;
-  
+
   return function (this: any, ...args: T) {
-    if(!waiting){
+    if (!waiting) {
       func.apply(this, args);
       waiting = true;
     }
-    
+
     // Other code
-  }
+  };
 }
 ```
 
@@ -76,13 +78,13 @@ If we keep the function definition like so, the end user cannot run the throttle
 // Other code
 
 setTimeout(() => {
-  if(waiting){
+  if (waiting) {
     waiting = false;
   } else {
     func.apply(this, args);
     waiting = true;
   }
-}, wait)
+}, wait);
 
 // Other code
 ```
@@ -111,7 +113,7 @@ export default function throttle(func, wait = 0) {
     if (shouldThrottle) return;
 
     shouldThrottle = true;
-    
+
     setTimeout(function () {
       shouldThrottle = false;
     }, wait);
@@ -125,4 +127,4 @@ All we care about the solution is `shouldThrottle` state. If that's `true` we ju
 
 If you paid close attention, you've also noticed that the returned function of `throttle` **does not need** `this` as an argument, and that's because since `func` get's called immediately within the context of the wrapping function, we're able to bind `this` correctly because `this` context is kept.
 
-I kept the call to action to [GreatFrontEnd](https://www.greatfrontend.com?fpr=cupofcraft) at a minimum this time, and I want to make it clear that I am not an affiliate of it. I will earn nothing if you subscribe. But it's not for the monetary value that I want to introduce you to the platform; it's because **it is a great way to gather and show off your expertise**.
+I kept the call to action to <ExternalLink href="https://www.greatfrontend.com?fpr=cupofcraft">GreatFrontEnd</ExternalLink> at a minimum this time, and I want to make it clear that I am not an affiliate of it. I will earn nothing if you subscribe. But it's not for the monetary value that I want to introduce you to the platform; it's because **it is a great way to gather and show off your expertise**.

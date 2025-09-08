@@ -94,13 +94,13 @@
   --tw-prose-td-borders: var(--color-coffee-300);
 
   /* Inverted variables read when `prose-invert` is present */
-  --tw-prose-invert-body: var(--color-coffee-250);
-  --tw-prose-invert-headings: var(--color-coffee-250);
+  --tw-prose-invert-body: var(--color-coffee-200);
+  --tw-prose-invert-headings: var(--color-coffee-500);
   --tw-prose-invert-bold: var(--color-coffee-400);
   --tw-prose-invert-bullets: var(--color-coffee-400);
-  --tw-prose-invert-links: var(--color-coffee-150);
-  --tw-prose-invert-quotes: var(--color-coffee-200);
-  --tw-prose-invert-quote-borders: var(--color-coffee-700);
+  --tw-prose-invert-links: var(--color-coffee-450);
+  --tw-prose-invert-quotes: var(--color-coffee-300);
+  --tw-prose-invert-quote-borders: var(--color-coffee-900);
   --tw-prose-invert-captions: var(--color-coffee-400);
   --tw-prose-invert-code: var(--color-coffee-200);
   --tw-prose-invert-pre-code: var(--color-coffee-900);

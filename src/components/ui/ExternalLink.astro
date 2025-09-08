@@ -1,0 +1,14 @@
+---
+import { SquareArrowOutUpRightIcon } from '@lucide/astro';
+
+interface Props {
+  href: string;
+}
+
+const { href } = Astro.props;
+---
+
+<a class="inline-flex items-center gap-0.5" {href} target="_blank" rel="noopener noreferrer">
+  <slot />
+  <SquareArrowOutUpRightIcon class="size-2.5" />
+</a>

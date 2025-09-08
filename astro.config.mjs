@@ -7,6 +7,8 @@ import icon from 'astro-icon';
 
 import sitemap from '@astrojs/sitemap';
 
+import mdx from '@astrojs/mdx';
+
 export default defineConfig({
   site: 'https://cupofcraft.com',
 
@@ -14,5 +16,5 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
-  integrations: [icon(), sitemap()],
+  integrations: [icon(), sitemap(), mdx()],
 });

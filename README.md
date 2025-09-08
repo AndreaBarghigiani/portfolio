@@ -1,43 +1,24 @@
-# Astro Starter Kit: Minimal
+# Andrea Barghigiani (aka cupofcraft) portfolio
 
-```sh
-pnpm create astro@latest -- --template minimal
-```
+Hi there 👋
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+I'm Andrea Barghigiani, and this is my portfolio (finally!) that you can find at [cupofcraft.dev](https://cupofcraft.dev).
 
-## 🚀 Project Structure
+Inside this portfolio, you can find:
 
-Inside of your Astro project, you'll see the following folders and files:
+- My resume
+- My writing
+- My projects
+- My contact information
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+I've build this because I wanted to have my own space on the Internet, after years writing italian content on [SkillsAndMore](https://skillsandmore.org) I thought it was a good idea to bring my writings in english to spread my experience and knowledge with the world.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Consider this as a live project, I'm always working on it and improving it, so if you find any issue or have any suggestion, please open an issue here on [GitHub](https://github.com/AndreaBarghigiani/portfolio).
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### Tech Stack
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- [Astro](https://astro.build)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Shadcn UI](https://ui.shadcn.com)
+- [Astro Icon](https://astro-icon.vercel.app)
+- [Motion](https://motion.dev)

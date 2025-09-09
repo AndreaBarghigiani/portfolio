@@ -1,14 +1,22 @@
 ---
 import { SquareArrowOutUpRightIcon } from '@lucide/astro';
 
-interface Props {
-  href: string;
-}
+type Props =
+  | {
+      href: string;
+      isGFE?: false;
+    }
+  | {
+      href?: string;
+      isGFE: true;
+    };
 
-const { href } = Astro.props;
+const { href = '', isGFE } = Astro.props;
+
+const path = isGFE ? `https://www.greatfrontend.com${href}?fpr=cupofcraft` : href;
 ---
 
-<a class="inline-flex items-center gap-0.5" {href} target="_blank" rel="noopener noreferrer">
+<a class="inline-flex items-center gap-0.5" href={path} target="_blank" rel="noopener noreferrer">
   <slot />
   <SquareArrowOutUpRightIcon class="size-2.5" />
 </a>

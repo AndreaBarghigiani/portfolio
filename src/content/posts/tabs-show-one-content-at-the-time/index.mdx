@@ -1,0 +1,436 @@
+---
+title: Tabs, show one content at the time
+date: 2025-09-09
+tags: React, GreatFrontEnd
+seo:
+  title: Tabs, show one content at the time
+  description: Tabs are one of the most useful interface we can leverage to display multiple content saving vertical space. While there are many built-in solution around, have you ever really though about how they work? 
+  type: article
+  keywords: React, GreatFrontEnd
+---
+
+import EL from '@/components/ui/ExternalLink.astro';
+
+Tabs are an incredible tool to group related content without sacrificing too much vertical space.
+
+Think about it.
+
+When blogs were the go-to source for learning, category index pages were long and presented essentially the same structure.
+
+A big title, the category name, sometimes a short description, and then a list of the most recent articles. If the blog was old or had a prolific writer (or writers), generally, the list had the ten most recent posts and a link to the category's archive page.
+
+Woah, thinking back at why we were doing all of this, helping search engines find all the links inside our website, makes me feel a bit old 😅
+
+Today, we no longer have to show all that content and build long pages. This is partly because search engines got smarter, and we found many ways to present our content.
+
+One of the ways that we can handle a significant amount of content is by **building a tab system**.
+
+Instead of long lists, we use tab labels as category names, showing only the relevant content while keeping users in place.
+
+But enough about general talking, let's dive deep into the task and check how I solved <EL isGFE href="/interviews/study/gfe75/questions/user-interface/tabs">this GreatFrontEnd challenge</EL>.
+
+## The starting point
+
+We had to create a tab system, we already described in depth what they are, let's think programmatically now.
+
+What do we need to create a tab system?
+
+First and foremost, we need a data structure that can hold the tab's `label` and a `description` that contains the information we want to display. Looking at the blog archive example analyzed earlier, we will probably have a `posts` or `articles` array containing the latest or most read articles (depending on the sorting we implement).
+
+As you'll see from the starting code we had, we were not tasked to create a tab system for archives of blog posts organized into categories in this challenge. We need to make tabs able to display word definitions.
+
+```javascript
+export default function Tabs() {
+  return (
+    <div>
+      <div>
+        <button>HTML</button>
+        <button>CSS</button>
+        <button>JavaScript</button>
+      </div>
+      <div>
+        <p>
+          The HyperText Markup Language or HTML is the
+          standard markup language for documents designed to
+          be displayed in a web browser.
+        </p>
+        <p>
+          Cascading Style Sheets is a style sheet language
+          used for describing the presentation of a document
+          written in a markup language such as HTML or XML.
+        </p>
+        <p>
+          JavaScript, often abbreviated as JS, is a
+          programming language that is one of the core
+          technologies of the World Wide Web, alongside HTML
+          and CSS.
+        </p>
+      </div>
+    </div>
+  );
+}
+```
+
+The initial `Tabs` component is stateless, but hardcoding content isn’t practical. In real-world apps, we’d use a JSON array to manage tab data dynamically.
+
+Let’s move the data to `App.tsx` and pass it as props.
+
+```javascript
+const items = [
+  {
+    id: 'html',
+    label: 'HTML',
+    content:
+      'The HyperText Markup Language or HTML is the standard markup language for documents designed to be displayed in a web browser.',
+  },
+  {
+    id: 'css',
+    label: 'CSS',
+    content:
+      'Cascading Style Sheets is a style sheet language used for describing the presentation of a document written in a markup language such as HTML or XML',
+  },
+  {
+    id: 'javascript',
+    label: 'JavaScript',
+    content:
+      'JavaScript, often abbreviated as JS, is a programming language that is one of the core technologies of the World Wide Web, alongside HTML and CSS.',
+  },
+];
+
+function App() {
+  return <Tabs items={items} />;
+}
+```
+
+> To keep the code cleaner, we could declare the `items` array inside a `data.ts` file, but let's roll with it for now since the focus of the exercise is not how we would organize the project's code.
+
+Passing all the tab data inside the `items` array will help us reduce code duplication because now we know the shape of each item, and we will loop. If we were using TypeScript, `items` will just be defined as an array of `Item`:
+
+```typescript
+type Item = {
+	id: string,
+	label: string,
+	content: string
+}
+```
+
+Don't stress too much if you don't know TypeScript, it's good if you know but this is out of the scope of this article. I added it just because I wanted to highlight the type of content we will loop.
+
+Right, we have an array, so it makes sense that inside our `Tabs.jsx`, we will loop all the items we receive. We have two `div` that need to list the `items`, so it makes sense that we have two `map` inside our `return`.
+
+```javascript
+export default function Tabs({ items }) {
+  return (
+    <div>
+      <div>
+        {items.map((item) => (
+          <button key={item.id}>
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      <div>
+        {items.map((item) => (
+          <p key={item.id}>
+            {item.content}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+And now we have all we need. We list all the labels inside each `button` and all the contents inside the `div` container. But all the elements are disconnected and there's no way to know which tab is active, meaning that we cannot adapt our UI to display only the content that has been selected (clicked) by our user.
+
+But we're in the React world, and you know what we need to do when we need to update the UI based on user interaction.
+
+Right?
+
+Well, we reach for state!
+
+Thanks to the `useState` hook we can keep track of the current active item and update it with the `onClick` event that we will create for our `button`s.
+
+```javascript
+import { useState } from "react";
+
+export default function Tabs({ items }) {
+  const [openTab, setOpenTab] = useState('html');
+
+  return (
+    <div>
+      <div>
+        {items.map((item) => (
+          <button
+            key={item.id}
+            onClick={} // Set the openTab to the current clicked item
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      <div>
+        {items.map((item) => (
+          <p key={item.id}>
+            {item.content}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+Now we've introduced `useState` to keep track of the current selected tab, but how do we change it? We need a way to update the state based on the `button` that our user clicks.
+
+Try to think about it.
+
+We know we need to use the `onClick` prop that we set on each `button`, but which information can we use to connect the list of labels to the content list?
+
+If you read the data structure we pass to `Tabs`, it should be clear by now. I've edited the data to introduce the `id` key. Generally speaking, when you see an `id`, it means that the object has a unique identifier that we can use to select it.
+
+That's a common practice, especially when working with relational databases, where identifying a row by its ID increases the ability to optimize performance.
+
+So let's introduce the `id` key and use it to select the current item and display only the related content.
+
+```javascript
+export default function Tabs({ items }) {
+  const [openTab, setOpenTab] = useState('html');
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    setOpenTab(e.target.id);
+  };
+
+  return (
+    <div>
+      <div>
+        {items.map((item) => (
+          <button
+            key={item.id}
+            id={item.id}
+            onClick={handleClick}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      <div>
+        {items.map((item) => (
+          <p key={item.id}>
+            {item.content}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+I'm a fan of declaring event handler outside my JSX, it just looks cleaner to me.
+
+With that said, you should have spotted the `handleClick` function that I am attaching to the `onClick` event handler. Inside that I do not do any crazy stuff to pass the value which I'll use to update the state, because the element that'll fire the event (our `button`) already has the `id` attribute that holds such information, and it'll be passed to `handleClick` automatically.
+
+That's why I can access to `e.target.id` and get its value!
+
+But there is something else I would like to address about the `handleClick` function, let's focus on it for a moment:
+
+```javascript
+const handleClick = (e) => {
+  e.preventDefault();
+  setOpenTab(e.target.id);
+};
+```
+
+This function looks like a standard event handler callback, but if you know a thing or two about how HTML, and precisely the `button` element, works you should figure that _maybe_ we don't need that `e.preventDefault()` call.
+
+Why am I telling you this?
+
+Because I am a strong believer that if we learn to leverage the tools that we have at our disposal, we can make informed decisions and write code that's not only cleaner, but that will perform better and require less maintenance.
+
+By default the `button` element has the `type` attribute set to `submit`, and that's true when they are inside a `form`.
+
+This is so because when the user presses a `button` inside a `form`, he's expecting that the content he put will be submitted.
+
+But this is not our case, `button` **is not** inside a `form`, and in this specific case its `type` default value is set to a standard `button`. Basically speaking, it's like adding `type="button"` attribute to it.
+
+```javascript
+const handleClick = (e) => {
+  setOpenTab(e.target.id);
+};
+```
+
+Knowing how web standards and browser works allowed us to write even less code!
+
+Alright, now we have our local state that keeps track of the latest clicked `button`, how can we tell that we want to display only the content that matches the `id` stored inside the state?
+
+And now the preferred answer of every engineer is: **It depends!** 😮
+
+And that's true, because it depends on your constraints and the result you want to achieve. You can entirely remove the DOM element with JavaScript, you could hide it with a CSS class or you can, once again, leverage web standards to achieve the same result!
+
+Since I am all for web standards, and it should be clear by now, let's leverage an attribute that our browsers are able to understand natively!
+
+```javascript
+<div className="content">
+  {items.map((item) => (
+    <p hidden={openTab !== item.id}>
+      {item.content}
+    </p>
+  ))}
+</div>
+```
+
+I know, you probably reach out for some CSS solution because it has been the most common way to hide an HTML element for many years. But the `hidden` attribute has been introduced with the powerful HTML5 update, back in 2014 (more than 10 years ago 🤯), and if you check the <EL href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/hidden">MDN Page</EL> you'll see that it is fully compatible with all browsers.
+
+So why should we use a CSS class to hide a component? HTML gives us all the tools to reach the same end result.
+
+And speaking about the end result, we finally solved this challenge with this last step. Let me group all the code:
+
+```javascript
+import { useState } from 'react';
+import { clsx } from 'clsx';
+
+export default function Tabs({ items }) {
+  const [openTab, setOpenTab] = useState('html');
+
+  const handleClick = (e) => {
+    setOpenTab(e.target.id);
+  };
+
+  return (
+    <div>
+      <div className="space-x-2">
+        {items.map((item) => (
+          <button
+            className={clsx('p-1.5 border bg-slate-200', {
+              'text-blue-500 border-blue-500': openTab === item.id,
+            })}
+            key={item.id}
+            id={item.id}
+            onClick={handleClick}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      <div>
+        {items.map((item) => (
+          <p key={item.id} hidden={openTab !== item.id}>
+            {item.content}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+### Comparing to the proposed solution
+
+As I usually do in these kinds of articles, I like to compare my solution with the one proposed for the challenge. Analyzing the code that other developers have written can teach us a ton and even give us a _taste_ for how we like writing code.
+
+So without further ado, let's jump straight to the proposed solution by analyzing how they approached the data flow in `App.tsx`:
+
+```javascript
+// App
+import Tabs from './Tabs';
+
+export default function App() {
+  return (
+    <div className="wrapper">
+      <Tabs
+        items={[
+          {
+            value: 'html',
+            label: 'HTML',
+            panel:
+              'The HyperText Markup Language or HTML is the standard markup language for documents designed to be displayed in a web browser.',
+          },
+          {
+            value: 'css',
+            label: 'CSS',
+            panel:
+              'Cascading Style Sheets is a style sheet language used for describing the presentation of a document written in a markup language such as HTML or XML.',
+          },
+          {
+            value: 'javascript',
+            label: 'JavaScript',
+            panel:
+              'JavaScript, often abbreviated as JS, is a programming language that is one of the core technologies of the World Wide Web, alongside HTML and CSS.',
+          },
+        ]}
+      />
+    </div>
+  );
+}
+```
+
+As you can see, the main difference here is how the data is declared. This is just a little preference about how data are represented, and in most real life cases you will not even notice it.
+
+My approach here has been different from the proposed solution just because I do not like to pollute my JSX, but there's no real life difference between the two approaches.
+
+Let's have a look now at how they tacked the `Tabs` component:
+
+```javascript
+// Tabs component
+import { useState } from 'react';
+
+export default function Tabs({ defaultValue, items }) {
+  const [value, setValue] = useState(
+    defaultValue ?? items[0].value,
+  );
+
+  return (
+    <div className="tabs">
+      <div className="tabs-list">
+        {items.map(({ label, value: itemValue }) => {
+          const isActiveValue = itemValue === value;
+
+          return (
+            <button
+              key={itemValue}
+              type="button"
+              className={[
+                'tabs-list-item',
+                isActiveValue && 'tabs-list-item--active',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              onClick={() => {
+                setValue(itemValue);
+              }}>
+              {label}
+            </button>
+          );
+        })}
+      </div>
+      <div>
+        {items.map(({ panel, value: itemValue }) => (
+          <div key={itemValue} hidden={itemValue !== value}>
+            {panel}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+Again, lucky me, the bulk of the component logic is more or less the same.
+
+If you scroll down, you'll notice that the GreatFrontend developer leveraged the same `hidden` attribute to handle the content display logic.
+
+Inside the `button`s instead I can see the following differences:
+- `type="button"`: I've omitted this because, as we discovered, if a `button` is not inside a `form` the `type` attribute default value is `button` and not `submit`
+- `className` logic: inside the GreatFrontEnd platform you do not have `clsx` or Tailwind CSS, so the developer implemented a template string to handle the difference between the active/inactive state and cleaned the string with `filter` and `join` (so you will not have a space at the end of your class name). Clever!
+- state management: you can see how they leveraged the current `itemValue` to handle the state changes inside `onClick`. While this avoids any problem with the possibility of having multiple `id` inside our page with the same value, I personally didn't like the approach because we have to define an anonymous function.
+
+Both approaches look fine to me. Have you implemented this tab system using a different approach? Did I say something wrong, or is it worth improving?
+
+In this article, I focused on how to solve this challenge, but **there are so many things we could do** to make ourselves more aware of the code we write. For example, are you curious about how to make this component 100% accessible? Maybe you're more interested in how we can test the component.
+
+Well, keep following my articles. I will release more content about these topics so we can become better frontend engineers.

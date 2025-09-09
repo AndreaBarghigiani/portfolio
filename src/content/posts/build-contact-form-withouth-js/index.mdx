@@ -1,13 +1,16 @@
 ---
 title: Build a contact form withouth JavaScript
 date: 2025-02-18
-tags: JavaScript, form, accessibility 
+tags: JavaScript, form, accessibility
 seo:
   title: Build a contact form withouth JavaScript
   description: Nowadays we rely on JavaScript for almost everything, but do you know we can handle a form even without and keep a nice user experience?
   type: article
   keywords: JavaScript, form, accessibility
 ---
+
+import EL from '@/components/ui/ExternalLink.astro';
+
 Being a Frontend Engineer does not mean specializing in a single framework. Of course, you can have your preferences and work with them. But our job always involves **picking up the right tool for the job**. The ability to choose the right approach to close the ticket in front of you it probably even matters more.
 
 That's why I was delighted to see a challenge that didn't require any knowledge of JavaScript. The task's protagonist was HTML.
@@ -30,7 +33,8 @@ export default function App() {
     <form
       // Ignore the onSubmit prop, it's used by GFE to
       // intercept the form submit event to check your solution.
-      onSubmit={submitForm}>
+      onSubmit={submitForm}
+    >
       <input type="text" />
     </form>
   );
@@ -49,7 +53,7 @@ Let's break down the features that we need to implement to solve this challenge:
 2. Each `input` must have a proper `label` that will focus it if clicked.
 3. `button` must be able to `submit` the form.
 
-If you open the <a href="https://www.greatfrontend.com/interviews/study/gfe75/questions/user-interface/contact-form/react?fpr=cupofcraft" target="_blank">challenge on GreatFrontEnd</a>, you'll see that the brief includes other specs that will help you gather more information on how to solve it. However, I've listed only these three because this is where I want to focus in this article.
+If you open the <EL isGFE href="/interviews/study/gfe75/questions/user-interface/contact-form/react">challenge on GreatFrontEnd</EL>, you'll see that the brief includes other specs that will help you gather more information on how to solve it. However, I've listed only these three because this is where I want to focus in this article.
 
 ### Sending data via HTML
 
@@ -59,7 +63,7 @@ At line 9, it checks the URL inside the `action` attribute:
 
 ```ts
 if (form.action !== SUBMIT_URL) {
-  alert("Incorrect form action value");
+  alert('Incorrect form action value');
   return;
 }
 ```
@@ -67,8 +71,8 @@ if (form.action !== SUBMIT_URL) {
 While at line 14 checks for the proper `method` that `form` uses:
 
 ```ts
-if (form.method.toLowerCase() !== "post") {
-  alert("Incorrect form method value");
+if (form.method.toLowerCase() !== 'post') {
+  alert('Incorrect form method value');
   return;
 }
 ```
@@ -170,7 +174,7 @@ export default function App() {
 
 ### Comparing to the proposed solution
 
-Lucky me, both solutions are similar, which is already a success. Analyzing the code, though, I noticed that my approach was a bit different. I aimed at speed of implementation, like relying on the `style` attribute instead of leveraging the connected stylesheet, while the proposed solution has more _leverage in the basic_ approach.
+Lucky me, both solutions are similar, which is already a success. Analyzing the code, though, I noticed that my approach was a bit different. I aimed at speed of implementation, like relying on the `style` attribute instead of leveraging the connected stylesheet, while the proposed solution has more *leverage in the basic* approach.
 
 ```ts
 export default function App() {
@@ -230,4 +234,4 @@ Clean and straightforward, leveraging only standard HTML elements.
 
 I hope you found it helpful. I shared my thought process and findings while I was working on this GFE 75 challenge because I think it will help you and me. I **mus**t understand what I am doing deeply to explain it, and maybe you will discover something new that I haven't had time to work on yet.
 
-In any case, let me remember that many of the challenges in the <a href="https://www.greatfrontend.com?fpr=cupofcraft" target="_blank">GreatFrontEnd</a> are free, and you're doing a disservice to yourself if you do not work on some challenges occasionally. I know this because I've done it in the past, but it's time for a change 😜
+In any case, let me remember that many of the challenges in the <EL isGFE>GreatFrontEnd</EL> are free, and you're doing a disservice to yourself if you do not work on some challenges occasionally. I know this because I've done it in the past, but it's time for a change 😜

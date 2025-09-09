@@ -1,0 +1,329 @@
+---
+title: Building a todo list in React
+date: 2025-03-10
+tags: JavaScript, GreatFrontEnd, React 
+seo:
+  title: Building a ToDo List in React
+  description: A todo list is maybe the first app you ever build, in this article I describe how I solved this challenge inside the GreatFrontEnd platform.
+  type: article
+  keywords: JavaScript, GreatFrontEnd, React 
+---
+
+import EL from '@/components/ui/ExternalLink.astro';
+
+One of the reasons I invested in a <EL isGFE>GreatFrontEnd</EL> membership was the variety of challenges and quizzes on the platform, a feature that allows me to expand my knowledge while exercising with possible technical questions I can face in my next interview.
+
+Today I want to talk about the first UI challenge I faced inside the GFE 75 path.
+
+Building a Todo List without worrying about the UI but focusing on functionality. This was the starting code I had at the beginning:
+
+```javascript
+export default function App() {
+  return (
+    <div>
+      <h1>Todo List</h1>
+      <div>
+        <input type="text" placeholder="Add your task" />
+        <div>
+          <button>Submit</button>
+        </div>
+      </div>
+      <ul>
+        <li>
+          <span>Walk the dog</span>
+          <button>Delete</button>
+        </li>
+        <li>
+          <span>Water the plants</span>
+          <button>Delete</button>
+        </li>
+        <li>
+          <span>Wash the dishes</span>
+          <button>Delete</button>
+        </li>
+      </ul>
+    </div>
+  );
+}
+```
+
+Basically, the Todo List should allow the user to:
+
+- add a task, writing it inside the `input` and `submit`
+    - the `input` needs to be empty after each addition
+- delete a task by clicking on the Delete button
+
+It's nothing fancy, but it's still a good opportunity for some practice.
+
+This time I decided that my practice wasn't gonna be only focused on the coding part, that was the easy one, but while I was working on it I was speaking out loud!
+
+I put myself in a mock interview 😅
+
+I imagined myself as I was talking with an interviewer. I commented out loud my thought process and the reasoning behind each step.
+
+And while I was talking, I produced the following code:
+
+```javascript
+import { useState } from 'react';
+
+const initialState = ['Walk the dog', 'Water the plants', 'Wash the dishes'];
+
+export default function ToDoList() {
+  const [tasks, setTasks] = useState(initialState);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const task = e.target.elements.task.value;
+    setTasks((prev) => [...prev, task]);
+    e.target.reset();
+  };
+
+  const handleDelete = (task) => {
+    setTasks((prev) => prev.filter((_, i) => i !== task));
+  };
+
+  return (
+    <div>
+      <h1>Todo List</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type='text'
+          className='p-2 border'
+          name='task'
+          placeholder='Add your task'
+          autoFocus
+        />
+        <div>
+          <button type='submit'>Submit</button>
+        </div>
+      </form>
+
+      <ul>
+        {tasks.map((task, i) => (
+          <TaskItem
+            key={i}
+            taskIndex={i}
+            text={task}
+            handleDelete={handleDelete}
+          />
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function TaskItem({ text, taskIndex, handleDelete }) {
+  return (
+    <li>
+      <span>{text}</span>
+      <button
+        onClick={() => handleDelete(taskIndex)}
+        className='px-2 py-1 border bg-slate-300'
+      >
+        Delete
+      </button>
+    </li>
+  );
+}
+```
+
+I know this code can look naive and be a pain to expand and maintain, but this is the result I felt comfortable producing while mocking the interview. And that's not because I think the code is complete, it's far from it.
+
+While keeping an eye on the time spent on the challenge, I explained why I was implementing something, and in case there was a different approach, I made sure my interviewer (ok, it was just me 😜) could understand why I did not.
+
+For example, generally speaking, in React, we go for the controlled components any time we interact with a `form`. But if you check my code, you notice that I decided to use React state only to hold the tasks list, while the content for the new task was kept in an uncontrolled `input` component.
+
+I prefer to code small `form`s without holding everything in a React local state and instead delegate everything to the `onSubmit` event handler. While this approach helps me not worry about the intricacies of the render cycle of React while my user is typing, it can lead to approaches closer to the browser API.
+
+While this will not make your code look like React, I am happy when I can leverage the features that we can get with "just" JavaScript.
+
+On top of that, since I removed the general `div` in favor of a `form` element, we also gained the ability to `submit` our content by just pressing Enter if we have `focus` on the `input`. Too many times, we reinvent the wheel when we work with React, and we change the `role` of our elements, my baseline is: _"If I can use an HTML element that already does what I want, there's no need for additional_ `div` or `span`".
+
+If we have a closer look at `handleSubmit` we will notice something interesting:
+
+```javascript
+const handleSubmit = (e) => {
+  e.preventDefault();
+  const task = e.target.elements.task.value;
+  setTasks((prev) => [...prev, task]);
+  e.target.reset();
+};
+```
+
+If we held the value of the `input` inside an `useState` hook, to clear the `input` upon sending the data, we just needed to replace the current state value with an empty string.
+
+Since I favored using uncontrolled components, I had to store the value of my `input` inside the variable `task` before resetting the form with `e.target.reset()` (remember, we're inside an `onSubmit` synthetic event here, the event is not fired by our `input` or `button`. Otherwise, we could face a nasty bug when React isn't fast enough to store `e.target.elements.task.value` inside our tasks state.
+
+Besides that, there is another part of my code that, while aligned with the description of the task, I do not like it much: I use the index of the array to remove items from the list.
+
+Generally speaking, you should **never** rely on items' position inside an array to decide upon how to edit a specific item. 99% of the time you will have the `id` field from the database that can make an item unique, and you'll see how the developer faked it in the proposed solution.
+
+However, since the list of tasks was pretty stable, meaning **the user could not change the order of the items**, I decided to leverage its `index`. I made sure the interviewer was aware of this approach and that I knew we could do things differently.
+
+Before marking the challenge as complete, I tested the accessibility of my application by simply using the keyboard to add and delete tasks. While this experiment was successful, you'll discover that I missed some improvements that I could have added to the code.
+
+### Comparing to the proposed solution
+
+As I told you multiple times, I think that GreatFrontEnd is an amazing platform, and every day that I use it, my feelings get stronger and stronger.
+
+The proposed solution, which you can find the full code for at the end, is similar to my previous one but tackles some aspects that I forgot to add.
+
+> Be aware that the code I am showing you is <EL isGFE href="/questions/user-interface/todo-list/react/solution/improved">based on the **improved solution**</EL> that the developer released after getting feedback on the first solution. I find this especially important to note because it shows that even experienced developers can improve their craft if they are open to feedback.
+
+#### Handling `id` for each item
+
+As I wrote before, I moved quickly to solve the challenge, and while I knew it wasn't the best approach, I decided to keep track of the items I wanted to delete by their indexes.
+
+In the proposed solution, not only is each task an object, a data structure that will also help to keep track of the status of each item, but the developer implemented a `newID` function that can generate a new `id` based on its closure:
+
+```javascript
+const newID = (() => {
+  let id = 0;
+  return () => id++;
+})();
+```
+
+One of the interesting things about this function is that is an IIFE and thanks to the closure approach we generate an unique ID every time `newID` is called. And that's how we populate `INITIAL_TASKS` with unique IDs.
+
+A little thing that I think it's worth mentioning, is the fact that with this IIFE we **only have one set of IDs**, and that's perfectly fine with the challenge we're solving now. But in case you need to generate multiple IDs, while there are better libraries like `uuid` (or even better your own database values), we cannot use `newID` as IIFE and instead create separate functions.
+
+```javascript
+const newID = () => {
+  let id = 0;
+  return () => id++;
+};
+
+const groupOneIds = newID();
+const groupTwoIds = newID()
+```
+
+Now, `groupOneIds` and `groupTwoIds` will keep track of two separate ID collections while maintaining the custom logic defined by `newID`.
+
+#### Improved accessibility
+
+While my version had a positive result with my keyboard tests, we have other tools to improve the lives of our disabled users. One of them is the `aria-label` attribute, really useful when your UI does not have space for a `<label>` element.
+
+I didn't use it because I thought the `placeholder` was enough to give guidance to the user, but I was wrong.
+
+Another approach that we could leverage to improve the accessibility of our application, as suggested in the solution explanation, is to use the `aria-live` attribute to indicate that JavaScript will update a section of the page.
+
+You can discover more about `aria-live` inside the [specific MDN page,](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-live) you can read it all and discover in detail how the screen readers will be able to announce updates inside this kind of container. But since the proposed solution does not even give us an example, justifying it for lack of time, here's the code I would implement during an interview.
+
+```xml
+<ul aria-live="assertive">
+  {tasks.map( /* Handling loop */ ) }
+</ul>
+```
+
+Since `ul` is a semantic element that already gets `role="list"`, all we had to do was add `aria-live` attribute to help screen readers notify the user about updates. I decided to use `assertive` because I want the screen reader to notify the user as soon as something gets updated, mainly because the app is so simple that hardly this will ever cause an issue, but if you prefer to discover all the available values jump to the MDN page I previously liked.
+
+#### Safely accept `input` values
+
+Even though in a real app, you probably use a validation library, I use Zod, for example; this does not mean that you should ignore the security part altogether. Checking the validity of the value not only helps us to keep the application secure, but it also ensures that we have something to show. Like this check inside the `onSubmit` function, if there’s no text for the new task, we will not create a new component.
+
+```javascript
+if (newTask.trim() === '') {
+  return;
+}
+```
+
+#### Leverage standard API while confirming item deletion
+
+Before sharing the entire solution with you, I wanted to highlight how the developer has leveraged standard JavaScript to ask for confirmation from the user about the item it's about to delete. If `window.confirm` returns `true`, meaning the user has clicked the _OK_ button, we are allowed to remove the item from the state array.
+
+Most of the time, you will need to implement your own modal windows, but this challenge didn't have any UI requirements, and making it work with a standard implementation will make our code more robust and future-proof.
+
+#### The complete proposed solution
+
+While there are other aspects where the proposed solution differs from mine, like having a controlled component for the task text, I do not feel the need to explain each of them and I think is worth sharing the entire code for the improved solution.
+
+```javascript
+import { useState } from 'react';
+
+// Encapsulate the ID generation so that it can only
+// be read and is protected from external modification.
+const newID = (() => {
+  let id = 0;
+  return () => id++;
+})();
+
+const INITIAL_TASKS = [
+  { id: newID(), label: 'Walk the dog' },
+  { id: newID(), label: 'Water the plants' },
+  { id: newID(), label: 'Wash the dishes' },
+];
+
+export default function App() {
+  const [tasks, setTasks] = useState(INITIAL_TASKS);
+  const [newTask, setNewTask] = useState('');
+
+  return (
+    <div>
+      <h1>Todo List</h1>
+      {/* Use a form instead. */}
+      <form
+        onSubmit={(event) => {
+          // Listen to onSubmit events so that it works for both "Enter" key and
+          // click of the submit <button>.
+          event.preventDefault();
+          // Trim the field and don't add to the list if it's empty.
+          if (newTask.trim() === '') {
+            return;
+          }
+
+          // Trim the value before adding it to the tasks.
+          setTasks([
+            ...tasks,
+            { id: newID(), label: newTask.trim() },
+          ]);
+          // Clear the <input> field after successful submission.
+          setNewTask('');
+        }}>
+        <input
+          aria-label="Add new task"
+          type="text"
+          placeholder="Add your task"
+          value={newTask}
+          onChange={(event) =>
+            setNewTask(event.target.value)
+          }
+        />
+        <div>
+          <button>Submit</button>
+        </div>
+      </form>
+      {/* Display an empty message when there are no tasks */}
+      {tasks.length === 0 ? (
+        <div>No tasks added</div>
+      ) : (
+        <ul>
+          {tasks.map(({ id, label }) => (
+            <li key={id}>
+              <span>{label}</span>
+              <button
+                onClick={() => {
+                  // Add confirmation before destructive actions.
+                  if (
+                    window.confirm(
+                      'Are you sure you want to delete the task?',
+                    )
+                  ) {
+                    setTasks(
+                      tasks.filter(
+                        (task) => task.id !== id,
+                      ),
+                    );
+                  }
+                }}>
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+```
+
+Hopefully, this article has been as helpful for you as it has been for me. If you want to go faster, create an account with <EL isGFE>GreatFrontEnd</EL> I hope to see you for the next challenge.

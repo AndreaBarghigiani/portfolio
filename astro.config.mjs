@@ -9,6 +9,8 @@ import sitemap from '@astrojs/sitemap';
 
 import mdx from '@astrojs/mdx';
 
+import vercel from '@astrojs/vercel';
+
 export default defineConfig({
   site: 'https://cupofcraft.com',
 
@@ -17,4 +19,9 @@ export default defineConfig({
   },
 
   integrations: [icon(), sitemap(), mdx()],
+  adapter: vercel({
+    webAnalytics: {
+      enabled: true,
+    },
+  }),
 });

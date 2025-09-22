@@ -1,0 +1,8 @@
+# Ignore markdown files
+*.md
+*.mdx
+*.yaml
+
+# You can also ignore specific directories
+# src/content/**/*.md
+# src/content/**/*.mdx

@@ -10,36 +10,41 @@ const { pathname } = Astro.url;
 
 <Container
   as="header"
-  class="navbar fixed flex w-full max-w-full items-center justify-center gap-8 py-5 transition-all duration-200">
+  class="navbar fixed flex w-full max-w-full items-center justify-center gap-8 py-5 transition-all duration-200"
+>
   <Avatar class="border-border border" />
 
   <div class="bg-muted-foreground/50 border-border w-max rounded-full border p-1 backdrop-blur-md">
     <nav class="flex items-center">
       <ul class="flex items-center gap-1">
         <NavLink href="/">Home</NavLink>
-        <li class="relative group">
+        <li class="group relative">
           <button
             type="button"
             class:list={[
-              'flex items-center gap-2 px-5 py-2 font-medium transition-colors hover:text-headings',
-              (pathname.startsWith('/posts') || pathname.startsWith('/series')) ? 'text-coffee-100 bg-muted-foreground/40 rounded-full' : ''
+              'hover:text-headings flex items-center gap-2 px-5 py-2 font-medium transition-colors',
+              pathname.startsWith('/posts') || pathname.startsWith('/series')
+                ? 'text-coffee-100 bg-muted-foreground/40 rounded-full'
+                : '',
             ]}
             aria-haspopup="true"
             aria-expanded="false"
           >
             Writing
-            <ChevronDown class="w-4 h-4 transition-transform group-hover:rotate-180" />
+            <ChevronDown class="h-4 w-4 transition-transform group-hover:rotate-180" />
           </button>
           <div
-            class="absolute left-1/2 top-full mt-1 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            class="invisible absolute top-full left-1/2 z-50 mt-1 -translate-x-1/2 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100"
+          >
             <div
-              class="bg-muted-foreground/50 border-border min-w-[120px] rounded-lg border p-1 backdrop-blur-md">
+              class="bg-muted-foreground/50 border-border min-w-[120px] rounded-lg border p-1 backdrop-blur-md"
+            >
               <a
                 href="/posts"
                 class:list={[
-                  'block px-4 py-2 text-sm transition-colors rounded-md',
+                  'block rounded-md px-4 py-2 text-sm transition-colors',
                   'hover:text-headings',
-                  pathname === '/posts' && 'text-coffee-100 bg-muted-foreground/40'
+                  pathname === '/posts' && 'text-coffee-100 bg-muted-foreground/40',
                 ]}
               >
                 Posts
@@ -47,9 +52,9 @@ const { pathname } = Astro.url;
               <a
                 href="/series"
                 class:list={[
-                  'block px-4 py-2 text-sm transition-colors rounded-md',
+                  'block rounded-md px-4 py-2 text-sm transition-colors',
                   'hover:text-headings',
-                  pathname === '/series' && 'text-coffee-100 bg-muted-foreground/40'
+                  pathname === '/series' && 'text-coffee-100 bg-muted-foreground/40',
                 ]}
               >
                 Series

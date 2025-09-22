@@ -58,7 +58,8 @@ const seriesPosts = allPosts
                   class:list={[
                     'hover:text-headings flex-1 text-sm transition-colors',
                     post.id === entry.id ? 'text-coffee-100 font-medium' : 'text-muted-foreground',
-                  ]}>
+                  ]}
+                >
                   {post.data.title}
                 </a>
                 {post.id === entry.id && (
@@ -78,20 +79,24 @@ const seriesPosts = allPosts
     <button
       type="button"
       class="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm"
-      aria-haspopup="true">
+      aria-haspopup="true"
+    >
       <ArrowLeftIcon class="size-3" />
       Back
     </button>
     <div
-      class="invisible absolute top-full left-0 z-50 mt-1 opacity-0 group-hover/back:visible group-hover/back:opacity-100 before:absolute before:-top-1 before:right-0 before:left-0 before:h-1 before:content-['']">
+      class="invisible absolute top-full left-0 z-50 mt-1 opacity-0 group-hover/back:visible group-hover/back:opacity-100 before:absolute before:-top-1 before:right-0 before:left-0 before:h-1 before:content-['']"
+    >
       <div
-        class="bg-muted-foreground/50 border-border min-w-[140px] rounded-lg border p-1 backdrop-blur-md">
+        class="bg-muted-foreground/50 border-border min-w-[140px] rounded-lg border p-1 backdrop-blur-md"
+      >
         <a href="/posts" class="hover:text-headings block rounded-md px-3 py-2 text-sm">
           Back to archive
         </a>
         <a
           href={`/series/${seriesData.id}/`}
-          class="hover:text-headings block rounded-md px-3 py-2 text-sm">
+          class="hover:text-headings block rounded-md px-3 py-2 text-sm"
+        >
           View all in series
         </a>
       </div>

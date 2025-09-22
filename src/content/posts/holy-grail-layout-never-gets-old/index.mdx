@@ -1,0 +1,321 @@
+---
+title: Holy grail layout, never gets old!
+date: 2025-09-21
+tags:
+seo:
+  title: Holy grail layout, never gets old!
+  description: Let's test our skills with a new UI challenge where we're tasked on creating one of the most used layout on the web.
+  type: article
+  keywords: HTML, CSS
+series:
+  ref: gfe75
+  number: 8
+---
+
+import EL from '@/components/ui/ExternalLink.astro';
+
+The mix and match of the challenges present inside GFE 75, and overall in all the <EL isGFE>GreatFrontEnd platform</EL>, are what made me decide to get a lifetime account.
+
+We started [this series](/series/gfe75) with some standard coding challenges, like building our `reduce`, and the last two have been focused on UI.
+
+Even in this one, we're tasked to build a holy grail layout.
+
+Don't wanna take too much of your precious time, but I cannot stop to stress you about the amazing content inside the GreatFrontEnd platform. Not only do you find precious information inside the guides, but you also have a wealth of challenges categorized in:
+
+- JS functions
+- UI coding
+- System Design
+
+That's a wonderful way to practice with the most common questions and challenges we face during an interview!
+
+But let's close the promotional speech, and get back to the current challenge.
+
+We have to build a holy grail layout starting from this simple code:
+
+```javascript
+export default function App() {
+  return (
+    <>
+      <header>Header</header>
+      <div>
+        <nav>Navigation</nav>
+        <main>Main</main>
+        <aside>Sidebar</aside>
+      </div>
+      <footer>Footer</footer>
+    </>
+  );
+}
+```
+
+> You're viewing a React component here because it is the library I picked to solve the challenge, but it is not a requirement. Well, I even suspect that in many interviews where this challenge is used, **JavaScript is not involved at all**. If the fact that I use React disturbs you, in your challenge, you can select Vanilla JS to work with straight HTML.
+
+```css
+body {
+  font-family: sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+header,
+nav,
+main,
+aside,
+footer {
+  padding: 12px;
+}
+
+header { background-color: tomato; }
+nav { background-color: coral; }
+main { background-color: moccasin; }
+aside { background-color: sandybrown; }
+footer { background-color: slategray; }
+```
+
+This is the setup of our challenge, now it's time to make it a holy grail layout.
+
+Wait, what? You don't know what a holy grail layout is?
+
+Well, what it is simple: it's a three-column layout that expands its height depending on window size or content while having a full-width header and footer.
+
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1743481506455/16f95ccd-c082-4c2b-b50a-632e3793a39d.jpeg)
+
+Each column of the sample image, extends its `height` to occupy the space of the greater column.
+
+It is by knowing the reason why this is a challenge that is the fun part 😄
+
+I don't wanna go into a rabbit hole here, so let's just say that back in the day when we didn't have `display` values like `flex` or `grid`; many developers have smashed their head on the keyboards trying to make this layout work.
+
+To solve this challenge, I immediately thought to use `flex`. Approaching the solution with `grid` is a viable option too, but I just picked the approach that I am most comfortable with.
+
+Let's break down the steps we need to take:
+
+- `header` must be full-width and `60px` tall
+- `footer` must be full-width, `100px` tall, and must be placed at the bottom if content isn't tall enough
+- the `div` between `header` and `footer` has to expand to fill the page, the same mush happen for it's children
+  - `nav` and `aside` have a fixed `width` of `100px`
+  - `main` will expand its `width` with the remaining space
+
+With this information, I started to work on the... HTML.
+
+### Avoiding CSS hierarchy
+
+Yes, the first thing I did was add an `id="wrapper"` to the `div` that contained all the content. I did that because I didn't want to mess around with hierarchy, in this case, I chose to go with one of the highest specificity possible.
+
+```html
+<div id="wrapper"></div>
+```
+
+Now I could focus on the CSS to create the layout
+
+### Set `header` and `footer` `height`
+
+Talking about the layout, limiting the `flex` layout to the `div#wrapper` has it's advantages. For example, since `header` and `footer` are semantic elements with a default value for `display` set to `block`, I shouldn't worry about their `width` and focus solely on their `height`.
+
+```css
+:root {
+  --header-height: 60px;
+  --footer-height: 100px;
+}
+
+header {
+  background-color: tomato;
+  height: var(--header-height);
+}
+
+footer {
+  background-color: slategray;
+  height: var(--footer-height);
+}
+```
+
+The use of <EL href="https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties">CSS custom properties</EL> may seem an overkill here, but later, I'll show you why I decided to use them. Besides, this is just a standard definition for the `height` property of `header` and `footer.`
+
+### Making the real layout
+
+And now for the fun part, it's time to create the three-column layout with elastic `height` to complete the challenge.
+
+Having the `div#wrapper` selector is a quick win here, you just have to set a `min-height` and `display` to see your content align horizontally.
+
+```css
+div#wrapper {
+  display: flex;
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+}
+```
+
+Now, I hope you see the reason for using CSS custom properties! With them, I created a central place as a source of truth for my values, if the design changes in the future, I could just edit the values in `:root`, and the height of the content will adapt accordingly.
+
+### Set side columns `width`
+
+But we are not done yet, while we addressed the column and the height of our layout, we need to fix each column `width` value because right now each column size is defined by its content.
+
+You know what, I don't wanna overuse custom properties, but I believe that for the specifics of the task a `--side-col-width` is a viable option:
+
+```css
+:root {
+  --header-height: 60px;
+  --footer-height: 100px;
+  --side-col-width: 100px;
+}
+
+nav,
+aside {
+  flex-shrink: 0;
+  width: var(--side-col-width);
+}
+```
+
+This declaration is fine with the challenge requirements and aligns with my scope of writing less code and controlling the behaviour from a "central place". But while you're working on it, make sure to let your interviewer know that.
+
+### Let `main` grow!
+
+We're almost done. We have fixed-height `header` and `footer`, we set up a three-column layout for the content and set a fixed-width for `nav` and `aside`. All we miss right now is to let `main` expand to fill all the remaining space.
+
+How can you do something like this inside a `flex` container?
+
+I hope you already know the answer. With the `flex-grow` property!
+
+```css
+main {
+  background-color: moccasin;
+  flex-grow: 1;
+}
+```
+
+In this case, we could reach the same result with `flex: 1`, but this declaration can lead to strange behaviour and make the code less explicit. So, unless you want `flex: 1` to also set the value of your `flex-basis` (it's a shorthand after all), better stick to `flex-grow`.
+
+### Full code
+
+I just gave you my step-by-step process on how I solved this challenge, before discussing the proposed solution let me share the full code:
+
+```javascript
+export default function App() {
+  return (
+    <>
+      <header>Header</header>
+      <div id="wrapper">
+        <nav>Navigation</nav>
+        <main>Main</main>
+        <aside>Sidebar</aside>
+      </div>
+      <footer>Footer</footer>
+    </>
+  );
+}
+```
+
+```css
+body {
+  font-family: sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --header-height: 60px;
+  --footer-height: 100px;
+  --side-col-width: 100px;
+}
+
+header,
+nav,
+main,
+aside,
+footer {
+  padding: 12px;
+  text-align: center;
+}
+
+header {
+  background-color: tomato;
+  height: var(--header-height);
+}
+
+div#wrapper {
+  display: flex;
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+}
+
+nav,
+aside {
+  flex-shrink: 0;
+  width: var(--side-col-width);
+}
+
+nav {
+  background-color: coral;
+}
+
+main {
+  background-color: moccasin;
+  flex-grow: 1;
+}
+
+aside {
+  background-color: sandybrown;
+}
+
+footer {
+  background-color: slategray;
+  height: var(--footer-height);
+}
+```
+
+### Comparing to the proposed solution
+
+This task was quite easy in the end, at least it was for me based on my background, so do not expect huge differences.
+
+As usual, I advise you to go directly to the [GreatFrontEnd challenge](https://www.greatfrontend.com/questions/user-interface/holy-grail/) and check the solution yourself. Inside it, you will also find a complete description; my task here is just to highlight the differences.
+
+As I did, also the proposed solution has edited the HTML to add a `className` of `columns` to the `div` that contains the three columns.
+
+```javascript
+export default function App() {
+  return (
+    <>
+      <header>Header</header>
+      <div className="columns">
+        <nav>Navigation</nav>
+        <main>Main</main>
+        <aside>Sidebar</aside>
+      </div>
+      <footer>Footer</footer>
+    </>
+  );
+}
+```
+
+This was somewhat expected, you have so many tools to identify an element in CSS that makes it easier not to mess with the hierarchy.
+
+The thing that I did not expect was how they implemented the full height of the layout.
+
+```css
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+```
+
+As you can see, inside `styles.css` they decided to set the entire React application as a `flex` container. This will surely elude some quirks between browsers, especially if you have dynamic heights for `header` and `footer`, but while reading the description of the challenge, I thought that adding a `flex` container to the `root` was an overkill.
+
+I preferred my approach because, while you have to set some custom properties, it makes clear that the growing part of the layout has to be the `#wrapper`.
+
+Moving on, I am happy to say that, besides the different ways of selecting the wrapper `div` and the necessity to make also this `flex-grow: 1` (because it'll allow it to grow inside the `column` flex container), both codes are almost identical.
+
+Well, to be honest, I expected that. Not because I am a master of layouts, as I told you, I picked the Flexbox approach because I am more confident with it. This task just felt somewhat natural because I build layouts since the introduction of `float` and we needed a Holy Grail layout for a long time. So I had time to practice 😅
+
+As always, while I hope you have learned something from this article, I cannot close it without praising you. If you want to grow in your career, in addition to all the courses and experiences you gain, do not forget to **solve challenges**.
+
+While they can seem abstract and *"not useful*", I can assure you that sooner or later, you'll need the knowledge and the practice you get from it!

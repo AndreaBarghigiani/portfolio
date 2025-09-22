@@ -1,13 +1,17 @@
 ---
 title: Replicate the classNames function
 date: 2025-01-09
-tags: JavaScript, GFE 75 
+tags: JavaScript, GFE 75
 seo:
   title: Replicate the classnames function
   description: The classNames function is one of my favourite helpers when I create components. It plays so nicely with Tailwind and thanks to this GFE 75 challenge.
   type: article
   keywords: JavaScript, GFE 75
+series:
+  ref: gfe75
+  number: 3
 ---
+
 I am pretty sure that if you're reading this article, you are a FrontEnd Developer, and if your focus is on the React library, the package `classnames` (or `class`) should ring a bell.
 
 If it doesn't, well probably you haven't such need yet or maybe you're deep into Styled Components.
@@ -32,10 +36,7 @@ export default function Text({
 }) {
   return (
     <p
-      className={`text-white flex gap-4
-				${isMobile && 'flex-col'} 
-				${bgColor === 'blue' ? 'bg-blue-400' : 'bg-stone-400'}
-			`}
+      className={`flex gap-4 text-white ${isMobile && 'flex-col'} ${bgColor === 'blue' ? 'bg-blue-400' : 'bg-stone-400'} `}
     >
       {text}
     </p>
@@ -61,17 +62,13 @@ export default function Text({
   isMobile: boolean;
   bgColor: 'blue' | 'red' | 'green';
 }) {
-	const pClass = classNames('text-white flex gap-4 bg-stone-400', {
-		'flex-col': isMobile,
-		'bg-blue-400': bgColor === 'blue',
-		'bg-green-400': bgColor === 'green',
-	});
-	
-	return (
-		<p className={pClass}>
-		  {text}
-		</p>
-	);
+  const pClass = classNames('text-white flex gap-4 bg-stone-400', {
+    'flex-col': isMobile,
+    'bg-blue-400': bgColor === 'blue',
+    'bg-green-400': bgColor === 'green',
+  });
+
+  return <p className={pClass}>{text}</p>;
 }
 ```
 
@@ -93,7 +90,7 @@ classNames({ 'foo-bar': false }); // ''
 classNames({ foo: true }, { bar: true }); // 'foo bar'
 classNames({ foo: true, bar: true }); // 'foo bar'
 classNames({ foo: true, bar: false, qux: true }); // 'foo qux'
-classNames(['foo', 'bar', 'qux']) // 'foo bar qux'
+classNames(['foo', 'bar', 'qux']); // 'foo bar qux'
 classNames('foo', ['bar', { qux: false, baz: true }]); // 'foo bar baz
 ```
 
@@ -129,22 +126,21 @@ Instead of recursively calling `classNames`, I created a closure function that g
 ```ts
 export default function classNames(...args: Array<ClassValue>): string {
   // The variable holding the list of classes
-  let classnames: string[] = []
-  
+  let classnames: string[] = [];
+
   // The closure that will update the list of classes
   function processItem(item: ClassValue) {
     // 1. Check if item is not falsy, aka we can work with the value
-    
     // 2. Define actions on item type. It's the recursive function.
-      // 2.a. If array, recursively call processItem
-      // 2.b. If object, iterate over its keys and conditionally add new classes
-      // 2.c. If number or  string, just add the class
+    // 2.a. If array, recursively call processItem
+    // 2.b. If object, iterate over its keys and conditionally add new classes
+    // 2.c. If number or  string, just add the class
   }
-  
+
   // Call processItem for each item in args
-  args.forEach(processItem); 
-  
-  return classnames.join(' ')
+  args.forEach(processItem);
+
+  return classnames.join(' ');
 }
 ```
 
@@ -152,7 +148,7 @@ Following the plan let's start to implement each step, starting by the check for
 
 ```ts
 function processItem(item: ClassValue) {
-	if (!item) return;
+  if (!item) return;
 }
 ```
 
@@ -211,11 +207,10 @@ Now we move one step above, and we start to handle the case where an `item` is a
 This snippet does a lot, but I didn't feel of creating variables because I thought it was straightforward, let's check what it does anyway:
 
 - We convert all proprieties inside the object into an array, thanks `Object.entries`.
-    
+
 - We loop over each item and destructure its values as `key` and `value`. `key` will be the class name/s we want to apply while `value` will coerced into a truthy or falsy value.
-    
+
 - In case `value` is truthy, we add the item to `classnames` array.
-    
 
 Now, for the part you were waiting for, what do we do if the `item` is an array and it holds multiple values we want to process?
 
@@ -250,10 +245,10 @@ export type ClassDictionary = Record<string, any>;
 export type ClassArray = Array<ClassValue>;
 
 export default function classNames(...args: Array<ClassValue>): string {
-  let classnames: string[] = []
-  
+  let classnames: string[] = [];
+
   function processItem(item: ClassValue) {
-    if(!item) return;
+    if (!item) return;
 
     if (Array.isArray(item)) {
       item.forEach(processItem);
@@ -267,8 +262,8 @@ export default function classNames(...args: Array<ClassValue>): string {
   }
 
   args.forEach(processItem);
-  
-  return classnames.join(' ')
+
+  return classnames.join(' ');
 }
 ```
 
@@ -283,11 +278,10 @@ In this case, the platform proposes three different solutions and a follow-up (i
 What I'll do instead is to summarize the different approaches and talk about the main difference between my code and the solutions:
 
 1. **Pure recursive function**: the first solution involves the call of `classNames` itself. That has been my first attempt, but while I was typing a TypeScript error about the arguments made me doubt about it. Happy to say that the proposed solution works well, and probably my was just a typo.
-    
+
 2. **Inner recursive helper that modifies an external value**: this has been my approach in this article. Even though inside the solution we have the `classNamesImpl` closure, it pratically does the same of our `processItem` one.
-    
+
 3. **Inner recursive helper that modifies the argument**: even though this is still a closure, as the previous approach, here we pass the `classnames` value to each call of the `classNamesImpl`, making the relation explicit with the array that holds all classes and passing the new one to the next call of `classNamesImpl`.
-    
 
 Let's talk about the findings that I had while comparing my code with the proposed solutions.
 
@@ -301,14 +295,14 @@ An approach that I found interesting is that for the second and third solutions,
 
 ```ts
 export default function classNames(...args: Array<ClassValue>): string {
-  let classnames: string[] = []
-  
+  let classnames: string[] = [];
+
   function classNamesImpl(...args: Array<ClassValue>) {
-      args.forEach((arg) => {
-        // Apply logic on arg type
-      })
+    args.forEach((arg) => {
+      // Apply logic on arg type
+    });
   }
-  
+
   // Call implementation by spreading args
   classNamesImpl(...args);
 

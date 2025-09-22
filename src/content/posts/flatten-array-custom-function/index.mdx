@@ -1,20 +1,26 @@
 ---
 title: Flatten an array with a custom function
 date: 2025-01-13
-tags: JavaScript, GFE 75 
+tags: JavaScript, GFE 75
 seo:
   title: Flatten an array with a custom function
   description: Let's learn how to implement our own flat function to discover how the designer of the JavaScript language thinks and learn from their intuitions.
   type: article
   keywords: JavaScript, GFE 75
+series:
+  ref: gfe75
+  number: 4
 ---
+
+import EL from '@/components/ui/ExternalLink.astro';
+
 When it comes to arrays, JavaScript gives us plenty of options to work with them. The most common methods, maybe made famous by the need to write expressions in the JSX syntax itself, probably are `map`, `filter`, `some`, and `reduce`.
 
 But you only have to look at the [MDN Array page](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) to see how many methods and properties this kind of object provides us. I am pretty sure you'll find some old friends in there, like `concat` or `find`.
 
-If you paid attention, you probably spotted the built-in method `flat`. We will recreate this functionality in the [fourth challenge of GFE 75](https://www.greatfrontend.com/interviews/study/gfe75/questions/javascript/flatten?fpr=cupofcraft) inside the GreatFrontEnd platform.
+If you paid attention, you probably spotted the built-in method `flat`. We will recreate this functionality in the <EL isGFE href='/interviews/study/gfe75/questions/javascript/flatten'>fourth challenge of GFE 75</EL> inside the GreatFrontEnd platform.
 
-> This challenge is also one of the **many free challenges** the platform provides to gather experience and confidence. So do not hesitate and [create your account today](https://www.greatfrontend.com?fpr=cupofcraft)
+> This challenge is also one of the **many free challenges** the platform provides to gather experience and confidence. So do not hesitate and <EL isGFE>create your account today</EL>.
 
 This task should be pretty simple, especially if you [followed along with the `classNames` article](https://cupofcraft.dev/posts/replicate-classnames-function) or if - even better - you completed the challenge by yourself.
 
@@ -24,15 +30,15 @@ I am comparing this challenge with the one focused on reproducing the `className
 function flatten(value: Array<ArrayValue>): Array<any> {
   // Array that will hold all values to be returned
   const result: ArrayValue = [];
-  
+
   // The logic of the entire challenge, it'll be called recursively
   function processItem(item) {}
-  
+
   // Run `processItem` for the first time in the function
-  value.forEach(processItem)
-  
+  value.forEach(processItem);
+
   // Return the resulting array
-  return result
+  return result;
 }
 ```
 
@@ -44,10 +50,10 @@ All that's missing now is the logic inside `processItem`, and it's straightforwa
 
 ```typescript
 function processItem(item) {
-  if(Array.isArray(item)){
-    item.forEach(processItem)
+  if (Array.isArray(item)) {
+    item.forEach(processItem);
   } else {
-    result.push(item)
+    result.push(item);
   }
 }
 ```
@@ -57,18 +63,18 @@ That's all the logic needed to solve the entire challenge.
 ```typescript
 function flatten(value: Array<ArrayValue>): Array<any> {
   const result: ArrayValue = [];
-  
+
   function processItem(item) {
-    if(Array.isArray(item)){
-      item.forEach(processItem)
+    if (Array.isArray(item)) {
+      item.forEach(processItem);
     } else {
-      result.push(item)
+      result.push(item);
     }
   }
-  
-  value.forEach(processItem)
-  
-  return result
+
+  value.forEach(processItem);
+
+  return result;
 }
 ```
 
@@ -83,13 +89,14 @@ But before going into the code, I have a confession to make. Once again, I got a
 I keep forgetting that an interview is a two-way path that you and the interviewer walk on together, he has the same rights as you to ask questions, and most of the time exchange these will help you share your way of thoughts well before you touch the keyboard!
 
 Some of the questions I could ask could have been:
+
 - The type of data inside the array.
 - The level of nesting.
 - Return new or mutate the original array.
 - Assumption of valid input.
 - Kind of environment.
 
-Now, it's time to check the solutions they propose for this challenge. They've created **seven different solutions**, each with a specific approach and focus. One uses Generators, which I definitely need to gain some fresh experience with, while others are clever one-liners.
+Now, it's time to check the solutions they propose for this challenge. They've created **seven different solutions**, each with a specific approach and focus. One uses Generators, which I definitely need to gain some fresh experience with, while others are clever one-liners.
 
 I'm not here for cleverness. These approaches are generally unreadable and difficult to understand. However, both approaches are close to mine, and I think we can learn more about them by examining how they differ.
 
@@ -102,7 +109,7 @@ export default function flatten(value: Array<ArrayValue>): Array<any> {
 
   while (copy.length) {
     const item = copy.shift();
-    
+
     if (Array.isArray(item)) {
       copy.unshift(...item);
     } else {
@@ -149,6 +156,7 @@ With this snippet, we're still leveraging the `while` loop, but this time, the c
 So `while` the array we're working with has some nested arrays. We keep leveraging the `concat` method and the spread operator, and both play a crucial role.
 
 `concat` is a powerful method that **automatically** takes any arguments you provide and behaves differently based on the tipe of each:
+
 - If we're passing an object or a primitive value, `concat` will simply add it to the array from which it's been called.
 - Instead, if we're passing an array, `concat` will **extract** each value in it and add it to the array from which it's been called.
 
@@ -156,8 +164,8 @@ Sounds confusing? Here's a quick example that should clarify:
 
 ```javascript
 [].concat(1); // [1]
-[].concat(1,2); // [1, 2]
-[].concat([3,4]); // [3, 4] (each item has been added individually)
+[].concat(1, 2); // [1, 2]
+[].concat([3, 4]); // [3, 4] (each item has been added individually)
 [].concat(1, 2, [3, 4]); // [1, 2, 3, 4]
 ```
 

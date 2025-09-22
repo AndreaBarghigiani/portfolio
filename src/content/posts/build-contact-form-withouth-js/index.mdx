@@ -7,6 +7,9 @@ seo:
   description: Nowadays we rely on JavaScript for almost everything, but do you know we can handle a form even without and keep a nice user experience?
   type: article
   keywords: JavaScript, form, accessibility
+series:
+  ref: gfe75
+  number: 7
 ---
 
 import EL from '@/components/ui/ExternalLink.astro';
@@ -135,7 +138,7 @@ That's it.
 
 We satisfied the requirement of having a _Send_ text inside a `button`, but we had nothing more to do on the element itself. Why? The standard behavior of a `button` inside a form is to `submit` the form itself.
 
-A `button` element has <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#type" target="_blank">few other values</a> for the `type` attribute, but here, the important thing to know is that the default value of this attribute is `submit`.
+A `button` element has <EL href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#type">few other values</EL> for the `type` attribute, but here, the important thing to know is that the default value of this attribute is `submit`.
 
 And that's why our `form` can send the data collected even with JavaScript disabled.
 

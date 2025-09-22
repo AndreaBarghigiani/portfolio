@@ -7,9 +7,12 @@ seo:
   description: Like debounce, the throttle function is really useful to optimize our function calls. This time, instead of importing from Lodash or any other alternative, we learn how to build our own.
   type: article
   keywords: JavaScript, GFE 75
+series:
+  ref: gfe75
+  number: 5
 ---
 
-import ExternalLink from '@/components/ui/ExternalLink.astro';
+import EL from '@/components/ui/ExternalLink.astro';
 
 Most of the time, we find the `throttle` function being compared to `debounce`, which we created as the [first article in this series](/posts/write-debounce-function).
 
@@ -127,4 +130,4 @@ All we care about the solution is `shouldThrottle` state. If that's `true` we ju
 
 If you paid close attention, you've also noticed that the returned function of `throttle` **does not need** `this` as an argument, and that's because since `func` get's called immediately within the context of the wrapping function, we're able to bind `this` correctly because `this` context is kept.
 
-I kept the call to action to <ExternalLink href="https://www.greatfrontend.com?fpr=cupofcraft">GreatFrontEnd</ExternalLink> at a minimum this time, and I want to make it clear that I am not an affiliate of it. I will earn nothing if you subscribe. But it's not for the monetary value that I want to introduce you to the platform; it's because **it is a great way to gather and show off your expertise**.
+I kept the call to action to <EL isGFE>GreatFrontEnd</EL> at a minimum this time, and I want to make it clear that I am not an affiliate of it. I will earn nothing if you subscribe. But it's not for the monetary value that I want to introduce you to the platform; it's because **it is a great way to gather and show off your expertise**.

@@ -13,6 +13,7 @@ const { entry } = Astro.props;
     <div class="relative min-w-22 shrink-0">
       <span class="text-muted-foreground text-sm">{formatDate(entry.data.date)}</span>
     </div>
+
     <a href={`/posts/${entry.id}/`} class="flex flex-col gap-3">
       <div class="flex flex-col">
         <span class="text-headings font-medium">{entry.data.title}</span>

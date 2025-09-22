@@ -1,0 +1,62 @@
+---
+import Container from '@/components/Container.astro';
+import SeriesItemPreview from '@/components/ui/SeriesItemPreview.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { ArrowLeftIcon } from '@lucide/astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('series');
+
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+
+// Get all posts that belong to this series
+const allPosts = await getCollection('posts');
+
+const seriesPosts = allPosts
+  .filter((post) => post.data.series?.ref.id === entry.id)
+  .sort((a, b) => (a.data.series?.number || 0) - (b.data.series?.number || 0));
+---
+
+<BaseLayout seo={entry.data.seo}>
+  <Container as="section">
+    <article class="flex flex-col gap-6">
+      <div class="flex flex-col gap-2">
+        <a
+          href="/series"
+          class="text-muted-foreground hover:text-foreground flex w-max items-center gap-2 pb-4 text-sm transition-all">
+          <ArrowLeftIcon class="size-3" /> Back to series
+        </a>
+
+        <h1 class="text-headings text-3xl font-semibold">{entry.data.title}</h1>
+        {
+          entry.data.description && (
+            <p class="text-coffee-300/85 text-lg">{entry.data.description}</p>
+          )
+        }
+      </div>
+
+      <section class="flex flex-col gap-4">
+        <h2 class="text-headings text-xl font-semibold">In this series:</h2>
+
+        {
+          seriesPosts.length === 0 ? (
+            <p class="text-muted-foreground">No articles in this series yet.</p>
+          ) : (
+            <ul class="flex flex-col gap-3">
+              {seriesPosts.map((post) => (
+                <SeriesItemPreview entry={post} />
+              ))}
+            </ul>
+          )
+        }
+      </section>
+    </article>
+  </Container>
+</BaseLayout>

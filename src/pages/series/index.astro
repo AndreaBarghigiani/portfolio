@@ -1,0 +1,27 @@
+---
+import Container from '@/components/Container.astro';
+import SeriesPreview from '@/components/ui/SeriesPreview.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const series = await getCollection('series');
+---
+
+<BaseLayout>
+  <Container as="section" class="py-6">
+    <div class="flex flex-col gap-6">
+      {
+        series.length === 0 ? (
+          <p>No posts found</p>
+        ) : (
+          <h3 class="text-headings text-xl font-semibold">Series</h3>
+          <ul class="flex flex-col gap-3 divide-y">
+            {series.map((single) => (
+              <SeriesPreview entry={single} />
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </Container>
+</BaseLayout>

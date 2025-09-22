@@ -1,5 +1,5 @@
 import { glob } from 'astro/loaders';
-import { defineCollection, type ImageFunction, z } from 'astro:content';
+import { defineCollection, type ImageFunction, reference, z } from 'astro:content';
 
 export const seoSchemaWithoutImage = z.object({
   title: z.string(),
@@ -54,6 +54,16 @@ const linkCollection = defineCollection({
   }),
 });
 
+const seriesCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/series' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string().optional(),
+      seo: seoSchema(image),
+    }),
+});
+
 const postCollection = defineCollection({
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/posts' }),
   schema: ({ image }) =>
@@ -62,6 +72,13 @@ const postCollection = defineCollection({
       date: z.date(),
       image: image().optional(),
       seo: seoSchema(image),
+      series: z
+        .object({
+          ref: reference('series'),
+          number: z.number().int().positive(),
+          note: z.string().optional(),
+        })
+        .optional(),
     }),
 });
 
@@ -70,4 +87,5 @@ export const collections = {
   jobs: jobCollection,
   links: linkCollection,
   posts: postCollection,
+  series: seriesCollection,
 };

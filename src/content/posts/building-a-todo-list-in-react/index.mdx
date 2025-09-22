@@ -1,12 +1,15 @@
 ---
 title: Building a todo list in React
 date: 2025-03-10
-tags: JavaScript, GreatFrontEnd, React 
+tags: JavaScript, GreatFrontEnd, React
 seo:
   title: Building a ToDo List in React
   description: A todo list is maybe the first app you ever build, in this article I describe how I solved this challenge inside the GreatFrontEnd platform.
   type: article
-  keywords: JavaScript, GreatFrontEnd, React 
+  keywords: JavaScript, GreatFrontEnd, React
+series:
+  ref: gfe75
+  number: 6
 ---
 
 import EL from '@/components/ui/ExternalLink.astro';
@@ -50,7 +53,7 @@ export default function App() {
 Basically, the Todo List should allow the user to:
 
 - add a task, writing it inside the `input` and `submit`
-    - the `input` needs to be empty after each addition
+  - the `input` needs to be empty after each addition
 - delete a task by clicking on the Delete button
 
 It's nothing fancy, but it's still a good opportunity for some practice.
@@ -87,25 +90,20 @@ export default function ToDoList() {
       <h1>Todo List</h1>
       <form onSubmit={handleSubmit}>
         <input
-          type='text'
-          className='p-2 border'
-          name='task'
-          placeholder='Add your task'
+          type="text"
+          className="border p-2"
+          name="task"
+          placeholder="Add your task"
           autoFocus
         />
         <div>
-          <button type='submit'>Submit</button>
+          <button type="submit">Submit</button>
         </div>
       </form>
 
       <ul>
         {tasks.map((task, i) => (
-          <TaskItem
-            key={i}
-            taskIndex={i}
-            text={task}
-            handleDelete={handleDelete}
-          />
+          <TaskItem key={i} taskIndex={i} text={task} handleDelete={handleDelete} />
         ))}
       </ul>
     </div>
@@ -116,10 +114,7 @@ function TaskItem({ text, taskIndex, handleDelete }) {
   return (
     <li>
       <span>{text}</span>
-      <button
-        onClick={() => handleDelete(taskIndex)}
-        className='px-2 py-1 border bg-slate-300'
-      >
+      <button onClick={() => handleDelete(taskIndex)} className="border bg-slate-300 px-2 py-1">
         Delete
       </button>
     </li>
@@ -194,7 +189,7 @@ const newID = () => {
 };
 
 const groupOneIds = newID();
-const groupTwoIds = newID()
+const groupTwoIds = newID();
 ```
 
 Now, `groupOneIds` and `groupTwoIds` will keep track of two separate ID collections while maintaining the custom logic defined by `newID`.
@@ -272,21 +267,17 @@ export default function App() {
           }
 
           // Trim the value before adding it to the tasks.
-          setTasks([
-            ...tasks,
-            { id: newID(), label: newTask.trim() },
-          ]);
+          setTasks([...tasks, { id: newID(), label: newTask.trim() }]);
           // Clear the <input> field after successful submission.
           setNewTask('');
-        }}>
+        }}
+      >
         <input
           aria-label="Add new task"
           type="text"
           placeholder="Add your task"
           value={newTask}
-          onChange={(event) =>
-            setNewTask(event.target.value)
-          }
+          onChange={(event) => setNewTask(event.target.value)}
         />
         <div>
           <button>Submit</button>
@@ -303,18 +294,11 @@ export default function App() {
               <button
                 onClick={() => {
                   // Add confirmation before destructive actions.
-                  if (
-                    window.confirm(
-                      'Are you sure you want to delete the task?',
-                    )
-                  ) {
-                    setTasks(
-                      tasks.filter(
-                        (task) => task.id !== id,
-                      ),
-                    );
+                  if (window.confirm('Are you sure you want to delete the task?')) {
+                    setTasks(tasks.filter((task) => task.id !== id));
                   }
-                }}>
+                }}
+              >
                 Delete
               </button>
             </li>

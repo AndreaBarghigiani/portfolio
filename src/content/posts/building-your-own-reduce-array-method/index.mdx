@@ -7,12 +7,18 @@ seo:
   description: Learning how the internals of JavaScript works is a great way to master the language you use every day. Let's challenge our knowledge!
   type: article
   keywords: JavaScript, GFE 75
+series:
+  ref: gfe75
+  number: 2
 ---
+
+import EL from '@/components/ui/ExternalLink.astro';
+
 JavaScript has always amazed me with its internal workings and the built-in features that we have for free, especially with the evolutions the language has gone through in recent years.
 
 I always wanted to dive deeper into the internals of the language, but due to my busy schedule and my curiosity about new features, I always had trouble getting back to the basics.
 
-That's why I have recently focused so much on the [GreatFrontEnd challenges](https://www.greatfrontend.com/) that I want to solve. Not only does this platform give me a clear path on what I should work on to get ready for my next interview, but it also pushes me to know the tool I am using even better.
+That's why I have recently focused so much on the <EL isGFE>GreatFrontEnd challenges</EL> that I want to solve. Not only does this platform give me a clear path on what I should work on to get ready for my next interview, but it also pushes me to know the tool I am using even better.
 
 Enough about the praise for GFE. Let's get real and talk about today's challenge.
 
@@ -25,11 +31,12 @@ While the logic can seem hard to grasp, especially when you work with TypeScript
 I've used _"most of the time_ because `reduce` is incredibly powerful. You can stretch it as you wish even though it probably could be better to use a different method provided by the language.
 
 The signature of the function is straightforward; you need to pass a callback function and an initial value to it. The callback function accepts 4 arguments:
+
 - `accumulator`: the value that holds the current state of your loop and that will be returned at the end of the `reduce` lifecycle.
 - `element`: the current array element you're working on.
 - `index`: that, as in any other loop method, can tell you where you are in the loop.
 - `this`: the entire array you're looping through
- 
+
 More than `reduce` itself, when I explain it to a co-worker, I always find that the most challenging part to grasp about this method is the callback function 😅
 
 But today, we're here to create our own `reduce` method, and I hope everything will be clear with the following explanation.
@@ -41,17 +48,12 @@ When I opened the second task of GFE75 this was the TypeScript code I had to wor
 ```ts
 interface Array<T> {
   myReduce<U>(
-    callbackFn: (
-      previousValue: U,
-      currentValue: T,
-      currentIndex: number,
-      array: T[],
-    ) => U,
-    initialValue?: U,
+    callbackFn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U,
+    initialValue?: U
   ): U;
 }
 
-Array.prototype.myReduce = function (callbackFn, initialValue) {}
+Array.prototype.myReduce = function (callbackFn, initialValue) {};
 ```
 
 As you can see, the TypeScript definition of the `callbackFn` is the most complex part of its signature. But at the end of the day, the `myReduce` method that we're creating (that has this name to not conflict with the `reduce` built-in method) has to return a `U` typed value, that has to be the same of `initialValue`, if provided.
@@ -60,13 +62,13 @@ With the knowledge that the methods we add to the `prototype` of a standard obje
 
 ```ts
 Array.prototype.myReduce = function (callbackFn, initialValue) {
-  let value = initialValue !== undefined ? initialValue : this.pop()
-  
-  for(let i = 0; i < this.length; i++) {
-    value = this.at(i) ? callbackFn(value, this.at(i), i, this) : value
+  let value = initialValue !== undefined ? initialValue : this.pop();
+
+  for (let i = 0; i < this.length; i++) {
+    value = this.at(i) ? callbackFn(value, this.at(i), i, this) : value;
   }
-  
-  return value
+
+  return value;
 };
 ```
 
@@ -118,10 +120,10 @@ First and foremost, the solution implements _talking variable names_. Instead of
 
 **He also did not mutate the array**. Instead, he used a ternary operator to keep track of the `startingIndex` based on the `noInitialValue` check result.
 
-Lastly, at least the last thing that's different from my code is the check to see if a value is held by the item at the current index. In my code snippet, I just quickly checked for the presence of a positive value with [`this.at`](http://this.at)`(i)`, but you know as me that this check it can get hallucinated on falsy values.
+Lastly, at least the last thing that's different from my code is the check to see if a value is held by the item at the current index. In my code snippet, I just quickly checked for the presence of a positive value with `this.at(i)`, but you know as me that this check it can get hallucinated on falsy values.
 
 The solution creator instead relied on `Object.hasOwn(this, i)` to have a more complete check.
 
-That's because [`this.at`](http://this.at)`(i)` (or `this[i]`) will return `false` if, for example, the stored value at such index is `0`. Instead, use `Object.hasOwn` to allow us to check if the array (remember, arrays are just Objects in JavaScript) has a value at that specific `i`ndex.
+That's because `this.at(i)` (or `this[i]`) will return `false` if, for example, the stored value at such index is `0`. Instead, use `Object.hasOwn` to allow us to check if the array (remember, arrays are just Objects in JavaScript) has a value at that specific `i`ndex.
 
 That value could be `0`, `undefined`, or any other falsy value. But it is still a value held by the item of our array, and as such, we need to use it inside out `callbackFn`.

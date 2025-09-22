@@ -7,7 +7,13 @@ seo:
   description: Notes on the first challenge in GFE 75 by GreatFrontEnd
   type: article
   keywords: GreatFrontEnd, GFE 75
+series:
+  ref: gfe75
+  number: 1
 ---
+
+import EL from '@/components/ui/ExternalLink.astro';
+
 I suppose you already know why we use `debounce`, but just as a little refresher, here's my own definition: _"we use_ `debounce` _when we do not want to fire a function as soon as it gets called, but instead, we want to handle the cases when the function gets called multiple times in a short timeframe and have our program run only once”_.
 
 If you do not like my definition [here's the MDN one](https://developer.mozilla.org/en-US/docs/Glossary/Debounce), it's not long, and I advise you to read it.
@@ -26,7 +32,7 @@ function debounce(func: Function, wait: number): Function {
 }
 ```
 
-Other implementations of `debounce` accept even more attributes, but I want to keep it simple, as this will allow us to pass the first challenge of the [GFE 75 collection of GreatFrontEnd](https://www.greatfrontend.com/interviews/gfe75).
+Other implementations of `debounce` accept even more attributes, but I want to keep it simple, as this will allow us to pass the first challenge of the <EL isGFE href='/interviews/study/gfe75'>GFE 75 collection of GreatFrontEnd</EL>.
 
 Just to be clear, I am not here to give you the golden ticket that will allow you to pass these challenges; I want you to earn it while understanding the ins and outs of the challenges that I face while completing it on my own.
 
@@ -144,7 +150,7 @@ Like in the following test:
 ```ts
 test('uses arguments of latest invocation', (done) => {
     let i = 21;
-    
+
     const increment = debounce((a: number, b: number) => {
         i += a * b;
     }, 10);

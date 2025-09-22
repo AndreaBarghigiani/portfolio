@@ -1,0 +1,51 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  number: number;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const { number, size = 'md' } = Astro.props;
+
+// Available drop icons
+const dropIcons = ['drop-1', 'drop-3', 'drop-4', 'drop-2'];
+
+// Create a deterministic "random" selection based on the number
+// This ensures the same number always gets the same drop icon
+const selectedDrop = dropIcons[(number - 1) % dropIcons.length];
+
+// Size configurations
+const sizeConfig = {
+  sm: {
+    container: 'size-10',
+    icon: 'size-10',
+    text: 'text-sm font-semibold',
+  },
+  md: {
+    container: 'size-14',
+    icon: 'size-14',
+    text: 'text-lg font-bold',
+  },
+  lg: {
+    container: 'size-20',
+    icon: 'size-20',
+    text: 'text-xl font-bold',
+  },
+};
+
+const config = sizeConfig[size];
+---
+
+<div class={`grid place-items-center ${config.container}`}>
+  <!-- Drop icon as background -->
+  <Icon
+    name={selectedDrop}
+    class={`col-start-1 row-start-1 ${config.icon} text-coffee-300 dark:text-coffee-600`}
+  />
+
+  <!-- Number text -->
+  <div class={`col-start-1 row-start-1 ${config.text} text-coffee-800 dark:text-coffee-200`}>
+    {number}
+  </div>
+</div>

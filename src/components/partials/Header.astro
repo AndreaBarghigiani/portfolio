@@ -3,19 +3,60 @@ import Container from '@/components/Container.astro';
 import ThemeToggle from '@/components/ThemeToggle.astro';
 import Avatar from '@/components/ui/Avatar.astro';
 import NavLink from '@/components/ui/NavLink.astro';
+import { ChevronDown } from '@lucide/astro';
+
+const { pathname } = Astro.url;
 ---
 
 <Container
   as="header"
-  class="navbar fixed flex w-full max-w-full items-center justify-center gap-8 py-5 transition-all duration-200"
->
+  class="navbar fixed flex w-full max-w-full items-center justify-center gap-8 py-5 transition-all duration-200">
   <Avatar class="border-border border" />
 
   <div class="bg-muted-foreground/50 border-border w-max rounded-full border p-1 backdrop-blur-md">
     <nav class="flex items-center">
       <ul class="flex items-center gap-1">
         <NavLink href="/">Home</NavLink>
-        <NavLink href="/posts">Posts</NavLink>
+        <li class="relative group">
+          <button
+            type="button"
+            class:list={[
+              'flex items-center gap-2 px-5 py-2 font-medium transition-colors hover:text-headings',
+              (pathname.startsWith('/posts') || pathname.startsWith('/series')) ? 'text-coffee-100 bg-muted-foreground/40 rounded-full' : ''
+            ]}
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            Writing
+            <ChevronDown class="w-4 h-4 transition-transform group-hover:rotate-180" />
+          </button>
+          <div
+            class="absolute left-1/2 top-full mt-1 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div
+              class="bg-muted-foreground/50 border-border min-w-[120px] rounded-lg border p-1 backdrop-blur-md">
+              <a
+                href="/posts"
+                class:list={[
+                  'block px-4 py-2 text-sm transition-colors rounded-md',
+                  'hover:text-headings',
+                  pathname === '/posts' && 'text-coffee-100 bg-muted-foreground/40'
+                ]}
+              >
+                Posts
+              </a>
+              <a
+                href="/series"
+                class:list={[
+                  'block px-4 py-2 text-sm transition-colors rounded-md',
+                  'hover:text-headings',
+                  pathname === '/series' && 'text-coffee-100 bg-muted-foreground/40'
+                ]}
+              >
+                Series
+              </a>
+            </div>
+          </div>
+        </li>
       </ul>
     </nav>
   </div>

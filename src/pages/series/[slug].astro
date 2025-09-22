@@ -37,7 +37,9 @@ const seriesPosts = allPosts
         <h1 class="text-headings text-3xl font-semibold">{entry.data.title}</h1>
         {
           entry.data.description && (
-            <p class="text-coffee-300/85 text-lg">{entry.data.description}</p>
+            <p class="text-coffee-700/85 dark:text-coffee-300/85 text-lg">
+              {entry.data.description}
+            </p>
           )
         }
       </div>

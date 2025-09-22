@@ -1,0 +1,100 @@
+---
+import { ArrowLeftIcon, ChevronRight } from '@lucide/astro';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import SeriesCounter from './SeriesCounter.astro';
+
+interface Props {
+  entry: CollectionEntry<'posts'>;
+  seriesData: CollectionEntry<'series'>;
+}
+
+const { entry, seriesData } = Astro.props;
+
+// Get all posts that belong to this series
+const allPosts = await getCollection('posts');
+
+const seriesPosts = allPosts
+  .filter((post) => post.data.series?.ref.id === seriesData?.id)
+  .sort((a, b) => (a.data.series?.number || 0) - (b.data.series?.number || 0));
+---
+
+<section class="border-coffee-300/65 mb-4 flex flex-col gap-4 rounded-lg border bg-black/25 p-4">
+  <div class="flex flex-col gap-2">
+    <div class="text-muted-foreground flex items-center gap-2 text-sm">
+      <span>This article is part of a series</span>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <h3 class="text-headings text-xl font-semibold">{seriesData.data.title}</h3>
+      {
+        seriesData.data.description && (
+          <p class="text-coffee-700/85 dark:text-coffee-300/85 text-base">
+            {seriesData.data.description}
+          </p>
+        )
+      }
+    </div>
+  </div>
+
+  {
+    seriesPosts.length > 1 && (
+      <div class="flex flex-col gap-4">
+        <details class="group">
+          <summary class="text-headings flex cursor-pointer list-none items-center gap-2 text-lg font-medium">
+            In this series:
+            <div class="transition-transform group-open:rotate-90">
+              <ChevronRight class="size-4" />
+            </div>
+          </summary>
+
+          <div class="grid gap-2 py-4">
+            {seriesPosts.map((post) => (
+              <div class="flex items-center gap-4">
+                <SeriesCounter number={post.data.series!.number} size="sm" />
+
+                <a
+                  href={`/posts/${post.id}/`}
+                  class:list={[
+                    'hover:text-headings flex-1 text-sm transition-colors',
+                    post.id === entry.id ? 'text-coffee-100 font-medium' : 'text-muted-foreground',
+                  ]}>
+                  {post.data.title}
+                </a>
+                {post.id === entry.id && (
+                  <span class="text-coffee-400 text-xs font-medium">Current</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </details>
+      </div>
+    )
+  }
+</section>
+
+<div class="flex items-center justify-between">
+  <div class="group/back relative">
+    <button
+      type="button"
+      class="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm"
+      aria-haspopup="true">
+      <ArrowLeftIcon class="size-3" />
+      Back
+    </button>
+    <div
+      class="invisible absolute top-full left-0 z-50 mt-1 opacity-0 group-hover/back:visible group-hover/back:opacity-100 before:absolute before:-top-1 before:right-0 before:left-0 before:h-1 before:content-['']">
+      <div
+        class="bg-muted-foreground/50 border-border min-w-[140px] rounded-lg border p-1 backdrop-blur-md">
+        <a href="/posts" class="hover:text-headings block rounded-md px-3 py-2 text-sm">
+          Back to archive
+        </a>
+        <a
+          href={`/series/${seriesData.id}/`}
+          class="hover:text-headings block rounded-md px-3 py-2 text-sm">
+          View all in series
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

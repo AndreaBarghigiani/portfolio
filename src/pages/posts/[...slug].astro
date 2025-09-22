@@ -1,22 +1,28 @@
 ---
 import Container from '@/components/Container.astro';
 import Author from '@/components/ui/Author.astro';
+import SeriesNavigation from '@/components/ui/SeriesNavigation.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { DEFAULT_CONFIGURATION } from '@/lib/constants';
 import { ArrowLeftIcon } from '@lucide/astro';
-import { Image } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
   const entries = await getCollection('posts');
+  const series = await getCollection('series');
 
   return entries.map((entry) => ({
     params: { slug: entry.id },
-    props: { entry },
+    props: {
+      entry,
+      seriesData: entry.data.series?.ref
+        ? series.find((s) => s.id === entry.data.series!.ref!.id)
+        : null,
+    },
   }));
 }
 
-const { entry } = Astro.props;
+const { entry, seriesData } = Astro.props;
 const { Content } = await render(entry);
 ---
 
@@ -24,22 +30,27 @@ const { Content } = await render(entry);
   <Container as="section">
     <article class="flex flex-col gap-6">
       <div class="flex flex-col gap-2">
-        <a
-          href="/posts"
-          class="text-muted-foreground hover:text-foreground flex w-max items-center gap-2 pb-4 text-sm transition-all"
-        >
-          <ArrowLeftIcon class="size-3" /> Back to archive
-        </a>
+        {
+          !seriesData ? (
+            <a
+              href="/posts"
+              class="text-muted-foreground hover:text-foreground flex w-max items-center gap-2 pb-4 text-sm transition-all">
+              <ArrowLeftIcon class="size-3" /> Back to archive
+            </a>
+          ) : (
+            <SeriesNavigation entry={entry} seriesData={seriesData} position="top" />
+          )
+        }
         <h1 class="text-headings text-3xl font-semibold">{entry.data.title}</h1>
       </div>
 
-      {
+      <!-- {
         entry.data.image && (
           <div class="relative aspect-video overflow-hidden rounded-lg">
             <Image src={entry.data.image} alt={entry.data.title} class="object-cover" />
           </div>
         )
-      }
+      } -->
 
       <div class="prose prose-lg prose-coffee dark:prose-invert">
         <Content />

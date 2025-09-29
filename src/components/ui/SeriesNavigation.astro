@@ -2,6 +2,7 @@
 import { ArrowLeftIcon, ChevronRight } from '@lucide/astro';
 import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
+import { getPostSlugFromId } from '@/lib/utils';
 import SeriesCounter from './SeriesCounter.astro';
 
 interface Props {
@@ -17,6 +18,8 @@ const allPosts = await getCollection('posts');
 const seriesPosts = allPosts
   .filter((post) => post.data.series?.ref.id === seriesData?.id)
   .sort((a, b) => (a.data.series?.number || 0) - (b.data.series?.number || 0));
+
+const currentSlug = getPostSlugFromId(entry.id);
 ---
 
 <section class="border-coffee-300/65 mb-4 flex flex-col gap-4 rounded-lg border bg-black/25 p-4">
@@ -43,36 +46,37 @@ const seriesPosts = allPosts
         <details class="group">
           <summary class="text-headings flex cursor-pointer list-none items-center gap-2 text-lg font-medium">
             In this series:
-            <div class="transition-transform group-open:rotate-90">
-              <ChevronRight class="size-4" />
-            </div>
           </summary>
 
           <div class="grid gap-2 py-4">
-            {seriesPosts.map((post) => (
-              <div class="flex items-center gap-4">
-                <SeriesCounter number={post.data.series!.number} size="sm" />
+            {seriesPosts.map((post) => {
+              const postSlug = getPostSlugFromId(post.id);
+              return (
+                <div class="flex items-center gap-4">
+                  <SeriesCounter number={post.data.series!.number} size="sm" />
 
-                <a
-                  href={`/posts/${post.id}/`}
-                  class:list={[
-                    'hover:text-headings flex-1 text-sm transition-colors',
-                    post.id === entry.id ? 'text-coffee-100 font-medium' : 'text-muted-foreground',
-                  ]}
-                >
-                  {post.data.title}
-                </a>
-                {post.id === entry.id && (
-                  <span class="text-coffee-400 text-xs font-medium">Current</span>
-                )}
-              </div>
-            ))}
+                  <a
+                    href={`/posts/${postSlug}/`}
+                    class:list={[
+                      'hover:text-headings flex-1 text-sm transition-colors',
+                      postSlug === currentSlug
+                        ? 'text-coffee-100 font-medium'
+                        : 'text-muted-foreground',
+                    ]}
+                  >
+                    {post.data.title}
+                  </a>
+                  {postSlug === currentSlug && (
+                    <span class="text-coffee-400 text-xs font-medium">Current</span>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </details>
       </div>
     )
   }
-</section>
 
 <div class="flex items-center justify-between">
   <div class="group/back relative">

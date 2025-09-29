@@ -49,6 +49,12 @@ export const sortPostsByDate = (posts: CollectionEntry<'posts'>[]) =>
     return bTime - aTime; // descending: newest first
   });
 
+export const getPostSlugFromId = (postId: string) => {
+  const withoutIndex = postId.replace(/\/index$/, '');
+  const parts = withoutIndex.split('/');
+  return parts[parts.length - 1] ?? withoutIndex;
+};
+
 /**
  * Checks if the current URL path matches the given path or path pattern
  * @param currentPath The current URL path (from Astro.url.pathname)

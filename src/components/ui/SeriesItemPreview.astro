@@ -1,18 +1,20 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { getPostSlugFromId } from '@/lib/utils';
 import SeriesCounter from './SeriesCounter.astro';
 interface Props {
   entry: CollectionEntry<'posts'>;
 }
 
 const { entry } = Astro.props;
+const slug = getPostSlugFromId(entry.id);
 ---
 
 <li class="py-2">
   <div class="flex items-center gap-5">
     {entry.data?.series?.number && <SeriesCounter number={entry.data.series?.number || 0} />}
 
-    <a href={`/posts/${entry.id}/`} class="flex flex-col gap-3">
+    <a href={`/posts/${slug}/`} class="flex flex-col gap-3">
       <div class="flex flex-col">
         <h3 class="text-headings text-xl font-medium">{entry.data.title}</h3>
         <p>{entry.data.seo.description}</p>

@@ -1,11 +1,12 @@
 ---
-import { formatDate } from '@/lib/utils';
+import { formatDate, getPostSlugFromId } from '@/lib/utils';
 import type { CollectionEntry } from 'astro:content';
 interface Props {
   entry: CollectionEntry<'posts'>;
 }
 
 const { entry } = Astro.props;
+const slug = getPostSlugFromId(entry.id);
 ---
 
 <li class="py-2">
@@ -14,7 +15,7 @@ const { entry } = Astro.props;
       <span class="text-muted-foreground text-sm">{formatDate(entry.data.date)}</span>
     </div>
 
-    <a href={`/posts/${entry.id}/`} class="flex flex-col gap-3">
+    <a href={`/posts/${slug}/`} class="flex flex-col gap-3">
       <div class="flex flex-col">
         <span class="text-headings font-medium">{entry.data.title}</span>
         <p class="text-sm">{entry.data.seo.description}</p>

@@ -82,10 +82,50 @@ const postCollection = defineCollection({
     }),
 });
 
+const courseNotesCollection = defineCollection({
+  loader: glob({ pattern: '**/index.{md,mdx}', base: './src/content/notes' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      author: z.string(),
+      url: z.string().url(),
+      description: z.string(),
+      certificateUrl: z.string().url().optional(),
+      certificateImage: image().optional(),
+    }),
+});
+
+const courseModulesCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/modules' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    url: z.string().url().optional(),
+    order: z.number().int().positive().optional(),
+    course: z.string().optional(),
+  }),
+});
+
+const courseLessonCollection = defineCollection({
+  loader: glob({ pattern: '**/lesson/**/index.{md,mdx}', base: './src/content/notes' }),
+  schema: z.object({
+    title: z.string(),
+    course: z.string().optional(),
+    module: reference('courseModules').optional(),
+    moduleOrder: z.number().int().positive().optional(),
+    order: z.number().int().positive().optional(),
+    description: z.string().optional(),
+    url: z.string().url().optional(),
+  }),
+});
+
 export const collections = {
   pages: pageCollection,
   jobs: jobCollection,
   links: linkCollection,
   posts: postCollection,
   series: seriesCollection,
+  notes: courseNotesCollection,
+  courseModules: courseModulesCollection,
+  lessonNotes: courseLessonCollection,
 };

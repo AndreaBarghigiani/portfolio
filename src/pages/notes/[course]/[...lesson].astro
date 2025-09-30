@@ -1,0 +1,103 @@
+---
+import Container from '@/components/Container.astro';
+import Author from '@/components/ui/Author.astro';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { DEFAULT_CONFIGURATION } from '@/lib/constants';
+import type { Seo } from '@/lib/constants';
+import { getLessonRouteInfoFromId, getNotesSlugFromId } from '@/lib/utils';
+import { ArrowLeftIcon } from '@lucide/astro';
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const lessons = await getCollection('lessonNotes');
+  const courses = await getCollection('notes');
+  const modules = await getCollection('courseModules');
+
+  return lessons.map((lesson: CollectionEntry<'lessonNotes'>) => {
+    const { courseSlug, lessonPath } = getLessonRouteInfoFromId(lesson.id);
+    const courseEntry =
+      courses.find((course) => getNotesSlugFromId(course.id) === courseSlug) ?? null;
+    const moduleId =
+      typeof lesson.data.module === 'string' ? lesson.data.module : lesson.data.module?.id ?? null;
+    const moduleEntry = moduleId ? modules.find((module) => module.id === moduleId) ?? null : null;
+
+    return {
+      params: {
+        course: courseSlug,
+        lesson: lessonPath,
+      },
+      props: {
+        lesson,
+        courseEntry,
+        moduleEntry,
+      },
+    };
+  });
+}
+
+const { lesson, courseEntry, moduleEntry } = Astro.props;
+const { Content } = await render(lesson);
+
+const courseSlug = courseEntry ? getNotesSlugFromId(courseEntry.id) : '';
+
+const lessonSeo: Seo = {
+  title: courseEntry
+    ? `${lesson.data.title} — ${courseEntry.data.title}`
+    : `${lesson.data.title} — Course Notes`,
+  description:
+    lesson.data.description ??
+    (courseEntry ? courseEntry.data.description : DEFAULT_CONFIGURATION.seo.description),
+};
+
+const courseHref = courseSlug ? `/notes/${courseSlug}/` : '/notes';
+---
+
+<BaseLayout seo={lessonSeo}>
+  <Container as="section" class="flex flex-col gap-6 py-6">
+    <div class="flex flex-col gap-3">
+      <a
+        href={courseHref}
+        class="text-muted-foreground hover:text-foreground flex w-max items-center gap-2 text-sm transition"
+      >
+        <ArrowLeftIcon class="size-3" /> Back to course
+      </a>
+
+      <header class="flex flex-col gap-3">
+        <div class="flex flex-col gap-1">
+          <span class="text-muted-foreground text-xs tracking-widest uppercase">
+            {courseEntry ? courseEntry.data.title : 'Course'}
+          </span>
+
+          <h1 class="text-headings text-3xl font-semibold">{lesson.data.title}</h1>
+        </div>
+
+        {moduleEntry && (
+          <div class="flex flex-col gap-1 text-sm">
+            <span class="text-muted-foreground tracking-widest uppercase">
+              Module
+            </span>
+            <span class="text-headings font-semibold">{moduleEntry.data.title}</span>
+
+            {moduleEntry.data.description && (
+              <p class="text-muted-foreground text-xs">{moduleEntry.data.description}</p>
+            )}
+
+            {moduleEntry.data.url && (
+              <ExternalLink href={moduleEntry.data.url}>Visit module page</ExternalLink>
+            )}
+          </div>
+        )}
+      </header>
+    </div>
+
+    <article class="prose prose-lg prose-coffee dark:prose-invert">
+      <Content />
+    </article>
+  </Container>
+</BaseLayout>
+
+<Container as="section" class="py-6">
+  <Author {...DEFAULT_CONFIGURATION.author} />
+</Container>

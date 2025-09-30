@@ -3,27 +3,35 @@ import Container from '@/components/Container.astro';
 import SeriesPreview from '@/components/ui/SeriesPreview.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import GradientDivider from '@/components/ui/GradientDivider.astro';
 
 const series = await getCollection('series');
 ---
 
 <BaseLayout>
-  <Container as="section" class="py-6">
-    <div class="flex flex-col gap-6">
-      {
-        series.length === 0 ? (
-          <p>No posts found</p>
-        ) : (
-          <>
-            <h3 class="text-headings text-xl font-semibold">Series</h3>
-            <ul class="flex flex-col gap-3 divide-y">
-              {series.map((single) => (
-                <SeriesPreview entry={single} />
-              ))}
-            </ul>
-          </>
-        )
-      }
-    </div>
+  <Container as="section" class="flex flex-col gap-8 py-6">
+    {
+      series.length === 0 ? (
+        <p>No posts found</p>
+      ) : (
+        <>
+          <header class="flex flex-col gap-3">
+            <h1 class="text-headings text-3xl font-semibold">Series</h1>
+            <p class="text-foreground">
+              When an article is not enough, or I am documenting my journey with something specific,
+              I like to create a series about it!
+            </p>
+          </header>
+
+          <GradientDivider />
+
+          <ul class="flex flex-col gap-3 divide-y">
+            {series.map((single) => (
+              <SeriesPreview entry={single} />
+            ))}
+          </ul>
+        </>
+      )
+    }
   </Container>
 </BaseLayout>

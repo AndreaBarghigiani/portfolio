@@ -55,6 +55,26 @@ export const getPostSlugFromId = (postId: string) => {
   return parts[parts.length - 1] ?? withoutIndex;
 };
 
+export const getLessonRouteInfoFromId = (lessonId: string) => {
+  const sanitized = lessonId.replace(/\/index$/, '');
+  const parts = sanitized.split('/');
+  const courseSlug = parts[0];
+  const lessonIndex = parts.indexOf('lesson');
+
+  const lessonSegments = lessonIndex >= 0 ? parts.slice(lessonIndex + 1) : parts.slice(1);
+  const lessonSlug = parts[parts.length - 1] ?? '';
+  const lessonPathSegments = ['lesson', lessonSlug];
+  const lessonPath = lessonPathSegments.join('/');
+
+  return {
+    courseSlug,
+    lessonSegments,
+    lessonSlug,
+    lessonPathSegments,
+    lessonPath,
+  } as const;
+};
+
 /**
  * Checks if the current URL path matches the given path or path pattern
  * @param currentPath The current URL path (from Astro.url.pathname)

@@ -1,0 +1,40 @@
+---
+import Container from '@/components/Container.astro';
+import GradientDivider from '@/components/ui/GradientDivider.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CoursePreview from '@/components/ui/CoursePreview.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+const entry = await getEntry('pages', 'notes');
+
+if (!entry) {
+  throw new Error('Notes page not found');
+}
+
+const courses = await getCollection('notes');
+---
+
+<BaseLayout seo={entry.data.seo}>
+  <Container as="section" class="flex flex-col gap-8 py-6">
+    <header class="flex flex-col gap-3">
+      <h1 class="text-headings text-3xl font-semibold">{entry.data.title}</h1>
+      <p class="text-foreground">
+        Explore detailed notes captured while studying courses, workshops, and live trainings.
+      </p>
+    </header>
+
+    <GradientDivider />
+
+    {
+      courses.length === 0 ? (
+        <p>No notes published yet.</p>
+      ) : (
+        <ul class="flex flex-col gap-3">
+          {courses.map((course) => (
+            <CoursePreview course={course} />
+          ))}
+        </ul>
+      )
+    }
+  </Container>
+</BaseLayout>

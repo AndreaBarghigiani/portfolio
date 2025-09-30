@@ -55,6 +55,12 @@ export const getPostSlugFromId = (postId: string) => {
   return parts[parts.length - 1] ?? withoutIndex;
 };
 
+export const getNotesSlugFromId = (entryId: string) => {
+  const withoutIndex = entryId.replace(/\/index$/, '');
+  const parts = withoutIndex.split('/');
+  return parts[parts.length - 1] ?? withoutIndex;
+};
+
 export const getLessonRouteInfoFromId = (lessonId: string) => {
   const sanitized = lessonId.replace(/\/index$/, '');
   const parts = sanitized.split('/');

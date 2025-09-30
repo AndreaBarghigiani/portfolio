@@ -83,7 +83,7 @@ const postCollection = defineCollection({
 });
 
 const courseNotesCollection = defineCollection({
-  loader: glob({ pattern: '**/index.{md,mdx}', base: './src/content/notes' }),
+  loader: glob({ pattern: '*/index.{md,mdx}', base: './src/content/notes' }),
   schema: ({ image }) =>
     z.object({
       title: z.string(),

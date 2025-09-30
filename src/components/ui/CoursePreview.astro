@@ -1,0 +1,19 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  course: CollectionEntry<'notes'>;
+}
+
+const { course } = Astro.props;
+---
+
+<li class="h-full">
+  <a href={`/notes/${course.id}/`} class="flex flex-col gap-3">
+    <h3 class="text-headings text-3xl font-medium">
+      {course.data.title}
+    </h3>
+
+    <p>{course.data.description}</p>
+  </a>
+</li>

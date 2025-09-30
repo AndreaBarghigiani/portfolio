@@ -1,0 +1,10 @@
+---
+const {
+  from = 'from-coffee-950',
+  via = 'via-coffee-600',
+  to = 'to-coffee-950',
+  class: extra = '',
+} = Astro.props;
+---
+
+<hr class={`h-0.5 rounded-full border-0 bg-gradient-to-r ${from} ${via} ${to} ${extra}`} />

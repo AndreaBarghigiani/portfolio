@@ -6,6 +6,8 @@ import NavLink from '@/components/ui/NavLink.astro';
 import { ChevronDown } from '@lucide/astro';
 
 const { pathname } = Astro.url;
+const isActivePath =
+  pathname.startsWith('/posts') || pathname.startsWith('/series') || pathname.startsWith('/notes');
 ---
 
 <Container
@@ -23,9 +25,7 @@ const { pathname } = Astro.url;
             type="button"
             class:list={[
               'hover:text-headings flex items-center gap-2 px-5 py-2 font-medium transition-colors',
-              pathname.startsWith('/posts') || pathname.startsWith('/series')
-                ? 'text-coffee-100 bg-muted-foreground/40 rounded-full'
-                : '',
+              isActivePath ? 'text-coffee-100 bg-muted-foreground/40 rounded-full' : '',
             ]}
             aria-haspopup="true"
             aria-expanded="false"
@@ -37,14 +37,14 @@ const { pathname } = Astro.url;
             class="invisible absolute top-full left-1/2 z-50 mt-1 -translate-x-1/2 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100"
           >
             <div
-              class="bg-muted-foreground/50 border-border min-w-[120px] rounded-lg border p-1 backdrop-blur-md"
+              class="bg-background border-border min-w-[120px] rounded-lg border p-1 backdrop-blur-md"
             >
               <a
                 href="/posts"
                 class:list={[
                   'block rounded-md px-4 py-2 text-sm transition-colors',
                   'hover:text-headings',
-                  pathname === '/posts' && 'text-coffee-100 bg-muted-foreground/40',
+                  pathname === '/posts' && 'text-headings bg-muted-foreground/40',
                 ]}
               >
                 Posts
@@ -54,10 +54,20 @@ const { pathname } = Astro.url;
                 class:list={[
                   'block rounded-md px-4 py-2 text-sm transition-colors',
                   'hover:text-headings',
-                  pathname === '/series' && 'text-coffee-100 bg-muted-foreground/40',
+                  pathname === '/series' && 'text-headings bg-muted-foreground/40',
                 ]}
               >
                 Series
+              </a>
+              <a
+                href="/notes"
+                class:list={[
+                  'block rounded-md px-4 py-2 text-sm transition-colors',
+                  'hover:text-headings',
+                  pathname === '/notes' && 'text-headings bg-muted-foreground/40',
+                ]}
+              >
+                Notes
               </a>
             </div>
           </div>

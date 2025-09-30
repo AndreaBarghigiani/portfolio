@@ -1,0 +1,177 @@
+---
+import Container from '@/components/Container.astro';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { ArrowLeftIcon } from '@lucide/astro';
+import type { Seo } from '@/lib/constants';
+import { getLessonRouteInfoFromId, getNotesSlugFromId } from '@/lib/utils';
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const courses = await getCollection('notes');
+
+  return courses.map((course) => {
+    const slug = getNotesSlugFromId(course.id);
+
+    return {
+      params: { course: slug },
+      props: { entry: course },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const entrySlug = getNotesSlugFromId(entry.id);
+
+const courseSeo: Seo = {
+  title: `${entry.data.title} — Course Notes`,
+  description: entry.data.description,
+  type: 'website',
+};
+
+const lessons = await getCollection('lessonNotes');
+const modules = await getCollection('courseModules');
+
+const moduleLookup = modules.reduce((acc, module) => {
+  if (!module.data.course || module.data.course === entrySlug) {
+    acc.set(module.id, module);
+  }
+
+  return acc;
+}, new Map<string, CollectionEntry<'courseModules'>>());
+
+const groupedLessons = lessons
+  .filter((lesson) => {
+    const { courseSlug } = getLessonRouteInfoFromId(lesson.id);
+    return courseSlug === entrySlug || lesson.data.course === entrySlug;
+  })
+  .map((lesson) => {
+    const moduleId =
+      typeof lesson.data.module === 'string'
+        ? lesson.data.module
+        : lesson.data.module?.id ?? null;
+    const moduleEntry = moduleId ? moduleLookup.get(moduleId) ?? null : null;
+    const moduleName = moduleEntry?.data.title ?? 'Standalone lessons';
+    const moduleOrder =
+      moduleEntry?.data.order ?? lesson.data.moduleOrder ?? Number.MAX_SAFE_INTEGER;
+    const lessonOrder = lesson.data.order ?? Number.MAX_SAFE_INTEGER;
+
+    return {
+      lesson,
+      moduleEntry,
+      moduleName,
+      moduleKey: moduleEntry?.id ?? '__standalone__',
+      moduleOrder,
+      lessonOrder,
+    };
+  })
+  .sort((a, b) => {
+    return (
+      a.moduleOrder - b.moduleOrder ||
+      a.moduleName.localeCompare(b.moduleName) ||
+      a.lessonOrder - b.lessonOrder ||
+      a.lesson.data.title.localeCompare(b.lesson.data.title)
+    );
+  })
+  .reduce(
+    (acc, current) => {
+      const existingGroup = acc.find((group) => group.moduleKey === current.moduleKey);
+
+      if (existingGroup) {
+        existingGroup.lessons.push(current.lesson);
+        return acc;
+      }
+
+      acc.push({
+        moduleKey: current.moduleKey,
+        moduleName: current.moduleName,
+        moduleDescription: current.moduleEntry?.data.description ?? null,
+        moduleUrl: current.moduleEntry?.data.url ?? null,
+        lessons: [current.lesson],
+      });
+
+      return acc;
+    },
+    [] as {
+      moduleKey: string;
+      moduleName: string;
+      moduleDescription: string | null;
+      moduleUrl: string | null;
+      lessons: CollectionEntry<'lessonNotes'>[];
+    }[]
+  );
+---
+
+<BaseLayout seo={courseSeo}>
+  <Container as="section" class="flex flex-col gap-6 py-6">
+    <a
+      href="/notes"
+      class="text-muted-foreground hover:text-foreground flex w-max items-center gap-2 text-sm transition"
+    >
+      <ArrowLeftIcon class="size-3" /> Back to notes overview
+    </a>
+
+    <header class="flex flex-col gap-3">
+      <h1 class="text-headings text-3xl font-semibold">{entry.data.title}</h1>
+      <div class="text-muted-foreground text-sm">
+        <span>Led by {entry.data.author}</span>
+        {' · '}
+        <ExternalLink href={entry.data.url}>Course website</ExternalLink>
+      </div>
+
+      {
+        entry.data.certificateUrl && (
+          <ExternalLink href={entry.data.certificateUrl}>View completion certificate</ExternalLink>
+        )
+      }
+    </header>
+
+    <div class="prose prose-coffee dark:prose-invert">
+      <Content />
+    </div>
+
+    {
+      groupedLessons.length === 0 ? (
+        <p class="text-muted-foreground text-sm">No lessons published for this course yet.</p>
+      ) : (
+        <section class="flex flex-col gap-8">
+          {groupedLessons.map((group) => (
+            <div class="flex flex-col gap-3">
+              <h2 class="text-headings text-2xl font-semibold">{group.moduleName}</h2>
+
+              {(group.moduleDescription || group.moduleUrl) && (
+                <div class="text-muted-foreground flex flex-col gap-1 text-sm">
+                  {group.moduleDescription && <p>{group.moduleDescription}</p>}
+
+                  {group.moduleUrl && (
+                    <ExternalLink href={group.moduleUrl}>Visit module page</ExternalLink>
+                  )}
+                </div>
+              )}
+
+              <ul class="flex flex-col gap-3">
+                {group.lessons.map((lesson) => {
+                  const { lessonPath } = getLessonRouteInfoFromId(lesson.id);
+
+                  return (
+                    <li class="hover:bg-foreground/10 rounded-lg p-2 transition-colors">
+                      <a href={`/notes/${entrySlug}/${lessonPath}/`} class="flex flex-col gap-2">
+                        <h4 class="text-headings text-lg font-semibold">{lesson.data.title}</h4>
+                        {lesson.data.description && (
+                          <p class="text-sm">{lesson.data.description}</p>
+                        )}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </section>
+      )
+    }
+  </Container>
+</BaseLayout>

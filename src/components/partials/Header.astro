@@ -24,7 +24,7 @@ const isActivePath =
           <button
             type="button"
             class:list={[
-              'hover:text-headings flex items-center gap-2 px-5 py-2 font-medium transition-colors',
+              'hover:text-headings flex items-center gap-2 py-2 pr-2 pl-5 font-medium transition-colors',
               isActivePath ? 'text-coffee-100 bg-muted-foreground/40 rounded-full' : '',
             ]}
             aria-haspopup="true"
@@ -72,6 +72,7 @@ const isActivePath =
             </div>
           </div>
         </li>
+        <NavLink href="/changelog">Changelog</NavLink>
       </ul>
     </nav>
   </div>

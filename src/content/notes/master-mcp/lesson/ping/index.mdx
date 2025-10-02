@@ -1,0 +1,58 @@
+---
+title: Ping
+course: master-mcp
+module: mcp-fundamentals
+order: 1
+description: Let's learn the basic step in how two computers can comunicate between each other. The old and safe Ping Pong!
+---
+MCP can be build with many languages and for this reason many SDKs are provided. In this course we will focus on the [TypeScript MCP SDK](https://github.com/modelcontextprotocol/typescript-sdk) and in this first lesson we will focus on the implementation of a [Ping](https://modelcontextprotocol.io/specification/2025-06-18/basic/utilities/ping) that is a general way to know from a computer if the other counterpart (our MCP server) is still responsive and able to keep the connection alive.
+
+But even before we are able to send the Ping request, we have to create our own server and in order to create it we have to import `McpServer` from `@modelcontextprotocol/sdk/server/mcp.js` and instantiate it.
+
+```ts
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+
+const server = new McpServer(serverInfo, options?)
+```
+This is not the exact code you'll write, because we don't know (yet) what `serverInfo` and `options` are. But if you'll dig into the TS definitions you'll soon discover that these are two objects that `McpServer` accepts to instantiate your server.
+### `serverInfo`
+It a mandatory object that has the following shape:
+```ts
+type serverInfo = {
+	name: string;
+	title?: string;
+	version: string;
+}
+```
+So `name` and `version` are mandatory while `title` can be specified just for UI purposes.
+### `options`
+While optional, this object allow us to specify important aspects of our server:
+```ts
+type options = {
+	instructions?: string;
+	capabilities?: ServerCapabilities;
+}
+```
+- `instructions` is a simple description about how to use the server and its features
+- `capabilities` instead allow us to list all the capabilities that the server supports (we will dig deeper later)
+
+Now that we know the signature of `McpServer` we're ready to create our server:
+```ts
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+
+const server = new McpServer({
+	name: 'epicme',
+	version: '1.0.0'
+}, {
+	instructions: 'This lets you solve math problems.',
+})
+```
+
+With a server in place, it's time to think about how we will communicate with our clients. MCP servers offers two transport mechanism:
+- **stdio** useful for command line tools and direct integrations (like when you have the server running locally).
+- **Streamable HTTP** for remote servers  able to handle clients request as well as server-to-client notifications.
+
+For now, let's stick with a simple *stdio* since our MCP server will run locally. It all begins importing `StdioServerTransport`. 
+```ts
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+```

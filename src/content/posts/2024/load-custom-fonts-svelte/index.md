@@ -26,7 +26,7 @@ That’s because it’s a **compiled framework**.
 
 I know, I know… You started reading this article because you wanted to know how to load your local fonts in Svelte, and I’ve opened Pandora's box to compare React and Next.js.
 
-So, let’s skip all the drama—I’ll save it for a future article—and explore how to load local fonts in a SvelteKit application.
+So, let’s skip all the drama — I’ll save it for a future article — and explore how to load local fonts in a SvelteKit application.
 
 # How to load your local fonts in SvelteKit
 

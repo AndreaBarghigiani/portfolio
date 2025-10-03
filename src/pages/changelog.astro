@@ -4,12 +4,11 @@ export const prerender = false;
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Author from '@/components/ui/Author.astro';
 import Container from '@/components/Container.astro';
-import CoffeeHeading from '@/components/partials/CoffeeHeading.astro';
-import Drops from '@/components/partials/Drops.astro';
 import ExternalLink from '@/components/ui/ExternalLink.astro';
 import GradientDivider from '@/components/ui/GradientDivider.astro';
 import { formatDate } from '@/lib/utils';
 import { DEFAULT_CONFIGURATION } from '@/lib/constants';
+import type { Seo } from '@/lib/constants';
 
 const owner = 'AndreaBarghigiani';
 const repository = 'portfolio';
@@ -64,9 +63,15 @@ try {
   fetchError = message;
   console.error('[changelog] GitHub fetch failed:', error);
 }
+
+const seo: Seo = {
+  title: 'Changelog',
+  description: 'Latest merged pull requests from GitHub',
+  type: 'website',
+};
 ---
 
-<BaseLayout>
+<BaseLayout {seo}>
   <Container as="section" class="flex flex-col gap-4">
     <header class="flex flex-col gap-3">
       <h1 class="text-headings text-3xl font-semibold">Changelog</h1>

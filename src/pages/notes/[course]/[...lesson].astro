@@ -48,8 +48,8 @@ const courseSlug = courseEntry ? getNotesSlugFromId(courseEntry.id) : '';
 
 const lessonSeo: Seo = {
   title: courseEntry
-    ? `${lesson.data.title} — ${courseEntry.data.title}`
-    : `${lesson.data.title} — Course Notes`,
+    ? `${lesson.data.title} | ${courseEntry.data.title}`
+    : `${lesson.data.title} | Course Notes`,
   description:
     lesson.data.description ??
     (courseEntry ? courseEntry.data.description : DEFAULT_CONFIGURATION.seo.description),

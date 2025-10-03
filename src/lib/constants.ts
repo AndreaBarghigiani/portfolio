@@ -33,13 +33,13 @@ export const DEFAULT_CONFIGURATION: DefaultConfigurationType = {
     pronouns: 'He/Him',
   },
   seo: {
-    title: 'cupofcraft — The lab of Andrea Barghigiani',
+    title: 'cupofcraft | The lab of Andrea Barghigiani',
     description:
       "Virtual space where Andrea shows the projects he's more proud of and writes about his leanings.",
     type: 'website',
     twitter: {
       creator: '@a_barghigiani',
     },
-    robots: 'noindex, nofollow',
+    robots: 'index, follow',
   },
 };

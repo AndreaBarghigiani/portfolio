@@ -3,6 +3,7 @@ import Container from '@/components/Container.astro';
 import Author from '@/components/ui/Author.astro';
 import PostPreview from '@/components/ui/PostPreview.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import GradientDivider from '@/components/ui/GradientDivider.astro';
 import { DEFAULT_CONFIGURATION } from '@/lib/constants';
 import { sortPostsByDate } from '@/lib/utils';
 import { getCollection, getEntry } from 'astro:content';
@@ -18,13 +19,23 @@ const sortedPosts = sortPostsByDate(posts);
 ---
 
 <BaseLayout seo={entry.data.seo}>
-  <Container as="section" class="flex flex-col gap-6 py-6">
+  <Container as="section" class="flex flex-col gap-6">
     {
       sortedPosts.length === 0 ? (
         <p>No posts found</p>
       ) : (
         <>
-          <h3 class="text-headings text-xl font-semibold">Latest posts</h3>
+          <header class="flex flex-col gap-3">
+            <h1 class="text-headings text-3xl font-semibold">Latest posts</h1>
+            <p class="text-foreground">
+              Writing about my experiences and thoughts. This is the part of my portfolio where you
+              find more structured content, crafted to share my experiences with the focus of
+              helping you learning something new.
+            </p>
+          </header>
+
+          <GradientDivider />
+
           <ul class="flex flex-col gap-3">
             {sortedPosts.map((post) => (
               <PostPreview entry={post} />
@@ -33,9 +44,9 @@ const sortedPosts = sortPostsByDate(posts);
         </>
       )
     }
+
+    <GradientDivider />
+
+    <Author {...DEFAULT_CONFIGURATION.author} />
   </Container>
 </BaseLayout>
-
-<Container as="section" class="py-6">
-  <Author {...DEFAULT_CONFIGURATION.author} />
-</Container>

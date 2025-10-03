@@ -2,12 +2,14 @@
 export const prerender = false;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Author from '@/components/ui/Author.astro';
 import Container from '@/components/Container.astro';
 import CoffeeHeading from '@/components/partials/CoffeeHeading.astro';
 import Drops from '@/components/partials/Drops.astro';
 import ExternalLink from '@/components/ui/ExternalLink.astro';
 import GradientDivider from '@/components/ui/GradientDivider.astro';
 import { formatDate } from '@/lib/utils';
+import { DEFAULT_CONFIGURATION } from '@/lib/constants';
 
 const owner = 'AndreaBarghigiani';
 const repository = 'portfolio';
@@ -65,23 +67,22 @@ try {
 ---
 
 <BaseLayout>
-  <Drops />
-
   <Container as="section" class="flex flex-col gap-4">
-    <CoffeeHeading icon="drop-2">Changelog</CoffeeHeading>
-
-    <p class="text-muted-foreground text-sm md:text-base">
-      Latest merged pull requests from
-      <a
-        class="text-headings font-medium underline-offset-4 hover:underline"
-        href={`https://github.com/${owner}/${repository}`}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        {owner}/{repository}
-      </a>
-      .
-    </p>
+    <header class="flex flex-col gap-3">
+      <h1 class="text-headings text-3xl font-semibold">Changelog</h1>
+      <p class="text-foreground">
+        Latest merged pull requests from
+        <a
+          class="text-headings font-medium underline-offset-4 hover:underline"
+          href={`https://github.com/${owner}/${repository}`}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {owner}/{repository}
+        </a>
+        .
+      </p>
+    </header>
 
     {
       !token && (
@@ -130,5 +131,9 @@ try {
         </ul>
       )
     }
+
+    <GradientDivider />
+
+    <Author {...DEFAULT_CONFIGURATION.author} />
   </Container>
 </BaseLayout>

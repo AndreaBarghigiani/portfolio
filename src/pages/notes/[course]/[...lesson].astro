@@ -20,8 +20,12 @@ export async function getStaticPaths() {
     const courseEntry =
       courses.find((course) => getNotesSlugFromId(course.id) === courseSlug) ?? null;
     const moduleId =
-      typeof lesson.data.module === 'string' ? lesson.data.module : lesson.data.module?.id ?? null;
-    const moduleEntry = moduleId ? modules.find((module) => module.id === moduleId) ?? null : null;
+      typeof lesson.data.module === 'string'
+        ? lesson.data.module
+        : (lesson.data.module?.id ?? null);
+    const moduleEntry = moduleId
+      ? (modules.find((module) => module.id === moduleId) ?? null)
+      : null;
 
     return {
       params: {
@@ -55,7 +59,7 @@ const courseHref = courseSlug ? `/notes/${courseSlug}/` : '/notes';
 ---
 
 <BaseLayout seo={lessonSeo}>
-  <Container as="section" class="flex flex-col gap-6 py-6">
+  <Container as="section" class="flex flex-col gap-6">
     <div class="flex flex-col gap-3">
       <a
         href={courseHref}
@@ -73,22 +77,22 @@ const courseHref = courseSlug ? `/notes/${courseSlug}/` : '/notes';
           <h1 class="text-headings text-3xl font-semibold">{lesson.data.title}</h1>
         </div>
 
-        {moduleEntry && (
-          <div class="flex flex-col gap-1 text-sm">
-            <span class="text-muted-foreground tracking-widest uppercase">
-              Module
-            </span>
-            <span class="text-headings font-semibold">{moduleEntry.data.title}</span>
+        {
+          moduleEntry && (
+            <div class="flex flex-col gap-1 text-sm">
+              <span class="text-muted-foreground tracking-widest uppercase">Module</span>
+              <span class="text-headings font-semibold">{moduleEntry.data.title}</span>
 
-            {moduleEntry.data.description && (
-              <p class="text-muted-foreground text-xs">{moduleEntry.data.description}</p>
-            )}
+              {moduleEntry.data.description && (
+                <p class="text-muted-foreground text-xs">{moduleEntry.data.description}</p>
+              )}
 
-            {moduleEntry.data.url && (
-              <ExternalLink href={moduleEntry.data.url}>Visit module page</ExternalLink>
-            )}
-          </div>
-        )}
+              {moduleEntry.data.url && (
+                <ExternalLink href={moduleEntry.data.url}>Visit module page</ExternalLink>
+              )}
+            </div>
+          )
+        }
       </header>
     </div>
 

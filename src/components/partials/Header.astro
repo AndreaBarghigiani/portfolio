@@ -12,7 +12,7 @@ const isActivePath =
 
 <Container
   as="header"
-  class="navbar fixed flex w-full max-w-full items-center justify-center gap-8 py-5 transition-all duration-200"
+  class="bg-background shadow-coffee-2xl fixed z-50 flex w-full max-w-full items-center justify-center gap-8 py-5 transition-all duration-200"
 >
   <Avatar class="border-border border" />
 
@@ -20,6 +20,7 @@ const isActivePath =
     <nav class="flex items-center">
       <ul class="flex items-center gap-1">
         <NavLink href="/">Home</NavLink>
+
         <li class="group relative">
           <button
             type="button"
@@ -72,6 +73,7 @@ const isActivePath =
             </div>
           </div>
         </li>
+
         <NavLink href="/changelog">Changelog</NavLink>
       </ul>
     </nav>
@@ -79,21 +81,3 @@ const isActivePath =
 
   <ThemeToggle />
 </Container>
-
-<script>
-  const handleScroll = () => {
-    const navbar = document.querySelector<HTMLElement>('.navbar');
-
-    if (!navbar) return;
-
-    if (window.scrollY > 0) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
-  };
-
-  if (typeof window !== 'undefined') {
-    window.addEventListener('scroll', handleScroll);
-  }
-</script>

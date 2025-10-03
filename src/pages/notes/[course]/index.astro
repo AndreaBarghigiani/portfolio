@@ -52,8 +52,8 @@ const groupedLessons = lessons
     const moduleId =
       typeof lesson.data.module === 'string'
         ? lesson.data.module
-        : lesson.data.module?.id ?? null;
-    const moduleEntry = moduleId ? moduleLookup.get(moduleId) ?? null : null;
+        : (lesson.data.module?.id ?? null);
+    const moduleEntry = moduleId ? (moduleLookup.get(moduleId) ?? null) : null;
     const moduleName = moduleEntry?.data.title ?? 'Standalone lessons';
     const moduleOrder =
       moduleEntry?.data.order ?? lesson.data.moduleOrder ?? Number.MAX_SAFE_INTEGER;
@@ -106,7 +106,7 @@ const groupedLessons = lessons
 ---
 
 <BaseLayout seo={courseSeo}>
-  <Container as="section" class="flex flex-col gap-6 py-6">
+  <Container as="section" class="flex flex-col gap-6">
     <a
       href="/notes"
       class="text-muted-foreground hover:text-foreground flex w-max items-center gap-2 text-sm transition"

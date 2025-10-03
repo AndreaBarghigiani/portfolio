@@ -9,107 +9,106 @@
 
 /* Coffee-inspired color palette */
 :root {
-  /* Coffee color palette */
-  --color-coffee-50: oklch(0.977 0.007 80.7);
-  --color-coffee-75: oklch(0.965 0.01 78.1);
-  --color-coffee-100: oklch(0.952 0.012 75.4);
-  --color-coffee-150: oklch(0.926 0.019 75.4);
-  --color-coffee-200: oklch(0.9 0.025 75.3);
-  --color-coffee-250: oklch(0.867 0.035 75.8);
-  --color-coffee-300: oklch(0.833 0.044 76.3);
-  --color-coffee-350: oklch(0.791 0.057 76.2);
-  --color-coffee-400: oklch(0.748 0.069 76.1);
-  --color-coffee-450: oklch(0.715 0.077 72.4);
-  --color-coffee-500: oklch(0.681 0.084 68.6);
-  --color-coffee-550: oklch(0.645 0.084 63.5);
-  --color-coffee-600: oklch(0.608 0.083 58.3);
-  --color-coffee-650: oklch(0.566 0.078 53.9);
-  --color-coffee-700: oklch(0.523 0.073 49.5);
-  --color-coffee-750: oklch(0.487 0.066 47.8);
-  --color-coffee-800: oklch(0.451 0.059 46.1);
-  --color-coffee-850: oklch(0.423 0.054 46);
-  --color-coffee-900: oklch(0.394 0.048 45.9);
-  --color-coffee-925: oklch(0.328 0.039 48.2);
-  --color-coffee-950: oklch(0.261 0.03 50.4);
+    /* Coffee color palette */
+    --color-coffee-50: oklch(0.977 0.007 80.7);
+    --color-coffee-75: oklch(0.965 0.01 78.1);
+    --color-coffee-100: oklch(0.952 0.012 75.4);
+    --color-coffee-150: oklch(0.926 0.019 75.4);
+    --color-coffee-200: oklch(0.9 0.025 75.3);
+    --color-coffee-250: oklch(0.867 0.035 75.8);
+    --color-coffee-300: oklch(0.833 0.044 76.3);
+    --color-coffee-350: oklch(0.791 0.057 76.2);
+    --color-coffee-400: oklch(0.748 0.069 76.1);
+    --color-coffee-450: oklch(0.715 0.077 72.4);
+    --color-coffee-500: oklch(0.681 0.084 68.6);
+    --color-coffee-550: oklch(0.645 0.084 63.5);
+    --color-coffee-600: oklch(0.608 0.083 58.3);
+    --color-coffee-650: oklch(0.566 0.078 53.9);
+    --color-coffee-700: oklch(0.523 0.073 49.5);
+    --color-coffee-750: oklch(0.487 0.066 47.8);
+    --color-coffee-800: oklch(0.451 0.059 46.1);
+    --color-coffee-850: oklch(0.423 0.054 46);
+    --color-coffee-900: oklch(0.394 0.048 45.9);
+    --color-coffee-925: oklch(0.328 0.039 48.2);
+    --color-coffee-950: oklch(0.261 0.03 50.4);
 }
 
 /* Dark theme - activated when .dark class is present */
 :root.dark {
-  --color-background: var(--color-coffee-950);
-  --color-foreground: var(--color-coffee-250);
-  --color-headings: var(--color-coffee-500);
-  --color-muted: var(--color-coffee-400);
-  --color-muted-foreground: var(--color-coffee-600);
-  --color-border: var(--color-coffee-200);
+    --color-background: var(--color-coffee-950);
+    --color-foreground: var(--color-coffee-250);
+    --color-headings: var(--color-coffee-500);
+    --color-muted: var(--color-coffee-400);
+    --color-muted-foreground: var(--color-coffee-600);
+    --color-border: var(--color-coffee-200);
 }
 
 /* Light theme */
 :root {
-  --color-background: var(--color-coffee-50);
-  --color-foreground: var(--color-coffee-700);
-  --color-headings: var(--color-coffee-900);
-  --color-muted: var(--color-coffee-600);
-  --color-muted-foreground: var(--color-coffee-500);
-  --color-border: var(--color-coffee-200);
+    --color-background: var(--color-coffee-50);
+    --color-foreground: var(--color-coffee-700);
+    --color-headings: var(--color-coffee-900);
+    --color-muted: var(--color-coffee-600);
+    --color-muted-foreground: var(--color-coffee-500);
+    --color-border: var(--color-coffee-200);
 }
 
 /* Theme configuration for Tailwind CSS v4 */
 @theme {
-  --font-sans: 'Figtree Variable', sans-serif;
-  --color-background: var(--color-background);
-  --color-foreground: var(--color-foreground);
-  --color-headings: var(--color-headings);
-  --color-muted: var(--color-muted);
-  --color-muted-foreground: var(--color-muted-foreground);
-  --color-border: var(--color-border);
+    --font-sans: 'Figtree Variable', sans-serif;
+    --color-background: var(--color-background);
+    --color-foreground: var(--color-foreground);
+    --color-headings: var(--color-headings);
+    --color-muted: var(--color-muted);
+    --color-muted-foreground: var(--color-muted-foreground);
+    --color-border: var(--color-border);
 
-  --color-coffee-50: var(--color-coffee-50);
-  --color-coffee-100: var(--color-coffee-100);
-  --color-coffee-200: var(--color-coffee-200);
-  --color-coffee-300: var(--color-coffee-300);
-  --color-coffee-400: var(--color-coffee-400);
-  --color-coffee-500: var(--color-coffee-500);
-  --color-coffee-600: var(--color-coffee-600);
-  --color-coffee-700: var(--color-coffee-700);
-  --color-coffee-800: var(--color-coffee-800);
-  --color-coffee-900: var(--color-coffee-900);
-  --color-coffee-950: var(--color-coffee-950);
+    --color-coffee-50: var(--color-coffee-50);
+    --color-coffee-100: var(--color-coffee-100);
+    --color-coffee-200: var(--color-coffee-200);
+    --color-coffee-300: var(--color-coffee-300);
+    --color-coffee-400: var(--color-coffee-400);
+    --color-coffee-500: var(--color-coffee-500);
+    --color-coffee-600: var(--color-coffee-600);
+    --color-coffee-700: var(--color-coffee-700);
+    --color-coffee-800: var(--color-coffee-800);
+    --color-coffee-900: var(--color-coffee-900);
+    --color-coffee-950: var(--color-coffee-950);
+
+    --shadow-coffee-xl: 0 10px 10px var(--color-coffee-950);
+    --shadow-coffee-2xl: 0 20px 20px var(--color-coffee-950);
+    --shadow-coffee-3xl: 0 35px 35px var(--color-coffee-950);
 }
 
 /* Prose Coffee */
 @utility prose-coffee {
-  /* Light scheme variables on the container */
-  --tw-prose-body: var(--color-coffee-700);
-  --tw-prose-headings: var(--color-coffee-900);
-  --tw-prose-bold: var(--color-coffee-800);
-  --tw-prose-bullets: var(--color-coffee-600);
-  --tw-prose-links: var(--color-coffee-700);
-  --tw-prose-quotes: var(--color-coffee-700);
-  --tw-prose-quote-borders: var(--color-coffee-300);
-  --tw-prose-captions: var(--color-coffee-600);
-  --tw-prose-code: var(--color-coffee-800);
-  --tw-prose-pre-code: var(--color-coffee-50);
-  --tw-prose-pre-bg: var(--color-coffee-900);
-  --tw-prose-th-borders: var(--color-coffee-300);
-  --tw-prose-td-borders: var(--color-coffee-300);
+    /* Light scheme variables on the container */
+    --tw-prose-body: var(--color-coffee-700);
+    --tw-prose-headings: var(--color-coffee-900);
+    --tw-prose-bold: var(--color-coffee-800);
+    --tw-prose-bullets: var(--color-coffee-600);
+    --tw-prose-links: var(--color-coffee-700);
+    --tw-prose-quotes: var(--color-coffee-700);
+    --tw-prose-quote-borders: var(--color-coffee-300);
+    --tw-prose-captions: var(--color-coffee-600);
+    --tw-prose-code: var(--color-coffee-800);
+    --tw-prose-pre-code: var(--color-coffee-50);
+    --tw-prose-pre-bg: var(--color-coffee-900);
+    --tw-prose-th-borders: var(--color-coffee-300);
+    --tw-prose-td-borders: var(--color-coffee-300);
 
-  /* Inverted variables read when `prose-invert` is present */
-  --tw-prose-invert-body: var(--color-coffee-200);
-  --tw-prose-invert-headings: var(--color-coffee-500);
-  --tw-prose-invert-bold: var(--color-coffee-400);
-  --tw-prose-invert-bullets: var(--color-coffee-400);
-  --tw-prose-invert-links: var(--color-coffee-450);
-  --tw-prose-invert-quotes: var(--color-coffee-300);
-  --tw-prose-invert-quote-borders: var(--color-coffee-900);
-  --tw-prose-invert-captions: var(--color-coffee-400);
-  --tw-prose-invert-code: var(--color-coffee-200);
-  --tw-prose-invert-pre-code: var(--color-coffee-900);
-  --tw-prose-invert-pre-bg: var(--color-coffee-200);
-  --tw-prose-invert-th-borders: var(--color-coffee-700);
-  --tw-prose-invert-td-borders: var(--color-coffee-700);
-}
-
-.navbar.scrolled {
-  @apply from-background to-background/50 bg-gradient-to-b backdrop-blur-md;
-  mask-image: linear-gradient(to bottom, black 85%, transparent);
+    /* Inverted variables read when `prose-invert` is present */
+    --tw-prose-invert-body: var(--color-coffee-200);
+    --tw-prose-invert-headings: var(--color-coffee-500);
+    --tw-prose-invert-bold: var(--color-coffee-400);
+    --tw-prose-invert-bullets: var(--color-coffee-400);
+    --tw-prose-invert-links: var(--color-coffee-450);
+    --tw-prose-invert-quotes: var(--color-coffee-300);
+    --tw-prose-invert-quote-borders: var(--color-coffee-900);
+    --tw-prose-invert-captions: var(--color-coffee-400);
+    --tw-prose-invert-code: var(--color-coffee-200);
+    --tw-prose-invert-pre-code: var(--color-coffee-900);
+    --tw-prose-invert-pre-bg: var(--color-coffee-200);
+    --tw-prose-invert-th-borders: var(--color-coffee-700);
+    --tw-prose-invert-td-borders: var(--color-coffee-700);
 }

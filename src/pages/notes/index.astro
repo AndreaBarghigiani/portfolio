@@ -4,6 +4,8 @@ import GradientDivider from '@/components/ui/GradientDivider.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import CoursePreview from '@/components/ui/CoursePreview.astro';
 import { getCollection, getEntry } from 'astro:content';
+import Author from '@/components/ui/Author.astro';
+import { DEFAULT_CONFIGURATION } from '@/lib/constants';
 
 const entry = await getEntry('pages', 'notes');
 
@@ -15,7 +17,7 @@ const courses = await getCollection('notes');
 ---
 
 <BaseLayout seo={entry.data.seo}>
-  <Container as="section" class="flex flex-col gap-8 py-6">
+  <Container as="section" class="flex flex-col gap-8">
     <header class="flex flex-col gap-3">
       <h1 class="text-headings text-3xl font-semibold">{entry.data.title}</h1>
       <p class="text-foreground">
@@ -36,5 +38,9 @@ const courses = await getCollection('notes');
         </ul>
       )
     }
+
+    <GradientDivider />
+
+    <Author {...DEFAULT_CONFIGURATION.author} />
   </Container>
 </BaseLayout>

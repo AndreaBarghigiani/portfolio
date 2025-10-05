@@ -1,0 +1,144 @@
+---
+export const prerender = false;
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Author from '@/components/ui/Author.astro';
+import Container from '@/components/Container.astro';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
+import GradientDivider from '@/components/ui/GradientDivider.astro';
+import { formatDate } from '@/lib/utils';
+import { DEFAULT_CONFIGURATION } from '@/lib/constants';
+import type { Seo } from '@/lib/constants';
+
+const owner = 'AndreaBarghigiani';
+const repository = 'portfolio';
+const token = import.meta.env.GITHUB_TOKEN;
+const perPage = 50;
+
+const apiUrl = new URL(`https://api.github.com/repos/${owner}/${repository}/pulls`);
+apiUrl.searchParams.set('state', 'closed');
+apiUrl.searchParams.set('sort', 'updated');
+apiUrl.searchParams.set('direction', 'desc');
+apiUrl.searchParams.set('per_page', String(perPage));
+
+const headers: Record<string, string> = {
+  Accept: 'application/vnd.github+json',
+  'X-GitHub-Api-Version': '2022-11-28',
+};
+
+if (token) {
+  headers.Authorization = `Bearer ${token}`;
+}
+
+type PullRequest = {
+  id: number;
+  number: number;
+  title: string;
+  body?: string;
+  html_url: string;
+  merged_at: string | null;
+  merged_by: { login: string } | null;
+  user: { login: string };
+  labels: Array<{ id: number; name: string; color: string }>;
+};
+
+let mergedPullRequests: PullRequest[] = [];
+let fetchError: string | null = null;
+
+try {
+  const response = await fetch(apiUrl, {
+    headers,
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch pull requests from GitHub (status ${response.status})`);
+  }
+
+  const pullRequests = (await response.json()) as PullRequest[];
+  mergedPullRequests = pullRequests.filter((pr) => pr.merged_at);
+} catch (error) {
+  const message =
+    error instanceof Error ? error.message : 'Unexpected error while fetching pull requests';
+  fetchError = message;
+  console.error('[changelog] GitHub fetch failed:', error);
+}
+
+const seo: Seo = {
+  title: 'Changelog',
+  description: 'Latest merged pull requests from GitHub',
+  type: 'website',
+};
+---
+
+<BaseLayout {seo}>
+  <Container as="section" class="flex flex-col gap-4">
+    <header class="flex flex-col gap-3">
+      <h1 class="text-headings text-3xl font-semibold">Changelog</h1>
+      <p class="text-foreground">
+        Latest merged pull requests from
+        <a
+          class="text-headings font-medium underline-offset-4 hover:underline"
+          href={`https://github.com/${owner}/${repository}`}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {owner}/{repository}
+        </a>
+        .
+      </p>
+    </header>
+
+    {
+      !token && (
+        <div class="bg-muted-foreground/20 border-border text-muted-foreground rounded-lg border px-4 py-3 text-xs">
+          Unauthenticated GitHub requests are limited to 60 per hour. Add a{' '}
+          <code>GITHUB_TOKEN</code> environment variable for higher limits.
+        </div>
+      )
+    }
+
+    {
+      fetchError && (
+        <div class="bg-destructive/10 border-destructive text-destructive rounded-lg border px-4 py-3 text-xs">
+          {fetchError}
+        </div>
+      )
+    }
+
+    <GradientDivider />
+
+    {
+      mergedPullRequests.length === 0 ? (
+        <p class="text-muted-foreground text-sm">No merged pull requests found.</p>
+      ) : (
+        <ul class="my-3 flex flex-col gap-3">
+          {mergedPullRequests.map((pr) => (
+            <li>
+              <div class="flex gap-5">
+                <div class="relative min-w-22 shrink-0">
+                  <span class="text-muted-foreground text-sm">
+                    {formatDate(new Date(pr.merged_at!))}
+                  </span>
+                </div>
+
+                <section class="flex flex-col gap-1">
+                  <heading class="flex gap-2">
+                    <h4 class="text-headings font-medium">{pr.title}</h4>
+                    <ExternalLink href={pr.html_url}>#{pr.number}</ExternalLink>
+                  </heading>
+
+                  {pr?.body ? <p class="text-foreground text-xs font-light">{pr.body}</p> : null}
+                </section>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <GradientDivider />
+
+    <Author {...DEFAULT_CONFIGURATION.author} />
+  </Container>
+</BaseLayout>

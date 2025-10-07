@@ -1,0 +1,147 @@
+---
+title: Tools
+course: master-mcp
+module: mcp-fundamentals
+order: 2
+description: Time to create our first tools, the server-defined functions that can be invoked by clients to perform specific actions.
+---
+## Intro
+Tools are meant to be *"model-controlled"*, so it's going to be the model to decide the best tool that can solve the user request.
+
+Each tool that we create must have an unique `name` and a `description`, on top of that we need to define the expected input parameters using a JSON Schema (but with the TS SDK we can leverage Zod directly).
+### Define a simple tool
+The first thing we must do to allow our MCP Server the use of tools is to add them to the `capabilities` of our server:
+```ts
+const server = new McpServer(
+	{ name: 'hello-world-server', version: '1.0.0' },
+	{
+		capabilities: {
+			tools: {},
+		},
+		instructions: 'A simple hello world server.',
+	},
+)
+```
+The TS SDK implements the entire tool implementation [described in the documentation](https://modelcontextprotocol.io/docs/learn/server-concepts#how-tools-work), and even if it does it with a slightly different syntax, it allow us to send all the required and optional configuration to register a tool.
+
+Because of the little difference we will find around the [tool definition we have in the MCP site](https://modelcontextprotocol.io/specification/2025-06-18/server/tools#tool), I decided to collect here the TS schema for `registerTool`:
+```ts
+registerTool<InputArgs extends ZodRawShape, OutputArgs extends ZodRawShape>(
+	name: string,
+	config: {
+		title?: string;
+		description?: string;
+		inputSchema?: InputArgs;
+		outputSchema?: OutputArgs;
+		annotations?: ToolAnnotations;
+	},
+	cb: ToolCallback<InputArgs>
+): RegisteredTool
+```
+
+Now we can register our new tool thanks to the `registerTool` method that we can access from the `server` instance thanks to the TS SDK.
+```ts
+// register a tool with the server
+server.registerTool(
+	// llm-facing name
+	'hello',
+	{
+		// user-facing title
+		title: 'Hello',
+		// llm-facing description (clients could also display this to the user)
+		description: 'Say hello',
+		// add a schema to validate the input
+		inputSchema: {
+			// description is llm-facing, (the user may see it as well)
+			name: z.string().describe('The name to say hello to'),
+		},
+	},
+	// callback able to produce the response from our tool
+	async ({ name }) => {
+		return {
+			content: [{ type: 'text', text: `Hello, ${name}!` }],
+		}
+	},
+)
+```
+> If not clear, the `describe` for each input it's a way to instruct our LLM about the input we want to process.
+
+Now that we have registered our first tool, the server is able to call [two specific method via the JSON-RPC 2.0 message system](https://modelcontextprotocol.io/specification/2025-06-18/server/tools#protocol-messages):
+- `tools/list` that lists all the tools available from the server
+- `tools/call` the actual invocation of the tool to get the response the user is looking for
+
+## Step 1: Simple Tool
+To solve the first step in this lesson, we didn't have to do much from what we already treated. Actually to solve the request of the lesson we even had to do less 😅
+
+Because this is truly a simple tool, we're not even able to accept an input and the response is entirely hardcoded. So I'll just add the solution for the records:
+```ts 
+server.registerTool(
+	'add',
+	{
+		title: 'Add',
+		description: 'Adds one and two',
+	},
+	() => ({ content: [{ type: 'text', text: 'The sum of 1 and 2 is 3.' }] }),
+)
+```
+## Step 2: Arguments
+This time we have to do something more exciting, give the ability to the user (better yet the model), to specify two arguments so it can run the calculation of any number and not just 1 and 2.
+```ts
+server.registerTool(
+	'add',
+	{
+		title: 'Add',
+		description: 'Add two numbers',
+		inputSchema: {
+			firstNumber: z.number().describe('The first number to add'),
+			secondNumber: z.number().describe('The second number to add'),
+		},
+	},
+	async ({ firstNumber, secondNumber }) => {
+		return {
+			content: [
+				{
+					type: 'text',
+					text: `The sum of ${firstNumber} and ${secondNumber} is ${firstNumber + secondNumber}.`,
+				},
+			],
+		}
+	},
+)
+```
+Here's the first time we properly introduce Zod to help us build the JSON Schema that will describe the inputs. Kent talks about the fact that we cannot use all the schemas that Zod offers us, but fortunately this library [released a new method `toJSONSchema`](https://zod.dev/json-schema) (that probably will be implemented right inside the MCP SDK) able to transform every schema into a proper JSON Schema.
+
+The TLDR; about all this is that if you're not sure that the schema you're about to write is going to be properly converted to the JSON schema our server understands, it is better to keep the schema simple and run some validation inside the callback.
+
+On top of that, since Zod released the new method, you can also read the previous linked documentation to discover which schemas are unrepresentable or not.
+## Step 3: Error Handling
+As stated above, it is preferable to handle errors right inside the callback. In this excercise we wanted to check if the second number is negative and all we have to do is to `throw` an error in case it happen.
+
+Throwing an error inside the callback, allow the SDK to produce a JSON Schema response that has `isError: true` so even the LLM can behave differently.
+
+The code is more or less the same, so let's focus on the check inside the callback:
+```ts
+({ firstNumber, secondNumber }) => {
+  if (secondNumber < 0) throw new Error('Second number cannot be negative')
+
+  // Same return as previous exercise
+}
+```
+But in case you want to have full control over the content you're sending in case of an error, nothing stops you in returning the entire response:
+```ts
+({ firstNumber, secondNumber }) => {
+  if (secondNumber < 0) {
+    return {
+      content: [
+        {
+          type: 'text',
+          text: 'Second number cannot be negative',
+        }
+      ],
+      isError: true
+    }
+  }
+
+  // Same return as previous exercise
+}
+```

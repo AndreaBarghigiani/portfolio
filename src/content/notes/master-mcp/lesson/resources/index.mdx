@@ -1,0 +1,280 @@
+---
+title: Resources
+course: master-mcp
+module: mcp-fundamentals
+order: 3
+description: Let's learn how to tell our applications which resources are available and that can be passed to our LLM.
+---
+## Intro
+The resources are designed to be **application-driven** and they're the ones that include the resource and provide it to the LLM. 
+
+These resources can be any type of data we want to add to the context of our LLM. They can be static (a file in our system), or dynamic (something you fetch from your database based on an `id` or other filters).
+
+As for the tools, the MDP SDK provide us a nice and easy way to register a new resource. You guess it, it's called `registerResource`!
+
+Once you instantiate your server, all you have to do is to register the resource:
+```ts
+server.registerResource(
+	'hello',
+	'hello://world',
+	{
+		title: 'Hello',
+		description: 'A simple hello world resource',
+	},
+	async (uri) => {
+		return {
+			contents: [
+				{
+					mimeType: 'text/plain',
+					text: 'Hello, world!',
+					uri: uri.toString(),
+				},
+			],
+		}
+	},
+)
+
+```
+As I did for the tools previously, since the syntax changes a bit thanks to our TS SDK, this is the schema that we need to follow when we want to create a new resource.
+```ts
+registerResource(
+	name: string, 
+	uriOrTemplate: string, 
+	config: {
+		name: string,
+		description?: string,
+		mimeType?: string,
+	}, 
+	readCallback: ReadResourceCallback
+): RegisteredResource;
+```
+Now that we have registered our first resource, the server is able to call [few specific method via the JSON-RPC 2.0 message system](https://modelcontextprotocol.io/specification/2025-06-18/server/resources#protocol-messages):
+- `resources/list` that discover all the resources available from the server
+- `resources/read` the message able to retrieve the content of the resource
+- `resources/templates/list` the templates allow the server to expose parameterized resources via [URI templates](https://datatracker.ietf.org/doc/html/rfc6570)
+- `resources/subscribe` ability to subscribe to resource changes
+## Step 1: Resources
+In this new excercise we changed things a little bit. To better organize our code, instead of having our code spread all over the file, we will structure our code into a `class` to get closer to the syntax proposed by Cloudflare (that we will be using later in the course). 
+
+> Hidden benefit of `class` in TypeScript: you can tell to `import type YourClass` and TS will be able to infer all the types used in it 🎉
+
+I've introduced the `class` approach because inside our `index.ts` file for the MCP server we're building the syntax has changed a bit, but for the good if you're going to ask me.
+
+Even though we could've got a similar result with a functional approach, the class allow us (for example) to encapsulate the server for the entire instance so we do not have to worry about how they get's passed around as it could happen in a functional approach.
+
+Let's see how Kent has setup the project:
+```ts
+export class EpicMeMCP {
+	db: DB
+	server = new McpServer(
+		{
+			name: 'epicme',
+			title: 'EpicMe',
+			version: '1.0.0',
+		},
+		{
+			capabilities: {
+				tools: {},
+				resources: {},
+			},
+			instructions: `list of instructions`.trim(),
+		},
+	)
+
+	constructor(path: string) {
+		this.db = DB.getInstance(path)
+	}
+	
+	async init() {
+		await initializeTools(this)
+		await initializeResources(this)
+	}
+}
+```
+Thanks to the `db` field we have a single public instance of our server, obtained via `DB.getInstance(path)` from constructor, that we can reach for everywhere in our object thanks via `this.db`. This acts also as a singleton and makes sure that every methods that needs to access our database will do by the same connection.
+
+The `server` declaration, stored in the class field, is the same as the previous excercise. We just explicitly told that beside `tools` we also want to use `resources`, even though we're not forced to do so.
+
+With `init` we call external functions able to leverage the current `this` instance of the object and, as the name suggest, initialize tools and resources for it.
+
+But, obviously, this is just a `class` definition, our script doesn't run the code. To do so we need to create a `main` function and call it at the end of our file.
+```ts
+async function main() {
+	const agent = new EpicMeMCP(process.env.EPIC_ME_DB_PATH ?? './db.sqlite')
+	await agent.init()
+	const transport = new StdioServerTransport()
+	await agent.server.connect(transport)
+	console.error('EpicMe MCP Server running on stdio')
+}
+```
+the code is more or less the same as we did in the `main` of the previous excercise, we're just a bit more explicit since we directly call the `init` method of the instanced and leverage the `agent` that also holds the `server`.
+
+Now that we cleared things up, it's time to build our first resource inside `initializeResources`.
+
+Following Kody's suggestion, this is what we're supposed to write:
+```ts
+export async function initializeResources(agent: EpicMeMCP) {
+	agent.server.registerResource(
+		'tags',
+		'epicme://tags',
+		{
+			title: 'Tags in database',
+			description: 'All the tags present in the database',
+		},
+		async (uri) => {
+			const tags = await agent.db.getTags()
+			return {
+				contents: [
+					{
+						mimeType: 'application/json',
+						text: JSON.stringify(tags),
+						uri: uri.toString(),
+					},
+				],
+			}
+		},
+	)
+}
+```
+`getTags` is a function that request all the tags from our database, but since its response is an array of objects, we have to `JSON.stringify` to pass them to the LLM.
+
+We will get back to this later, but if you cannot wait to wire up your new MCP with a client you can check this article of Kent where he shares all the information needed to connect your MCP with any agent. And let me tell you, it's a powerful feeling when you chat with your own MCP server with the tool you use everyday 💪
+## Step 2: Resource Templates
+A resource template allow us to specify the resource we want to take into consideration by our LLM. That's because until now we just list all the resources available, but we need a way to allow our clients to ask for a specific resource that can work on it.
+
+So instead of having an URI like `epicme://tags` we will be able to query to specific ones, for example, by specifying the `id` of the resource `epicme://tags/{id}`.
+
+In this case we need to leverage a new function that allow use to create a URI Template, this was something we had an hint previously when we inspected the type of `registerResource` since it accepted an `uriOrTemplate` field...
+
+As the attribute, and lesson, name suggest it's time to create our first `ResourceTemplate`.
+
+```ts
+import { ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js'
+```
+The same SDK provides us this utility and we can leverage it right from our resource registration like so:
+```ts
+agent.server.registerResource(
+	'hello',
+	new ResourceTemplate('epicme://tags/{name}', {
+		list: undefined,
+	}),
+	// Other code required to properly config the resource
+)
+```
+`list` is a config option that's not commonly used, but we will get back to it in the course. For now, since it is required, let's set it to `undefined`.
+
+Our resource registration is not yet completed, we still need to provide a `title` and `description`, but also the most important part that will allow us to tell the server how to get the informations we're looking for.
+
+In this exercise we want to get a specific `tag` or `entry` from our database based on the provided `id`. While this is something that we can easily, Kent simplyfied our job providing us the `getTag(id)` and `getEntry(id)` methods from the db instance stored in `agent.db` (if you set the name storing the instance as `agent`).
+
+So completing the excercise was pretty simple in the end. Here's the complete code to get a specific tag:
+```ts
+agent.server.registerResource(
+  'tag',
+  new ResourceTemplate('epicme://tags/{id}', {
+    list: undefined,
+  }),
+  {
+    title: 'Tags',
+    description: 'A single tag in our database',
+  },
+  async (uri, { id }) => {
+    invariant(Boolean(id), 'id must be defined')
+    const numId = Number(id)
+    const tag = await agent.db.getTag(numId)
+    return {
+      contents: [
+        {
+          mimeType: 'application/json',
+          text: JSON.stringify(tag),
+          uri: uri.toString(),
+        },
+      ],
+    }
+  },
+)
+```
+And this one is for the entry:
+```ts
+agent.server.registerResource(
+  'entry',
+  new ResourceTemplate('epicme://entries/{id}', {
+    list: undefined,
+  }),
+  {
+    title: 'Entries',
+    description: 'A single entry in our database',
+  },
+  async (uri, { id }) => {
+    invariant(Boolean(id), 'id must be defined')
+    const numId = Number(id)
+    const entry = await agent.db.getEntry(numId)
+    return {
+      contents: [
+        {
+          mimeType: 'application/json',
+          text: JSON.stringify(entry),
+          uri: uri.toString(),
+        },
+      ],
+    }
+  },
+)
+```
+In both cases I had to convert the `id` from a `string` into a `number`, because that was the type the method was looking for. But besides that, I believe the code is pretty straightforward.
+## Step 3: Resource Templates List
+Honest speak, I am not sure why this feature has even been implemented...
+
+In this lesson Kent show us how to leverage the `list` argument in the configuration object for `ResourceTemplate`.
+
+Basically speaking, the `list` allow as to list all the resources right under the *List Resources* column inside our MCP Inspector (I've tested it in the Raycast implementation of this server but wasn't able to list them as proposed).
+
+So in the end the excercise was quite simple, all you have to do is to create an `async` function that leverages `agent.db.getTags()` (the same method we use to list the tags) to generate an object of all the possible tag that the LLM can request.
+
+The single advantage I see here is that you can directly interact with the tag via the inspector by clicking directly on the resource, as it knows how to call the proper URI to get the specific information. But besides this honestly I do not see any advantage... Maybe I just miss the point.
+```ts
+agent.server.registerResource(
+  'tag',
+  new ResourceTemplate('epicme://tags/{id}', {
+    list: async () => {
+      const tags = await agent.db.getTags()
+      return {
+        resources: tags.map((tag) => ({
+          name: tag.name,
+          uri: `epicme://tags/${tag.id}`,
+          mimeType: 'application/json',
+        })),
+      }
+    },
+  }),
+  // Rest of the code is the same as previous excercise
+)
+```
+As Kent explain in the solution, the `resources` we generate here is intended to be consumed and interacted by the user and not the LLM.
+## Step 4: Resource Template Completitions
+As we have done things until now, we require the user to know the specific `id` of the resource he's looking for.
+
+Wouldn't be nice if we could provide an autocomplete based on the information we have stored in our database (or other external resource)?
+
+Well this is what the `complete` argument in the `ResourceTemplate` config object is all about!
+```ts
+agent.server.registerResource(
+  'tag',
+  new ResourceTemplate('epicme://tags/{id}', {
+    complete: {
+      async id(value) {
+        const tags = await agent.db.getTags()
+        return tags
+          .map((tag) => tag.id.toString())
+          .filter((id) => id.includes(value))
+      },
+    },
+    // Restored as undefined to keep code example concise
+    list: undefined,
+  }),
+  // Rest of the code is the same as previous excercise
+)
+```
+ Currently we can only autosuggest the same resource we're inserting, so is not possible to show the `name` of the tag even though our resource is looking for an `id` (as we do in many other autocompletes).
+
+Nonetheless this is a cool feature to look forward to.

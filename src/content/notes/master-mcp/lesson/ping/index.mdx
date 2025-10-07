@@ -56,3 +56,18 @@ For now, let's stick with a simple *stdio* since our MCP server will run locally
 ```ts
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 ```
+Now that we have both the server and the transportation we need to connect the two together inside the `main` function present in the file:
+```ts
+async function main() {
+	// Instantiate a transport
+	const transport = new StdioServerTransport();
+	// Let the server know what transport to use
+	await server.connect(transport);
+	
+	// Once we have a transport, we can show some feedback
+	console.error("The connection is in place");
+}
+```
+We use the `console.log` especially in this case because we're in `stdio` kind of communication, that already uses the `console.log` itself and can cause some confusion.
+
+So now we're connected with our MCP server and lucky us, the MCP Inspector is already able to make ping requests and we're ready to move to the next lesson.

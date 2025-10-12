@@ -9,6 +9,7 @@ import { getLessonRouteInfoFromId, getNotesSlugFromId } from '@/lib/utils';
 import { ArrowLeftIcon } from '@lucide/astro';
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import CourseNavigation from '@/components/ui/CourseNavigation.astro';
 
 export async function getStaticPaths() {
   const lessons = await getCollection('lessonNotes');
@@ -44,8 +45,6 @@ export async function getStaticPaths() {
 const { lesson, courseEntry, moduleEntry } = Astro.props;
 const { Content } = await render(lesson);
 
-const courseSlug = courseEntry ? getNotesSlugFromId(courseEntry.id) : '';
-
 const lessonSeo: Seo = {
   title: courseEntry
     ? `${lesson.data.title} | ${courseEntry.data.title}`
@@ -54,47 +53,13 @@ const lessonSeo: Seo = {
     lesson.data.description ??
     (courseEntry ? courseEntry.data.description : DEFAULT_CONFIGURATION.seo.description),
 };
-
-const courseHref = courseSlug ? `/notes/${courseSlug}/` : '/notes';
 ---
 
 <BaseLayout seo={lessonSeo}>
   <Container as="section" class="flex flex-col gap-6">
-    <div class="flex flex-col gap-3">
-      <a
-        href={courseHref}
-        class="text-muted-foreground hover:text-foreground flex w-max items-center gap-2 text-sm transition"
-      >
-        <ArrowLeftIcon class="size-3" /> Back to course
-      </a>
+    <CourseNavigation {lesson} {courseEntry} {moduleEntry} />
 
-      <header class="flex flex-col gap-3">
-        <div class="flex flex-col gap-1">
-          <span class="text-muted-foreground text-xs tracking-widest uppercase">
-            {courseEntry ? courseEntry.data.title : 'Course'}
-          </span>
-
-          <h1 class="text-headings text-3xl font-semibold">{lesson.data.title}</h1>
-        </div>
-
-        {
-          moduleEntry && (
-            <div class="flex flex-col gap-1 text-sm">
-              <span class="text-muted-foreground tracking-widest uppercase">Module</span>
-              <span class="text-headings font-semibold">{moduleEntry.data.title}</span>
-
-              {moduleEntry.data.description && (
-                <p class="text-muted-foreground text-xs">{moduleEntry.data.description}</p>
-              )}
-
-              {moduleEntry.data.url && (
-                <ExternalLink href={moduleEntry.data.url}>Visit module page</ExternalLink>
-              )}
-            </div>
-          )
-        }
-      </header>
-    </div>
+    <h1 class="text-headings text-4xl font-semibold">{lesson.data.title}</h1>
 
     <article class="prose prose-lg prose-coffee dark:prose-invert">
       <Content />

@@ -7,6 +7,7 @@ import type { Seo } from '@/lib/constants';
 import { getLessonRouteInfoFromId, getNotesSlugFromId } from '@/lib/utils';
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import GradientDivider from '@/components/ui/GradientDivider.astro';
 
 export async function getStaticPaths() {
   const courses = await getCollection('notes');
@@ -137,40 +138,43 @@ const groupedLessons = lessons
       groupedLessons.length === 0 ? (
         <p class="text-muted-foreground text-sm">No lessons published for this course yet.</p>
       ) : (
-        <section class="flex flex-col gap-8">
-          {groupedLessons.map((group) => (
-            <div class="flex flex-col gap-3">
-              <h2 class="text-headings text-2xl font-semibold">{group.moduleName}</h2>
+        groupedLessons.map((group) => (
+          <>
+            <GradientDivider />
+            <section class="flex flex-col gap-8">
+              <div class="flex flex-col gap-3">
+                <h2 class="text-headings text-2xl font-semibold">{group.moduleName}</h2>
 
-              {(group.moduleDescription || group.moduleUrl) && (
-                <div class="text-muted-foreground flex flex-col gap-1 text-sm">
-                  {group.moduleDescription && <p>{group.moduleDescription}</p>}
+                {(group.moduleDescription || group.moduleUrl) && (
+                  <div class="text-muted-foreground flex flex-col gap-1 text-sm">
+                    {group.moduleDescription && <p>{group.moduleDescription}</p>}
 
-                  {group.moduleUrl && (
-                    <ExternalLink href={group.moduleUrl}>Visit module page</ExternalLink>
-                  )}
-                </div>
-              )}
+                    {group.moduleUrl && (
+                      <ExternalLink href={group.moduleUrl}>Visit module page</ExternalLink>
+                    )}
+                  </div>
+                )}
 
-              <ul class="flex flex-col gap-3">
-                {group.lessons.map((lesson) => {
-                  const { lessonPath } = getLessonRouteInfoFromId(lesson.id);
+                <ul class="flex flex-col gap-3">
+                  {group.lessons.map((lesson) => {
+                    const { lessonPath } = getLessonRouteInfoFromId(lesson.id);
 
-                  return (
-                    <li class="hover:bg-foreground/10 rounded-lg p-2 transition-colors">
-                      <a href={`/notes/${entrySlug}/${lessonPath}/`} class="flex flex-col gap-2">
-                        <h4 class="text-headings text-lg font-semibold">{lesson.data.title}</h4>
-                        {lesson.data.description && (
-                          <p class="text-sm">{lesson.data.description}</p>
-                        )}
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
-        </section>
+                    return (
+                      <li class="hover:bg-foreground/10 rounded-lg p-2 transition-colors">
+                        <a href={`/notes/${entrySlug}/${lessonPath}/`} class="flex flex-col gap-2">
+                          <h4 class="text-headings text-lg font-semibold">{lesson.data.title}</h4>
+                          {lesson.data.description && (
+                            <p class="text-sm">{lesson.data.description}</p>
+                          )}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </section>
+          </>
+        ))
       )
     }
   </Container>

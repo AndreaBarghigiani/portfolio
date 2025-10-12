@@ -31,7 +31,7 @@ const courses = await getCollection('notes');
       courses.length === 0 ? (
         <p>No notes published yet.</p>
       ) : (
-        <ul class="flex flex-col gap-3">
+        <ul class="flex flex-col gap-8">
           {courses.map((course) => (
             <CoursePreview course={course} />
           ))}

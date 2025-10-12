@@ -8,7 +8,7 @@ interface Props {
 const { course } = Astro.props;
 ---
 
-<li class="h-full">
+<li class="hover:bg-foreground/5 h-full rounded-lg p-2 transition-colors">
   <a href={`/notes/${course.id}/`} class="flex flex-col gap-3">
     <h3 class="text-headings text-3xl font-medium">
       {course.data.title}

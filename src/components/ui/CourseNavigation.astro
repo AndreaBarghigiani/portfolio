@@ -1,0 +1,52 @@
+---
+import { ArrowLeftIcon, ChevronRightIcon } from '@lucide/astro';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import { getNotesSlugFromId } from '@/lib/utils';
+import ExternalLink from './ExternalLink.astro';
+
+interface Props {
+  lesson: CollectionEntry<'lessonNotes'>;
+  moduleEntry: CollectionEntry<'courseModules'> | null;
+  courseEntry: CollectionEntry<'notes'> | null;
+}
+
+const { lesson, moduleEntry, courseEntry } = Astro.props;
+
+const allLessons = await getCollection(
+  'lessonNotes',
+  (lesson) => lesson.data.course === courseEntry?.id
+);
+
+const courseSlug = courseEntry ? getNotesSlugFromId(courseEntry.id) : '';
+const courseHref = courseSlug ? `/notes/${courseSlug}/` : '/notes';
+---
+
+<aside class="border-coffee-300/65 mb-4 flex flex-col gap-4 rounded-lg border bg-black/25 p-4">
+  <header class="flex flex-col gap-3">
+    {
+      courseEntry ? (
+        <>
+          <span class="text-muted-foreground text-sm">This lesson note is part of:</span>
+
+          <h3 class="text-headings text-xl font-semibold">{courseEntry.data.title}</h3>
+
+          {courseEntry.data.description && (
+            <p class="text-coffee-700/85 dark:text-coffee-300/85 text-base">
+              {courseEntry.data.description}
+            </p>
+          )}
+        </>
+      ) : null
+    }
+  </header>
+
+  <footer>
+    <a
+      href={courseHref}
+      class="text-muted-foreground hover:text-foreground flex w-max items-center gap-2 text-sm transition"
+    >
+      <ArrowLeftIcon class="size-3" /> Back to course
+    </a>
+  </footer>
+</aside>

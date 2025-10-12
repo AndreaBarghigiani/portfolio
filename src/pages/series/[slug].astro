@@ -17,11 +17,11 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 
 // Get all posts that belong to this series
-const allPosts = await getCollection('posts');
+const allPosts = await getCollection('posts', (post) => post.data.series?.ref.id === entry.id);
 
-const seriesPosts = allPosts
-  .filter((post) => post.data.series?.ref.id === entry.id)
-  .sort((a, b) => (a.data.series?.number || 0) - (b.data.series?.number || 0));
+const seriesPosts = allPosts.sort(
+  (a, b) => (a.data.series?.number || 0) - (b.data.series?.number || 0)
+);
 ---
 
 <BaseLayout seo={entry.data.seo}>

@@ -5,7 +5,6 @@ module: mcp-fundamentals
 order: 2
 description: Time to create our first tools, the server-defined functions that can be invoked by clients to perform specific actions.
 ---
-## Intro
 Tools are meant to be *"model-controlled"*, so it's going to be the model to decide the best tool that can solve the user request.
 
 Each tool that we create must have an unique `name` and a `description`, on top of that we need to define the expected input parameters using a JSON Schema (but with the TS SDK we can leverage Zod directly).

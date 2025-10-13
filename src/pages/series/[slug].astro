@@ -4,6 +4,7 @@ import SeriesItemPreview from '@/components/ui/SeriesItemPreview.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { ArrowLeftIcon } from '@lucide/astro';
 import { getCollection } from 'astro:content';
+import AuthorSeparator from '@/components/partials/AuthorSeparator.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('series');
@@ -61,5 +62,7 @@ const seriesPosts = allPosts.sort(
         }
       </section>
     </article>
+
+    <AuthorSeparator />
   </Container>
 </BaseLayout>

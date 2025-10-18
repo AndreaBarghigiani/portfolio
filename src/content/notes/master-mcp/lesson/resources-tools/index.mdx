@@ -118,13 +118,15 @@ agent.server.registerTool(
 ```
 This is the **exact** same thing we did in the previous exercise.
 
-Since we could have hundreds of entries, and each could be incredibly long, instead of fill the context of our LLM we decide that's better to show a simple title that links to a specific resource. Then the LLM will be able to decide what to do with it. 
+Since we could have hundreds of entries, and each could be incredibly long, instead of filling the context of our LLM we decide that's better to show a simple title that links to a specific resource. Then the LLM will be able to decide what to do with it. 
 
-In order to do so we need to change the `return` inside our `map`s, and if you notice the changes that are present inside the various `content` arrays that each callback `return`, wait for the deep dive later on because Kent has done a terrific job in teaching us how to better organize our code.
+In order to do so we need to change the `return` inside our `map`s. 
 
-And the first change we have to make is to tell that we're not returning anymore an object with the type of `resource` and instead we aim to return a `resource_list`.
+In case you noticed the changes present in the various `content` arrays that each callback `return`, wait for the deep at the end because Kent has done a terrific job in teaching us how to better organize our code.
 
-Changing the type of our object requires also a different structure, one where we do not have a `resource` key describing our resource but we can define every key right at the same level.
+To complete this lesson, the first change we have to make is to tell that we're not returning an object with the type of `resource`, instead we aim to return a `resource_list`.
+
+Changing the type of our object requires also **a different structure**, one where we do not have a `resource` key describing our resource, instead we can define every key right at the same level.
 ```ts
 agent.server.registerTool(
   'list_tags',
@@ -149,11 +151,11 @@ agent.server.registerTool(
   },
 )
 ```
-So now our `tagLinks` array will be an array of `resource_link` objects where we can tell the LLM the exact `uri` for the specific resource, its `name` and `description` and, as we discovered a while ago, we can especially specify the `mimeType` so the LLM know how to treat the resource.
+So now our `tagLinks` array will be an array of `resource_link` objects where we can tell the LLM the exact `uri` for the specific resource, its `name` and `description` and, as we discovered a while ago, we can specify the `mimeType` so the LLM know how to treat the resource.
 
 Running this example inside our MCP Inspector show us a different interface:
 ![A Resource Link output from MCP Inspector](./assets/mcp-resource-list-interface-inspector.jpg)
-As you can see by yourself, the inspector is able to understand that we're generating a list of resources and it allow us also to dive deeper and discover its content by clicking on the URI.
+The inspector is able to understand that we're generating a list of resources and it allow us also to dive deeper and discover its content by clicking on the URI.
 
 ### A little note on code organization
 I believe that there is no doubts that Kent is a great developer, but you notice it even with the little things on how he does what he does.

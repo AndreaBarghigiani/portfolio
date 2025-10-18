@@ -1,0 +1,197 @@
+---
+title: Prompts
+course: master-mcp
+module: mcp-fundamentals
+order: 5
+description: Learn how it is possible to help your end user by exposing reusable, structured instructions to language models and clients via prompts.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+Even though our users commonly interact with an LLM via a chat system, this does not mean that they know (or want to) how to interact with the tools you're building.
+
+Especially if they have to use a specific workflow, that could be for example the summarization of a text, they do not want to repeat themselves every time to let the LLM understand what to do.
+
+Instead we can prepare some prompts ahead of time and provide them to the user. If you have worked with other MCP servers, for example if you've been playing with <EL href="https://openspec.dev/">openspec</EL>, <EL href="https://github.com/github/spec-kit">spec-kit</EL> or others you probably noticed the amount of `/` slash commands you have at your disposal.
+
+Well, **these are all prompts**. Prompts that the developer have implemented to help you interact with their tool.
+
+> In some cases or platform, these prompts are called `command`, but at the end is the same thing.
+
+Before digging into the code, here's some tips on how to create prompts that are easy to use:
+- **specific and clear**: use precise language and concrete examples
+- **give them structure**: break complex task into smaller ones
+- **include context**: that helps the model understand the task
+- **consistent formatting**: to provide a better user experience
+- **test and iterate**: different prompts gives different results
+- **think about edge cases**: if it falls, how to provide fallback instructions?
+
+Now that we know how to structure our prompts let's create the classic *"hello world"* example that defines our prompt:
+```ts
+import { z } from 'zod'
+
+agent.server.registerPrompt(
+	'hello_world',
+	{
+		title: 'Say hello to the user',
+		description: 'Say hello to the user',
+		argsSchema: {
+			name: z.string().describe('The name of the user to say hello to'),
+		},
+	},
+	async ({ name }) => ({
+		messages: [
+			{
+				role: 'user',
+				content: { type: 'text', text: `Hello, ${name}!` },
+			},
+		],
+	}),
+)
+```
+As you could expect, the `registerPrompt` structure is quite similar to tools and resources, but in order to keep the things as we've done until now let's deep dive into its schema:
+```ts
+registerPrompt<Args extends PromptArgsRawShape>(
+    name: string,
+    config: {
+        title?: string;
+        description?: string;
+        argsSchema?: Args;
+    },
+    cb: PromptCallback<Args>
+): RegisteredPrompt;
+```
+This method accept three arguments:
+- `name` which the LLM will use to specifically call it
+- `config` the classic configuration object with the `title` and `description` we can provide to the user, but this time with the addition of `argsSchema` that allow us to describe the arguments that this specific prompt will use
+- `cb` here's the real logic of our prompt, what our MCP server will respond when the LLM will use this prompt
+	- as you can see, our callbacks takes as attributes the same arguments we set inside `argsSchema` and then we return an array of `messages` with a `role` (generally `user` or `assistant`)
+## Step 1: Prompts
+Now that we know the structure of a prompt, let's talk about the first excercise.
+
+As Kent show in the video, **don't forget to uncomment** the various import and function calls from `index.ts`. I did and the *Prompt* tab wasn't active 😅
+
+Once you've done it, you're ready to wear your Prompt Engineer hat and prepare the prompt for your user. The configuration is straightforward and for that I'll just paste the code here, remember this code has to be **inside** the `initializePrompts` function. 
+```ts
+agent.server.registerPrompt(
+  'suggest_tags',
+  {
+    title: 'Suggest a tag',
+    description: 'Get useful ideas on which tag to use for your entry',
+    argsSchema: {
+      entryId: z
+        .string()
+        .describe(
+          'The entry id used to analyze and provide tags suggestion.',
+        ),
+    },
+  },
+  ({ entryId }) => {
+    return {
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please look up my WpicMe journal entry with ID "${entryId}" using get_entry and look up the available tags using list_tags
+            
+            Then suggest me which tags I should use and if you don't find anything propose a new one
+            
+            If the user approve a tag that you've suggested, create a new one using the create_tag and add it to the entry by using add_tag_to_entry.`.trim(),
+          },
+        },
+      ],
+    }
+  },
+)
+```
+As you can see there's nothing fancy here, we instruct the LLM about the tools available to satisfy the user request, so he doesn't have to know them 🤩
+
+## Step 2: Optimized Prompts
+We have just prepared a prompt to help our users to get inspiration about tags that can be applied to their entry, but we delegated all the work to the LLM and the tools we're exposing.
+
+This is because we went to the server to get the prompt, but then we're sending back instructions to the LLM to **get back to the server once more** and fetch data.
+
+In this lesson we will learn how to attach to our prompt the informations that's looking for just to speed things up and the LLM can start to work immediately.
+
+The `suggested_tags` prompt is still configured as before, but inside our callback we need to directly call the `getEntry()` and `getTags()` methods that we call right inside from the specific tools we previously mentioned.
+```ts
+agent.server.registerPrompt(
+	// Config as before
+	async ({ entryId }) => {
+		const entry = await agent.db.getEntry(Number(entryId))
+		const tags = await agent.db.listTags()
+
+		return {
+			messages: [
+				{
+					role: 'user',
+					content: {
+						type: 'text',
+						text: //Updated text to let LLM knows that entry and tags will be provided
+					}
+				},
+				// Declare resources
+			],
+		}
+	},
+)
+```
+With the `entry` and `tags` variables holding the result of these queries to the database, it's time to let the LLM know that we have these at our disposal right from the `messages` array providing the resources.
+
+Let's start with the entry resource:
+```ts
+{
+	role: 'user',
+	content: {
+		type: 'resource',
+		resource: {
+			uri: `epicme://entry/${entryId}`,
+			text: JSON.stringify(entry),
+			mimeType: 'application/json',
+		},
+	},
+},
+```
+We're embedding a resource, so it is clear that we have to follow the same pattern that we discovered in the previous lesson. Even there we were embedding a resource inside a tool call, so to me it makes perfect sense to do so even now.
+
+Now that we pass the entry resource, let's handle the tags as well.
+```ts
+{
+	role: 'user',
+	content: {
+		type: 'resource',
+		resource: {
+			uri: 'epicme://tags',
+			text: JSON.stringify(tags),
+			mimeType: 'application/json',
+		},
+	},
+},
+```
+And we're done. We prepared a specific prompt that help the user leverage our knowledge and also guides the LLM on what action to take, but more than that we also provide the specific resources right inside the prompt!
+## Step 3: Prompt Completition
+Within the last exercise of this module, we're requested to implement the autocomplete for the `entryId` input, the syntax it's a bit different from the one [we used previously with the resources](/notes/master-mcp/lesson/resources/) but thanks to the `completable` method provided by `@modelcontextprotocol` we're able to quickly implement it.
+
+All we have to do in this case, is to wrap the zod schema for the value we want to have completition for you and provide as second attribute of the `completable` function the logic to implement the autocomplete.
+
+Here's the details for the solution, you can take all the rest of the code from the previous `initializePrompts` function we've worked on in this lesson.
+```ts
+// Remember to import it from the top of the file
+// import { completable } from '@modelcontextprotocol/sdk/server/completable.js'
+
+
+argsSchema: {
+	entryId: completable(
+		z
+			.string()
+			.describe('The ID of the journal entry to suggest tags for'),
+		async (value) => {
+			const ids = await agent.db.getEntries()
+
+			return ids
+				.map((entry) => entry.id.toString())
+				.filter((id) => id.includes(value))
+		},
+	),
+},
+```

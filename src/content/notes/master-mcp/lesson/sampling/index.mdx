@@ -1,0 +1,89 @@
+---
+title: Sampling
+course: master-mcp
+module: advanced-mcp-features
+order: 3
+description: Sampling it's a cool implementation where your tool can borrow some AI power to run specific tasks that, otherwise, you should've implemented yourself from the server to an external LLM.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+Let's say that from your tool you want to allow the user to create a new entry in his journal, the user asks to his LLM to generate the new entry and then the LLM will call `create_entry` tool to store the new entry in the user's journal.
+
+Well this is standard stuff for your tool.
+
+But **what if** you want your tool to analyze the current content and automatically add relevant tags to the entry that its just creating.
+
+Well, you could implement a different LLM **bringing your own API keys** to OpenAI, Claude or even Gemini and you could do it yourself.
+
+But wait a second, your user **is already using an LLM** and they already burn some tokens just by interacting with your tool. Why don't just ask to use the same LLM to analyze and add tags to the entry?
+
+This will produce a better output because we leverage the same model and on top of that allow us to save some money because we do not have to implement it ourselves.
+
+And even though with this lesson we will learn something that probably is one of the best thing MCP servers can provide, we will also learn **server-side logging** and how our server can send log messages to the client for debugging and monitoring purposes!
+
+Another important aspect of sampling is that we're just prompting the LLM from the server, so as it already happened for the lesson on prompts we have to be mindful about the structure and the instructions we will pass to the LLM, otherwise the results we will get could be... disappointing.
+
+## Step 1: Simple Sampling
+Now that we know what sampling is, let's see some code in action!
+
+We already know that we want to add sampling to a specific tool we're developing, and in the lesson we want to empower the `create_entry` tool with this capability.
+
+As I already stated multiple times, Kent's code is something we can all learn from and we will see it right from the `tools.ts` file in the `create_entry` definition:
+```ts
+agent.server.registerTool(
+	'create_entry',
+	{ /* Config tool */ },
+	async (entry) => {
+		// Same dance about creating the entry and adding specified tags
+
+		// This is the cool part
+		void suggestTagsSampling(agent, createdEntry.id)
+
+		// Same dance where we create structuredContent and return the object
+	},
+)
+```
+We could've written all the logic inside `suggestTagsSampling` right inline inside our tool definition, but Kent suggest a better approach: bring the logic of the function outside (so it is even easier to test!), and we can find it inside `sampling.ts`.
+
+The first thing we need to do is understand if the client is able to handle sampling, as we did for the Elicitation lesson we just get the client capabilities and check if `sampling` is present:
+```ts
+export async function suggestTagsSampling(agent: EpicMeMCP, entryId: number) {
+	const capabilities = agent.server.server.getClientCapabilities()
+	
+	if (!capabilities?.sampling) {
+		console.error('Sampling not working here')
+		return
+	}
+
+	// We'll add more stuff soon
+}
+```
+This shouldn't be anything new, if there is no Sampling capability we just exit (and provide an error to debug).
+
+And here it comes the fun part, we prepare the message that we want to send back to the LLM in order to get our instructions read and executed from the client!
+```ts
+export async function suggestTagsSampling(agent: EpicMeMCP, entryId: number) {
+	// Check capabilities...
+
+	const result = await agent.server.server.createMessage({
+		systemPrompt: `You are a helpful assistant.`.trim(),
+		messages: [
+			{
+				role: 'user',
+				content: {
+					type: 'text',
+					mimeType: 'text/plain',
+					text: `You just created a new journal entry with the id ${entryId}.
+
+						Please respond with a proper commendation for yourself.`.trim(),
+				},
+			},
+		],
+		maxTokens: 10,
+	})
+
+	// We'll send the log back
+}
+```
+To create the message back to the LLM we leverage the (guess what) `createMessage` method provided by our own server. This method accept many keys but in this case we're fine with three of them:
+- `systemPrompt`: 

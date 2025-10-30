@@ -1,0 +1,218 @@
+---
+title: Elicitation
+course: master-mcp
+module: advanced-mcp-features
+order: 2
+description: In the previous lesson we learned how to return structured content, now it's time to learn how to collect structured input from users!
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+Elicitation is the practice where your MCP Server realize that it needs more information right in the middle of a tool call.
+
+This is not something that should replace the completeness of the first message, It is something that should enhance the user activity. The tool has to require all the information from the first prompt and then in the middle of its working maybe it realizes that it needs something more, so it goes back to the user with an elicited request and asks for more information.
+
+The lesson gives you the example of a user that is in the middle of ordering a pizza. So he sends the first request of getting a _"margerita"_ to his address, but the MCP realize that a drink is missing. So it sends an elicit request back to the user asking if he would like to have a drink with his order. And that's the way that we should use. 
+
+These kind of requests are also good to alert the user for destructive actions, as we experiment in the next step.
+
+## Step 1: Elicit Confirmation
+When you want to work with elicitations, the first thing we want to do is to know if the client is able to leverage the elicitation capabilities. In order to do so, we need to get into our server instance that provides us a `getClientCapabilities()` method that we can call.
+
+```ts
+const capabilities = agent.server.server.getClientCapabilities()
+```
+
+Getting the capabilities is part of the handshake that happen at the beginning of this client <> server relationship, the MCP TS SDK provides us this method that responds with the following (simplified) structure:
+```ts
+export const ClientCapabilitiesSchema = z
+	.object({
+		experimental: z.optional(z.object({})),
+		sampling: z.optional(z.object({})),
+		elicitation: z.optional(z.object({})),
+		roots: z.optional(
+		    z.object({ listChanged: z.optional(z.boolean()) })
+		)
+	})
+```
+This schema is a bit of a spoiler for the next lesson, but it was needed to show that inside the response we have a possible `elicitation` property that we need to leverage to understand if our client is able to use them.
+
+After knowing this we have to check if the client is able to use Elicitation, so we just throw a nice `if` inside the tool definition Kody prepareted for us:
+```ts
+agent.server.registerTool(
+	'delete_tag', // tool name
+	{ /* Standard tool config */ },
+	async ({ id }) => {
+		const existingTag = await agent.db.getTag(id)
+		invariant(existingTag, `Tag ID "${id}" not found`)
+
+		const capabilities = agent.server.server.getClientCapabilities()
+		
+		if (capabilities?.elicitation) {
+			// Here we can ask the user if he's sure of deleting
+		}
+
+		// Deleting tag and sending back the response from our tool
+	},
+)
+```
+As for the previous notes, I don't go into much details about the code that's already written, if you want to you can even check the <EL href="https://github.com/epicweb-dev/advanced-mcp-features/blob/main/exercises/02.elicitation/01.problem/src/tools.ts#L153-L170">GitHub repo for the lesson</EL>, it's free 😅 
+
+What I want to focus on instead is the code that we need to write.
+
+So the first thing is we check if the client is capable of handling elicitations. Once we've done that, the next step is to **ask for more details**. Now that we know that `elicitation` if present we can safely call for `elicitInput()` a method that takes a `message` and a `requestedSchema` that allow the user to have a proper question and a way to respond. To keep the code short, let's focus on the part that will live inside the `if`:
+```ts
+if( capabilities?.elicitation ){
+	const result = await agent.server.server.elicitInput({
+		message: `Are you sure you want to delete tag "${existingTag.name}" (ID: ${id})?`,
+		requestedSchema: {
+			type: 'object',
+			properties: {
+				confirmed: {
+					type: 'boolean',
+					description: 'if the user confirmed deletation',
+				},
+			},
+		},
+	})
+	
+	// More code to come...
+}
+```
+As anticipated, we have the standard `message` that the user will see from the client's UI and will provide context about the information that the MCP Server is requesting.
+
+Then we find the `requestedSchema` that with our surprise (mine for sure) the MCP TS SCK does not provide as a way to define it with Zod. We have to define it with the standard JSON schema and while this can seem a really simple example, in the end we're telling the client that we're looking to show a boolean field (generally will be utilized a `checkbox`), since the introduction of this lesson Kent showed us that it can be defined to do so much more!
+```ts
+requestedSchema: {
+	type: 'object',
+	properties: {
+		drink: {
+			type: 'string',
+			title: 'Select a drink',
+			description: 'if the user confirmed deletation',
+			enum: ['none', 'cola', 'fanta', 'tea'],
+			enumNames: ['No drink at all', 'Coca Cola', 'Fanta', 'Tea'],
+		},
+	},
+},
+```
+Once the user will respond we will have the result of this operation inside `result`, but what can we do with it?
+
+Since it will hold a `boolean`, we can leverage it with just another conditional that allow us to understand if the user accepted our elicitation or if he declined:
+```ts
+agent.server.registerTool(
+	'delete_tag', // tool name 
+	{ // Standard tool config	},
+	async ({ id }) => {
+		const existingTag = await agent.db.getTag(id)
+		invariant(existingTag, `Tag ID "${id}" not found`)
+
+		const capabilities = agent.server.server.getClientCapabilities()
+		if (capabilities?.elicitation) {
+			const result = await agent.server.server.elicitInput({
+				// Same as previous example where we promped the elicitation
+			})
+
+			const confirmed =
+				result.action === 'accept' && result.content?.confirmed === true
+
+			if (!confirmed) {
+				// The code we will run if user confirmed
+			}
+		}
+
+		// The response in case we can proceed
+	},
+)
+```
+To create the `confirmed` boolean we check two specific pieces of our `result`:
+- `action`: this can be one of `accept`, `decline` or `cancel`
+- `result.content.confirmed`: this is our own `requestedSchema` and we're validating that the user response match with a valid value that allow us to proceed (in our case it's just the `true` boolean)
+
+If everything goes well, or the client is not able to handle the elicitation, we will go straight to the tool execution that is at the end of the callback declaration. We will see it shortly, but let's focus first on the actions we should take in case the user does not agree with the tag deletation.
+```ts
+agent.server.registerTool(
+	'delete_tag', // tool name 
+	{ // Standard tool config	},
+	async ({ id }) => {
+		const existingTag = await agent.db.getTag(id)
+		invariant(existingTag, `Tag ID "${id}" not found`)
+
+		const capabilities = agent.server.server.getClientCapabilities()
+		if (capabilities?.elicitation) {
+			const result = await agent.server.server.elicitInput({
+				// Same as previous example where we promped the elicitation
+			})
+
+			const confirmed =
+				result.action === 'accept' && result.content?.confirmed === true
+
+			if (!confirmed) {
+				const structuredContent = { success: false, tag: existingTag }
+				
+				return {
+					structuredContent,
+					content: [
+						createText(
+							`Deleting tag "${existingTag.name}" (ID: ${id}) rejected by the user.`,
+						),
+						createTagResourceLink(existingTag),
+						createText(structuredContent),
+					],
+				}
+			}
+		}
+
+		// The response in case we can proceed
+	},
+)
+```
+In case the user does not confirm the delete operation, we need to exit early from our function and to do so we have to create a new `structuredContent` that we pass to the return statement with an aligned message.
+
+And now, let's see the happy path. The user has confirmed the decision of deleting the tag and we allow the tool to move forward with this destructive action.
+
+```ts
+agent.server.registerTool(
+	'delete_tag', // tool name 
+	{ // Standard tool config	},
+	async ({ id }) => {
+		const existingTag = await agent.db.getTag(id)
+		invariant(existingTag, `Tag ID "${id}" not found`)
+
+		const capabilities = agent.server.server.getClientCapabilities()
+		if (capabilities?.elicitation) {
+			const result = await agent.server.server.elicitInput({
+				// Same as previous example where we promped the elicitation
+			})
+
+			const confirmed =
+				result.action === 'accept' && result.content?.confirmed === true
+
+			if (!confirmed) {
+				// Same as previous example where we promped the elicitation
+			}
+		}
+
+		await agent.db.deleteTag(id)
+		
+		const structuredContent = { success: true, tag: existingTag }
+		
+		return {
+			structuredContent,
+			content: [
+				createText(
+					`Tag "${existingTag.name}" (ID: ${id}) deleted successfully.`,
+				),
+				createTagResourceLink(existingTag),
+				createText(structuredContent),
+			],
+		}
+	},
+)
+```
+Here we move forward with the delete of the tag.
+
+First, we actually delete the tag with `agent.db.deleteTag(id)`, since we do not care about the response we do not store the result of this database query.
+
+Then we create the `structuredContent` variable that holds the `success: true` prop with the data of the `tag` we just deleted and we `return` all these information inside a standard response.
+
+That's all for Elicitation 👋

@@ -22,7 +22,7 @@ When you want to work with elicitations, the first thing we want to do is to kno
 const capabilities = agent.server.server.getClientCapabilities()
 ```
 
-Getting the capabilities is part of the handshake that happen at the beginning of this client <> server relationship, the MCP TS SDK provides us this method that responds with the following (simplified) structure:
+Getting the capabilities is part of the handshake that happen at the beginning of this client-server relationship, the MCP TS SDK provides us this method that responds with the following (simplified) structure:
 ```ts
 export const ClientCapabilitiesSchema = z
 	.object({

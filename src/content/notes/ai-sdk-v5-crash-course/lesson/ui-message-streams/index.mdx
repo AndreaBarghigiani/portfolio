@@ -1,0 +1,46 @@
+---
+title: UI Message Streams
+course: ai-sdk-v5-crash-course
+module: ai-sdk-basics
+order: 4
+description: From a simple string that get's streamed in, we can get so much more information that are crucial to build our UI.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+In the previous lesson we learned about the `streamText` function, capable of streaming in the response of an LLM.
+
+In a terminal scenario, streaming text is basically all that we need because at the end of the day that is what we're capable of showing. But we're not here only to leverage the power of AI SDK in a terminal, we want to power our UIs! 
+
+Previously we leveraged `textStream` from the returning object of `streamText`, but this time we want to use `toUIMessageStream()`. <EL href='https://ai-sdk.dev/docs/reference/ai-sdk-core/stream-text#to-ui-message-stream'>A method</EL> that's capable of returning so much more information about the LLM response.
+```ts
+import { google } from '@ai-sdk/google';
+import { streamText } from 'ai'; // <- This is what you're looking for!
+
+const model = google('gemini-2.5-flash-lite');
+const prompt = 'Give me a sonnet about a cat called Steven.';
+
+const stream = streamText({ model, prompt }); 
+
+for await (const chunk of stream.toUIMessageStream()) {
+  console.log(chunk);
+}
+```
+If you paid close attention, beside the new `toUIMessageStream()` call, we have another change...
+
+We went back using `console.log` instead of `process.stdout.write`, and that's because while before we were getting a simple string and it was important to keep new words inline with the previous, the responso of `toUIMessageStream()` is quite different:
+```ts
+{ type: 'start' }
+{ type: 'start-step' }
+{ type: 'text-start', id: '0' }
+{ type: 'text-delta', id: '0', delta: 'A' }
+{ type: 'text-delta', id: '0', delta: ' feline friend,' }
+{
+  type: 'text-delta',
+  id: '0',
+  delta: ' with fur of purest white,\nHe stalks the halls, a prince of silent'
+}
+{ type: 'text-end', id: '0' }
+{ type: 'finish-step' }
+{ type: 'finish' }
+```
+Each object **is a new chunk** of our response, and the developers behind AI SDK decided this approach to give us plenty more information about *"where we are at"* in the current stream and thanks to the useful `type` values we can easily understand when the `text-start`, when it ends (`text-end`) and also how to build all the part in the middle since we are inside an iterable response and we can leverage the `text-delta` order to build the message in our UI. 

@@ -1,0 +1,297 @@
+---
+title: Streaming to a UI
+course: ai-sdk-v5-crash-course
+module: ai-sdk-basics
+order: 5
+description: Until now we lived inside a terminal, but in order to understand the importance of toUIMessageStream() we will build our first chat web app.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+Finally we will start implementing some of this knowledge inside an UI built with React 🎉
+
+Matt has already put the basic of the application for us.
+
+We have a `client/root.tsx` component that acts as our main, the file in charge to attach our React application to the root of our DOM.
+
+Beside that, he also build an API endpoint that will allow us to send POST request from our client to the server that's running our model.
+
+But we need to fill some spaces because if you try to open the application you'll get a console error about some `TODO`... I leave the full explanation of the exercise structure to Matt, inside these notes I want to focus only on the learning implementing the solution.
+
+For example, if you open the `api/chat.ts` pretty soon you'll find something interesting:
+```ts
+// TODO: get the UIMessage[] from the body
+const messages: UIMessage[] = TODO;
+
+// TODO: convert the UIMessage[] to ModelMessage[]
+const modelMessages: ModelMessage[] = TODO;
+```
+Right after we getting the `body` JSON from the request, we notice that we have to convert the `messages` we get from the UI from `UIMessage[]` to `ModelMessage[]`. Basically speaking we need to convert this:
+```ts
+interface UIMessage<...> {
+    id: string;
+    role: 'system' | 'user' | 'assistant';
+    metadata?: METADATA;
+    parts: Array<UIMessagePart<DATA_PARTS, TOOLS>>;
+}
+```
+Into this:
+```ts
+type ModelMessage =
+  | SystemModelMessage
+  | UserModelMessage
+  | AssistantModelMessage
+  | ToolModelMessage;
+```
+As you can see, `ModelMessage` is just an discriminated union of the following types:
+```ts
+type AssistantModelMessage = {
+  role: "assistant";
+  content: AssistantContent;
+  providerOptions?: ProviderOptions;
+};
+
+type SystemModelMessage = {
+  role: "system";
+  content: string;
+  providerOptions?: ProviderOptions;
+};
+
+type ToolModelMessage = {
+  role: "tool";
+  content: ToolContent;
+  providerOptions?: ProviderOptions;
+};
+
+type UserModelMessage = {
+  role: "user";
+  content: UserContent;
+  providerOptions?: ProviderOptions;
+};
+```
+Enough about TS lecture, it's time to follow the instructions and implement our chat!
+
+The first thing Matt suggests us is to import `useChat` and let it collect the messages and send them.
+
+That's right, because `useChat` will provide us plenty of useful utilities that we can deconstruct from. Just like many other hooks does nowadays.
+```ts
+import { useChat } from '@ai-sdk/react';
+
+const App = () => {
+  const { messages, sendMessage } = useChat();
+  // Rest of component
+}
+```
+Now that we get `messages` and `sendMessage` from `useChat`, the only thing that we still have to do in our client is to wire the `submit` event with the `sendMessage` function so we are able to send the message(s) that our user has typed (and the responses our LLM provided with previous answers).
+
+All we have to do is to reach for the `ChatInput` component and wire the `onSubmit` prop:
+```ts
+ <ChatInput
+  /* Other props */
+  onSubmit={(e) => {
+    e.preventDefault();
+    sendMessage({ text: input.trim() });
+    setInput('');
+  }}
+/>
+```
+Where we send the current message, held inside the `input` state, with the `sendMessage` utility provided by `useChat`. 
+
+We do not have to care about attaching previous messages, everything is handled by the custom hook for us 🎉
+
+As I nice touch, we also empty the `input` by resetting its state.
+
+And now we have to prepare our endpoint to make the proper calls and give us the message we're looking for.
+
+While Matt setup everything for us, he left plenty of `TODO` ready to be filled, we saw in the opening of this not that our POST endpoint will receive a request where in the `body` of our JSON there is a `messages` array.
+
+As specified by the `UIMessage[]` type we know that it'll have such shape, but probably one of the most important thing to remember is that our communication with an LLM is **stateless**. This means that our `messages` variable will have the **entire conversation** we had until the last message we sent.
+
+This is a sample of the array I was sending after a little back and forth with the LLM:
+```json
+[
+    {
+      "parts": [
+        {
+          "type": "text",
+          "text": "What's the capital of France?"
+        }
+      ],
+      "id": "TmXUJwXPSIMtNHoq",
+      "role": "user"
+    },
+    {
+      "id": "NkZliOz0n28tm7NV",
+      "role": "assistant",
+      "parts": [
+        {
+          "type": "step-start"
+        },
+        {
+          "type": "text",
+          "text": "The capital of France is **Paris**.",
+          "state": "done"
+        }
+      ]
+    },
+    {
+      "parts": [
+        {
+          "type": "text",
+          "text": "What about Germany?"
+        }
+      ],
+      "id": "F5dIXUwDCJnKGIDl",
+      "role": "user"
+    },
+    {
+      "id": "tbZeIQmpHlyJTZYq",
+      "role": "assistant",
+      "parts": [
+        {
+          "type": "step-start"
+        },
+        {
+          "type": "text",
+          "text": "The capital of Germany is **Berlin**.",
+          "state": "done"
+        }
+      ]
+    },
+    {
+      "parts": [
+        {
+          "type": "text",
+          "text": "and UK?"
+        }
+      ],
+      "id": "w1A3YwfgkzrRTYdn",
+      "role": "user"
+    },
+    {
+      "id": "J4YMhMubPLpxGgnW",
+      "role": "assistant",
+      "parts": [
+        {
+          "type": "step-start"
+        },
+        {
+          "type": "text",
+          "text": "The capital of the UK is **London**.",
+          "state": "done"
+        }
+      ]
+    },
+    {
+      "parts": [
+        {
+          "type": "text",
+          "text": "and Italy?"
+        }
+      ],
+      "id": "MtgXuq4j1vIfewtx",
+      "role": "user"
+    }
+  ]
+```
+As we can see, each if full of information! We have the `role` (useful value to let our UI understand who's *talking*) but most importantly we have a `parts` array that as saw in the precious lesson will allow us to connect different part of a text to build the response in a stream.
+
+The thing is: **our LLM does not care about all of this!**
+
+The LLM is mostly interested in the conversation, the data we're sending, and that's why we need to convert `messages` from a `UIMessage[]` into an `ModelMessage[]`.
+
+The thing is: *"How do we do that?"*
+
+Since we're using AI SDK this part is pretty simple, all we have to do is to import the `convertToModelMessages` function and it'll take care of this.
+```ts
+const modelMessages: ModelMessage[] = convertToModelMessages(messages);
+```
+Once we've done that, if it happen to `console.log` the `modelMessages` you'll get something like the following:
+```JSON
+[
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "What's the capital of France?"
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "The capital of France is **Paris**."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "What about Germany?"
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "The capital of Germany is **Berlin**."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "and UK?"
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "The capital of the UK is **London**."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "and Italy?"
+        }
+      ]
+    }
+  ]
+```
+As you can see, now the information we send are much simplier! The LLM still needs the `role` in order to understand the flow of the conversation, but from the rich `parts` array we had now we pass a `content` that can be a simple string or an array of different shape of objects (because you can also attach images, videos and other file format to your conversation).
+
+So, once you converted your `UIMessage[]` into a `ModelMessage[]`, thanks to `convertToModelMessages`, it's time to send this conversation to our LLM.
+
+We already did something like that, with the `streamText` function, but this time instead of configuring it with a `prompt` we want to leverage the `messages` attribute because it specifically accept a `ModelMessage[]`.
+```ts
+const streamTextResult = streamText({
+  model: google('gemini-2.5-flash'),
+  messages: modelMessages,
+});
+```
+Now that we have the `streamTextResult` we have all we need to send back the response to our chat. There is a tiny step we have to do before sending it back, and is to call `toUIMessageStream()` just like we did in the previous lesson.
+```ts
+const stream = streamTextResult.toUIMessageStream();
+```
+Now that we have the `stream` we can return `createUIMessageStreamResponse()` so our `useChat` will be able to properly populate the `messages` array and display them.
+```ts
+return createUIMessageStreamResponse({ stream });
+```
+That's all for this lesson.
+
+

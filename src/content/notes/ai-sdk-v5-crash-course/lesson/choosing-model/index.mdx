@@ -1,0 +1,26 @@
+---
+title: Choosing Your Model
+course: ai-sdk-v5-crash-course
+module: ai-sdk-basics
+order: 1
+description: Deciding which model is best for your use case it's something only you can discover, here you'll learn how to implement them with AI SDK.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+This is a course about AI SDK, but without a connection to an LLM (to a model) you cannot go much far.
+
+Let's be honest, you cannot go anywhere 😅
+
+Besides the setup of the project, that you can help yourself by <EL href="https://github.com/ai-hero-dev/ai-sdk-v5-crash-course">cloning and following the instruction in this repo</EL>, once you have AI SDK in your system it's time to select a model.
+
+The selection can be something fundamental, but with AI SDK its easier than you think because to use a specific model, all you have to do is to install the right package. AI SDK has <EL href="https://ai-sdk.dev/providers/ai-sdk-providers">tens of providers</EL> to choose from, Matt suggest to use the Gemini API because are cheap and have a generous free plan 😉
+
+So once you have completed the setup and installed the right package for your provider, it's time to make it to work.
+
+```ts
+import { google } from "@ai-sdk/google";
+```
+With this single import, and the appropriate API KEY stored in your `.env` and you're ready to go!
+
+> If you're wondering about *"How AI SDK knows which name I gave to my API KEY?* you have not to worry about. If you follow the documentation for the selected provider you'll find **the exact name** to use. With `google` you have to use `GOOGLE_GENERATIVE_AI_API_KEY`
+

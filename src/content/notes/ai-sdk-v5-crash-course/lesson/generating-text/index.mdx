@@ -1,0 +1,22 @@
+---
+title: Generating Text
+course: ai-sdk-v5-crash-course
+module: ai-sdk-basics
+order: 2
+description: It's time for the first output from your LLM.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+Generating text with AI SDK is a really simple task. Once you have selected the model you want to use and the prompt you want to send, all it's left it's calling the right function!
+```ts
+import { google } from '@ai-sdk/google';
+import { generateText } from 'ai'; // <- This is what you're looking for!
+
+const model = google('gemini-2.5-flash-lite');
+const prompt = 'What is the capital of France?';
+
+const result = await generateText({model, prompt});
+
+console.log(result.text) // <- This is the answer
+```
+As you can see, AI SDK makes interacting with LLM a task that's incredibly easy. But don't get fooled <EL href="https://ai-sdk.dev/docs/reference/ai-sdk-core/generate-text">`generateText`</EL> has plenty of parameters that let's you customize in great details how we want it to behave.

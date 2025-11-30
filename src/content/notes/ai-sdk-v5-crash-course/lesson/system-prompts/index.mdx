@@ -1,0 +1,34 @@
+---
+title: System Prompts
+course: ai-sdk-v5-crash-course
+module: ai-sdk-basics
+order: 6
+description: A system prompt is fundamental to structure how our LLM will behave, let's discover how AI SDK allow us to set this up.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+When you work with an LLM, it is really important to set the tone and capabilities of these amazing tools.
+
+That's because LLM are incredibly powerful, but they start as generalists and you let them figure out what the focus of the conversation will be by understanding the conversation.
+
+This is not a practical use of our time, nor the tokens!
+
+You have many way to try to setup a system prompt out in the wild, you can try to pass it as a first message of the conversation, but thanks to the AI SDK you have a very specific approach. All you have to do is to pass your system prompt, the string where you describe what you want and how from the LLM, right inside a the `streamText` configuration object.
+```ts
+const SYSTEM_PROMPT = `
+You are a very skilled developer and you know all the things about TypeScript.
+
+ALWAYS convert the code you read into TypeScript.
+
+Do your best to generate types that are understandable and do not duplicate code. If a type has the same shape of another type, or a part of, do your best to derivate it and use the original as the source of truth.
+`
+
+const streamTextResult = streamText({
+  model: google('gemini-2.5-flash'),
+  messages: modelMessages,
+  system: SYSTEM_PROMPT
+})
+```
+Honestly, there's nothing more for this lesson.
+
+Start by experimenting with your own needs and see how much you can force the LLM to behave as you whish.

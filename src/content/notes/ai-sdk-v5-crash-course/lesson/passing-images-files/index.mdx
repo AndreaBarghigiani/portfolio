@@ -1,0 +1,89 @@
+---
+title: Passing Images and Files
+course: ai-sdk-v5-crash-course
+module: ai-sdk-basics
+order: 7
+description: From simple text now it's time to learn how we can pass images and files to our LLM.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+One of the most useful things an LLM can do, is to accept files 😅
+
+Beside the need for us of typing something, and that can be a real pain if we talk about documents but it is something close to impossible if we refer to images and videos.
+
+That's why the ability to upload a file is so comfortable!
+
+There are plenty of approaches when it comes to files though, but since the exercise is focused on image uploads we can easily ignore the context window and convert the image with a standard base64 string.
+
+> This is not something that I would apply in production, but hey we're learning new stuff here so let's push the optimization for a later time.
+
+Matt has prepared for us an handy utility function `fileToDataURL` that returns a Promise and thanks to the <EL href="https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL">`readAsDataURL()`</EL> method of the `FileReader` class we are able to have a `data:*/*;base64,` string that we can safely pass to our LLM.
+```ts
+const fileToDataURL = (file: File) => {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
+```
+All we have left to do in this specific exercise is to handle the *"file upload"* (Matt already have prepared the `ChatInput` component for the task) and when we ~~send~~ submit the data to our model of choice we can safely convert it with `fileToDataURL`.
+```ts
+<ChatInput
+  /* Other props */
+  onSubmit={async (e) => {
+    e.preventDefault();
+
+    // Getting all the data for the form
+    const formData = new FormData(
+      e.target as HTMLFormElement,
+    );
+    
+    // Getting the file
+    const file = formData.get('file') as File;
+    
+    // Convert file into a base64 URL string
+    const fileURL = await fileToDataURL(file);
+
+    sendMessage({
+      // Sending the message
+    });
+
+    setInput('');
+    setSelectedFile(null);
+  }}
+/>
+```
+In this snippet I wanted to focus our attention to the `onSubmit` event and describe step by step what we were doing.
+
+Now it's time to get into the **how** we are sending the information to our LLM.
+
+We have the message the user typed with the `input` local state, we have the base64 URL in `fileURL` that we calculated...
+
+How do we send both informations to our LLM? Until now we saw how to leverage the `sendMessage` function to send a message like so:
+```ts
+sendMessage({ text: input.trim() });
+```
+A single object config with just a `text` prop where we pass the input the user has typed. But as listed a second ago, now we have **two pieces of information** that we want to send: the typed text and the attached file...
+
+Thankfully the <EL href="">`sendMessage`</EL> function is capable of handling several kind of inputs and while it is able to automatically handle the entire conversation held thanks to the `useChat` hook, we have to use a different configuration object for this task.
+```ts
+sendMessage({
+  parts: [
+    {
+      type: 'file',
+      url: fileURL,
+      mediaType: file.type,
+    },
+    {
+      type: 'text',
+      text: input,
+    },
+  ],
+});
+```
+This time we will not send a simple `text` as part of our configuration object, but we have to send a `parts` array.
+> If you're curious like me, in the previous example where we just pass `{ text: input }` to `sendMessage` we are just leveraging a little trick of `useChat`. At the end of the day, `sendMessage` will convert such object into a standard `{ parts: [ { type: 'text', text: input } ] }` configuration, so if you're getting crazy to check types definition, now you have a quick answer on how it works 😉
+
+So at the end of the day, we're free to enhance the `UIMessagePart` we're building into `parts` as long as our application knows what to do with the fields we're passing. And that's because the SDK does not force us to respect any kind of structure as long as we define a `type` with a string.

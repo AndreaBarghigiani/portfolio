@@ -1,0 +1,32 @@
+---
+title: Streaming Text
+course: ai-sdk-v5-crash-course
+module: ai-sdk-basics
+order: 3
+description: Get all the text at once is not a great user experience, let's stream it into our terminal!
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+We saw how easy it is to get some text from an LLM, but our users are used to read a stream of text that is getting written as the LLM respond.
+
+That's why `streamText` is so powerful, it handles all the streaming for you
+```ts
+import { google } from '@ai-sdk/google';
+import { streamText } from 'ai'; // <- This is what you're looking for!
+
+const model = google('gemini-2.5-flash-lite');
+const prompt = 'What is the capital of France?';
+
+const stream = streamText({ model, prompt }); 
+
+for await (const chunk of stream.textStream) {
+  process.stdout.write(chunk);
+}
+```
+This time, instead of leveraging the `generateText` function that we saw in the previous lesson that just prints text on the screen, we let the LLM *write down* the answer to our prompt.
+
+One little difference with our previous exercise has been the way we print out text.
+
+For the previous lesson, we've used `console.log` to have the generated text in our terminal. And that was great for what we had to do, but with <EL href="https://ai-sdk.dev/docs/reference/ai-sdk-core/stream-text#streamtext">`streamText`</EL> we need to have something different because with `console.log` we get a newline character at the end of each call, and that would've messed our display.
+
+That's why we use `process.stdout.write`, with it we can write to the standard output stream without adding any extra characters or formatting

@@ -1,0 +1,125 @@
+---
+title: Steaming Objects
+course: ai-sdk-v5-crash-course
+module: ai-sdk-basics
+order: 8
+description: Streaming text is a cool feature of AI SDK and the implementation is incredibly easy, but at the end of the day it is just text. What if we want proper objects that we can pass inside a custom component?
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+Up until now we had a lot of fun with the `streamText` function provided by the AI SDK, but you know that you can also ask to **stream an object**?!?
+
+You hear that right! LLM are not only capable of streaming text, but they can also stream object too! This is a great opportunity for our implementation because if we want to take the content inside the response and put it into a nice component we cannot rely on a simple piece of text, we need structure!
+
+And thats really convenient!
+
+> Little note here. While studying the amazing **"Master the Model Context Protocol"** by Kent C. Dodds, we encounter the concept of Structured Content and MCP UI. Right now the main difference that I can notice is that with a structured object we can bend the LLM response, with the MCP approaches we bend the MCP response.
+
+To give you a clear example, let's say we want to ask to our LLM to generate a fake product for us. We could brainstorm something for our next item in our eCommerce or just playing around with LLM to get ideas for a customer.
+
+But we don't want the same old text response. Alright MarkDown is great, but beside lists and titles there's not much we can display right away.
+
+We want a proper product object that we can then pass to a `<ProductCard />` component that we have created for the task!
+
+Such component will accept the following props:
+```ts
+type ProductCartT = {
+	title: string;
+	description: string;
+	rating: number;
+	url: string;
+	available: boolean;
+}
+```
+
+We have to tell our LLM that we want such structure so we could easily call the component while rendering the response.
+
+Thanks to the AI SDK this task is incredibly simple. All we have to do is leverage the <EL href="https://ai-sdk.dev/docs/reference/ai-sdk-core/stream-object#streamobject">`streamObject`</EL> behaves really similar to the already known `streamText`, and it shares many parameters with it.
+
+First and foremost, we have to define a `model` and a `prompt` (just like `steramText`), but then we are capable of defining something more. 
+
+We can define a `schema`, and we can leverage a tool that we (should) already know and love: Zod. In fact, the `schema` param of `streamObject` is capable of accepting a Zod or JSON Schema and by providing this the LLM will be able to structure the response respecting such schema!
+
+> An additional advantage of using a Zod schema, is that the output will be parsed **at the same time of streaming it**, so if at any time the structure of the response does not reflect our schema an error will be thrown.
+
+Keeping the product example description, let's see how we could leverage `streamObject` to get the data in the shape we need.
+```ts
+const model = google('gemini-2.0-flash');
+
+const factsResult = streamObject({
+  model,
+  prompt: `Let's brainstorm some product ideas for a backery.`,
+  schema: z.array(
+  	z.object({
+		title: z.string(),
+		description: z.string(),
+		rating: z.number(),
+		url: z.string(),
+		available: z.boolean(),
+  	})
+  ),
+});
+```
+And since we're streaming the response from our LLM, our user will be able to see populating each product card! Let's see how the response get's populated with some samples...
+```ts
+// First console.log
+[]
+
+// Middle console.log
+[
+  {
+    title: 'Lavender Honeycomb Cake',
+    description: 'A light and airy sponge cake infused with lavender and topped with homemade honeycomb candy and a drizzle of local honey.',
+    rating: 4.8,
+    url: 'https://example.com/lavender-honeycomb-cake',
+    available: true
+  },
+  { title: 'Spiced Apple Cider Donuts', description: 'Warm' }
+]
+
+// Last (complete) console.log
+[
+  {
+    title: 'Lavender Honeycomb Cake',
+    description: 'A light and airy sponge cake infused with lavender and topped with homemade honeycomb candy and a drizzle of local honey.',
+    rating: 4.8,
+    url: 'https://example.com/lavender-honeycomb-cake',
+    available: true
+  },
+  {
+    title: 'Spiced Apple Cider Donuts',
+    description: 'Warm and comforting apple cider donuts with a blend of cinnamon, nutmeg, and cloves, coated in a sweet maple glaze.',
+    rating: 4.5,
+    url: 'https://example.com/spiced-apple-cider-donuts',
+    available: true
+  },
+  {
+    title: 'Salted Caramel Brownie Bites',
+    description: 'Rich and fudgy brownie bites swirled with homemade salted caramel and sprinkled with sea salt.',
+    rating: 4.9,
+    url: 'https://example.com/salted-caramel-brownie-bites',
+    available: true
+  },
+  {
+    title: 'Rose Pistachio Macarons',
+    description: 'Delicate and beautiful macarons flavored with rosewater and filled with a creamy pistachio ganache.',
+    rating: 4.7,
+    url: 'https://example.com/rose-pistachio-macarons',
+    available: true
+  },
+  {
+    title: 'Sourdough Bread with Roasted Garlic',
+    description: 'A crusty and tangy sourdough loaf with roasted garlic cloves kneaded throughout, perfect for dipping or sandwiches.',
+    rating: 4.6,
+    url: 'https://example.com/sourdough-roasted-garlic',
+    available: false
+  }
+]
+```
+I believe the most interesting `console.log` that we have above is the one in the middle! As you can see we have a first (complete) object but the next one just has `title` and part of the `description`!
+
+This is exactly what I meant when I wrote: *"our user will be able to see populating each product card!"*
+
+In the exercise Matt took a different approach from the *product description* I have introduced before, he wanted to show us how we can prompt something to our LLM, **take the response** and use it as a `prompt` for a following `streamObject` call.
+
+That's incredibly powerful because now we know that we are not forced to end our LLM conversation at the first function call. We can wait for a response **and pass it into a different function** that can help us even more!

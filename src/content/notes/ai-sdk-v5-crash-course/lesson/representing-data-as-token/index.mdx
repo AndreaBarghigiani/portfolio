@@ -1,0 +1,96 @@
+---
+title: Representing data as tokens
+course: ai-sdk-v5-crash-course
+module: llm-fundamentals
+order: 3
+description: Different data formats affect token efficiency, let's optimize them!
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+In this exercise Matt show us how different data structure can produce a different amount of tokens.
+
+We start with as simple array of data:
+```ts
+const DATA = [
+  {
+    url: 'https://aihero.dev',
+    title: 'AI Hero',
+  },
+  {
+    url: 'https://totaltypescript.com',
+    title: 'Total TypeScript',
+  },
+  {
+    url: 'https://mattpocock.com',
+    title: 'Matt Pocock',
+  },
+  {
+    url: 'https://twitter.com/mattpocockuk',
+    title: 'Twitter',
+  },
+];
+```
+And we `map`, or convert if you wish, into different data formats that then get represented into a different amount of tokens.
+### Converted as MarkDown (53 tokens)
+```ts
+const asMarkdown = DATA.map(
+  (item) => `- [${item.title}](${item.url})`,
+).join('\n');
+```
+This produces the following MarkDown syntax:
+```md
+- [AI Hero](https://aihero.dev)
+- [Total TypeScript](https://totaltypescript.com)
+- [Matt Pocock](https://mattpocock.com)
+- [Twitter](https://twitter.com/mattpocockuk)
+```
+### Converted as XML (77 tokens)
+```ts
+const asXML = DATA.map(
+  (item) =>
+    `<item url="${item.url}" title="${item.title}"></item>`,
+).join('\n');
+```
+This produces the following XML syntax:
+```xml
+<item url="https://aihero.dev" title="AI Hero"></item>
+<item url="https://totaltypescript.com" title="Total TypeScript"></item>
+<item url="https://mattpocock.com" title="Matt Pocock"></item>
+<item url="https://twitter.com/mattpocockuk" title="Twitter"></item>
+```
+### Converted as JSON (103 tokens)
+```ts
+const asJSON = JSON.stringify(DATA, null, 2);
+```
+This produces the following JSON:
+```json
+[
+  {
+    "url": "https://aihero.dev",
+    "title": "AI Hero"
+  },
+  {
+    "url": "https://totaltypescript.com",
+    "title": "Total TypeScript"
+  },
+  {
+    "url": "https://mattpocock.com",
+    "title": "Matt Pocock"
+  },
+  {
+    "url": "https://twitter.com/mattpocockuk",
+    "title": "Twitter"
+  }
+]
+```
+
+## No clear winner
+While the tokens added to each title could let us believe that MarkDown is the syntax that generates fewer tokens, **don't get fooled**!
+
+Token generation can vary, a lot, by how we structured the format itself. For example, while we `stringify` the array we also used `null` and `2`. Two params that let `stringify` itself to make more human readable the output. 
+
+If we were just to strip out these params and only write `JSON.stringify(DATA)` we would generate only **64 tokens**, almost half!
+
+At the same time, there's a new format that's making noises around the web and claims to be the *"better JSON format for LLM"* and it's called TOON (Token-Optimized Object Notation). I've tested it with our sample JSON with the JSON stringified version with `null` and `2` as params and indeed it saved us some tokens generating only **54 tokens** against the **103 tokens** of the original version.
+
+We will see if this will be a clear winner of if the LLM Gods will be able to help us even more in optimizing our token usage.

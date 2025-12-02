@@ -1,0 +1,38 @@
+---
+title: Traking token usage
+course: ai-sdk-v5-crash-course
+module: llm-fundamentals
+order: 2
+description: As we discovered, tokens are an essential piece for our LLM, but they get even more important when we need to pay them! Better learn how to track their usage. 
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+Having a powerful tool at our disposal, like the AI SDK, not only helps us with swapping different models of by providing functions and methods that helps us interacting with an LLM.
+
+A cool thing about it is that it also helps us in monitoring the token consumption through a concept called *"usage"*. Let's see how it works.
+
+In the exercise we take our old friend `streamText` and as we did in the <EL href="https://cupofcraft.dev/notes/ai-sdk-v5-crash-course/lesson/streaming-text/">third lesson</EL> we leverage `process.stdout.write` to stream to the console the LLM's response.
+
+The entire `streamText` response is stored inside an `output` variable, and it is in such response that we can get all the information we need about our token consumption.
+
+Inspecting `output` will let us know that it has an `usage` property that we can `await` (yes, it's a Promise) in order to get all the information about our call.
+
+So let's add `console.log( await output.usage )` and see what are the information that we can have from it:
+```ts
+{
+  inputTokens: 13,
+  outputTokens: 127,
+  totalTokens: 140,
+  reasoningTokens: undefined,
+  cachedInputTokens: undefined
+}
+```
+Well, look at that! We have all the information we need to understand how many tokens we used!
+
+We have:
+- `inputTokens`: all the tokens that we sent to the LLM.
+- `outputTokens`: the ones that the LLM used to generate the response.
+- `totalTokens`: this is going to be useful to understand how many tokens there are in the context window (more on that later).
+- `reasoningTokens`: in the example this is `undefined` because we didn't use a mode capable of *"thinking"*.
+- `cachedInputTokens`: we discover later on a technique that will help us reduce the amount of tokens we send as input.
+> Now you know all the information that `usage` returns us, but remember one very important thing: in all the following messages, `inputTokens` are the sum of the tokens used in the current request **plus** all the tokens we already sent. That's because LLM are stateless and in order to remember our conversation, they need to be sent the entire conversation. 

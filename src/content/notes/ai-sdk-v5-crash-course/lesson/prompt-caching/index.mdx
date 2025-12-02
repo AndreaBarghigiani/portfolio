@@ -1,0 +1,18 @@
+---
+title: Prompt Caching
+course: ai-sdk-v5-crash-course
+module: llm-fundamentals
+order: 5
+description: Prompt caching is a feature that let us save some money by treating the cached tokens in a different way. 
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+This lesson is a simple one, and generally you have nothing to do because all the major modern models **implement it by default**!
+
+Prompt caching is the capability of a model to, indeed, cache tokens that they already saw and this is perfect in a chat context where the user will add new tokens to the conversation as long as they press *Send*.
+
+As you should know by now, with each new message we also send all the previous messages and this is where the prompt caching magic happen!
+
+The previous messages, while still increasing the context window, are billed in a different way (generally they're cheaper).
+
+Matt built a nice example where he leverages the `Tiktoken` package to show in the terminal what is being cached and what not. Just have a look at the lesson or run the example to see it live!

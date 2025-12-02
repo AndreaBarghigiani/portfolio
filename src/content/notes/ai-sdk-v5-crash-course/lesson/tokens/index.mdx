@@ -1,0 +1,22 @@
+---
+title: Tokens
+course: ai-sdk-v5-crash-course
+module: llm-fundamentals
+order: 1
+description: A token is the essential part of every interaction we have with an LLM. It is how they understand what we want and how they respond to us, it is also how the company behind them calculate our bills; so it is better to learn what they are 😅
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+We often *"talk"* to our models, but words, images or even audio is not what the understand!
+
+They are machines, and such they are not able to understand words; in any kind of format they come from.
+
+You know... LLM are trained on text of various sources, but that's not the format they store the information in their memory. They have to port this text into some mathematical format that they can retrieve, they make **vectors** that connects all their knowledge into a mathematical retrival connected source.
+
+In order to do so, they have to tokenize the input. And that means split our text into smaller chunks of words that then get *"translated"* into a number. With that number, they can easily query their memory and retrieve a vector of connected knowledge that help them *suggest* the next word that make sense in the response they're generating.
+
+This tokenization process is the fundamental part of how they make sense of our wall of text, and for us is even more important because **we get billed by the use of them**.
+
+In this lesson Matt just show us one of the many implementation of tokenization. There is an <EL href="https://tiktokenizer.vercel.app/">online playground</EL> as well as the `js-tiktoken` package that is used right inside our exercise file.
+
+In the excercise we find a text file that is 2295 characters long that get's tokenized down to **484** tokens represented, as explained a bit earlier, by an array of numbers that the LLM can use to predict the response. Or, such in this case, just to understand the text we're providing... 

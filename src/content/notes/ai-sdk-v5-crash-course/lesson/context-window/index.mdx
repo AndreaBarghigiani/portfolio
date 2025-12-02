@@ -1,0 +1,22 @@
+---
+title: Context Window
+course: ai-sdk-v5-crash-course
+module: llm-fundamentals
+order: 4
+description: The context window is maybe one of the most important aspects of all the LLM understanding. Basically it represents capability of an LLM to remember the topics covered during a conversation, but there's more to it.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+Now that we know what tokens are and how they work, it is important to understand that an LLM can't hold any arbitrary number of tokens inside a single conversation.
+
+> **Sidenote:** in this lesson Matt presents us a new cool param for the `generateText` function: `maxRetries`. This will force our model to retry to get an answer for the specific prompt we gave it, by default its value is 3.
+
+While each model has a different capability of holding tokens inside a single conversation, or context window, even the most capable of the models is able to handle an order of millions tokens.
+
+And even if this can seem a quite huge number, in the end in the previous lesson we discovered that inside our conversation the tokens grow exponentially.
+
+Every new message, brings with it **the entire conversation** that we had until then.
+
+Each model will respond in a different way when you reach their limits, in this exercise just be sure to go **over** the limit of your model otherwise you will get billed!
+
+Thanks for us, we have some techniques that we can leverage in order to keep the context window small. But remember, at the end of the day in case you see your context window growing too much you can always start a new chat! Yes you will lose the context of the conversation, but you will always be able to summarize the conversation and bring it into a fresh chat 😉 

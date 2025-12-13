@@ -14,17 +14,17 @@
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/sitemap": "^3.6.0",
     "@astrojs/vercel": "^9.0.2",
-    "@fontsource-variable/figtree": "^5.2.8",
+    "@fontsource-variable/figtree": "^5.2.10",
     "@lucide/astro": "^0.542.0",
-    "@tailwindcss/vite": "^4.1.13",
+    "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.16.5",
     "astro-icon": "^1.1.5",
-    "motion": "^12.23.12",
-    "sharp": "^0.34.3",
-    "tailwindcss": "^4.1.13"
+    "motion": "^12.23.26",
+    "sharp": "^0.34.5",
+    "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/typography": "^0.5.19",
     "prettier": "3.6.2",
     "prettier-plugin-astro": "0.14.1",
     "prettier-plugin-tailwindcss": "^0.6.14"

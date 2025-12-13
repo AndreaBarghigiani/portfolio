@@ -1,0 +1,97 @@
+---
+title: Calling Tools
+course: ai-sdk-v5-crash-course
+module: agents
+order: 1
+description: Tools are new capabilities we add to our LLM to reach for external data or compute power. In this lesson we discover how to create new tools that our LLM can indipendently choose to call, letting us create new kind of Agents.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+The tools you define with the Vercel AI SDK share some similarities from the ones that you can define with [MCP](https://cupofcraft.dev/notes/master-mcp/), in the end both of them are capable of running a piece of code that is getting executed outside your agent.
+
+They are capable of fetching data from an endpoint, making SQL queries with your ORM of choice and so on...
+
+The place where they differ is **where they get executed**. With the AI SDK the tool we define are only used locally (inside the same SDK instance) and based on the way they are defined can be utilized only from the same call (like we will do soon in this exercise). With MCP instead we create tools that can be called externally from multiple clients.
+
+Beside this, IMO **main**, difference let's get into the exercise that Matt has prepared for us.
+
+We are tasked of creating a set of tools that allow our LLM to interact with our filesystem via the standard CRUD operations. Following a course like this let us save time because we have an entire <EL href="https://github.com/ai-hero-dev/ai-sdk-v5-crash-course/blob/main/exercises/03-agents/03.01-tool-calling/problem/api/file-system-functionality.ts">`file-system-functionality.ts`</EL> file that's filled with all the low level functions that we need to create in order to allow the LLM to execute them!
+
+So when we will need to instruct a tool to work with our filesystem, we can leverage the functions that are already provided to us.
+
+But this brings our next question: *"How do we define a tool inside AI SDK?"*
+
+With my MCP studies that I linked previously, we knew that we had to use the language specific SDK provided to implement the spec. This is powerful, but for quick tools that we want to only use inside our LLM (or Agent since we're giving it *"the power of choice"*) the AI SDK has something more useful.
+
+As we should know by now, AI SDK is powerful because empowers both the client and the server side of our applications.
+
+So right where we define our endpoint capable of leveraging `streamText`, right inside its configuration next to the `model`, `system` and `messages` options we are capable of defining a `tools` option where we can, guess it... Define our tools!
+```ts
+export const POST = async (req: Request): Promise<Response> => {
+  const body: { messages: UIMessage[] } = await req.json();
+  const { messages } = body;
+
+  const result = streamText({
+    model: google('gemini-2.5-flash'),
+    messages: convertToModelMessages(messages),
+    system: `...`,
+    tools: {
+      writeFile,
+      readFile,
+      deletePath,
+      listDirectory,
+      createDirectory,
+      exists,
+      searchFiles,
+    },
+    stopWhen: ...,
+  });
+
+  return result.toUIMessageStreamResponse();
+};
+```
+This is our endpoint for `/api/chat` (the default endpoint that `useChat` uses). At the top there's the classic *dance* where we get the `body` of a request and we take only the part we're most interested about: our `messages`.
+
+Next we use `streamText` and, as anticipated, configure it with `model`, `system`, and `messages`.
+
+Then we have the focus of the exercise: the `tools` section.
+
+> If you are curious, we will also have to specify the `stopWhen` in order to get a greater control over how our LLM (that has Agents capabilities) behaves. Since the LLM can decide by itself to call a tool or not, and even decide how many tool calls make , it is important to give it a limit in order to better control our token consumption. `stopWhen` can be as simple as a function call (like `stepCountIs(10)`) or even an array of functions where the first condition met is the one that'll force the LLM to stop the execution.
+
+Inside my exercise file, instead of polluting the `streamText` of multiple tool definition inside the `tools` section I have decided to create separate functions with the same name of the tool I wanted to provide to the LLM. Leveraging the ES6 Object Property Shorthand, making the function name the same of the tool name helped me save some typings.
+
+With this introduction, lets analyze the first function `writeFile` that I have created as tool of our Agent:
+```ts
+const writeFile = tool({
+  description: 'Write a file in the filesystem',
+  inputSchema: z.object({
+    path: z
+      .string()
+      .describe('The path to the file to create'),
+    content: z
+      .string()
+      .describe('The content of the file to create'),
+  }),
+  execute: async ({ path, content }) => {
+    return fsTools.writeFile(path, content);
+  },
+});
+```
+If you scroll a little bit above, you will find that `writeFile` is the first tool defined inside the `tools`, and when the LLM decide to call it, this is the syntax that will be executed.
+
+First and foremost, to define a tool we have to call the `tool` function that we import straight from the `ai` package.
+
+The primary reason for the existance of the `tool` utility function, is that it helps Typescript to infer the type of the arguments for the `execute` portion of the tool. More precisely, with `inputSchema` we are defining the type of parameters that we have to pass to `execute` in order to be able to run the tool itself.
+
+So to be more analytical, even though `tool` has a <EL href="https://ai-sdk.dev/docs/reference/ai-sdk-core/tool#api-signature">bunch of parameters</EL> that we can configure with, let's discover for the moment the ones we see used here:
+- `description`: general string that defines the purpose of the tool,
+- `inputSchema`: with this Zod schema we define which arguments the tool can take
+- `execute`: what we want to do with the inputs that the LLM will provide to us.
+
+In our specific case, `execute` simply calls one of the available functions that are provided by the helper file Matt created for us.
+
+This is a common pattern for when you define `tools` with the AI SDK. The `description` helps the LLM to define what a specific tool is doing, with `inputSchema` we request a proper structure for the params we need to pass to our tool (and thanks to `describe` we help once more the LLM in understanding what the parameter meaning is), and in the end with `execute` we are defining what the tool should do once it receives the proper parameters.
+
+There is an open question to all of this though, something that I touched at the beginning and that I will cover in a separate article: how can we define and interact with tools inside an external MCP Server?
+
+I have this question because I want to create tools that can be also used outside my application or the backend driven by the AI SDK, but it is something that I still have to study and experiment with so you can wait for my next article or send me an email where you describe which approach you took.

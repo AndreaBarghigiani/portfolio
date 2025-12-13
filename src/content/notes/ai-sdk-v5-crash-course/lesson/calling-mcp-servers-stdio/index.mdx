@@ -1,0 +1,92 @@
+---
+title: Calling MCP Servers via stdio
+course: ai-sdk-v5-crash-course
+module: agents
+order: 4
+description: in this lesson we will learn how we can leverage the AI SDK to connect into an MCP Server via stdio
+---
+
+import EL from '@/components/ui/ExternalLink.astro';
+
+In this course we will not build our own MCP Server, I am covering a [entire course](https://cupofcraft.dev/notes/master-mcp/) dedicated about it.
+
+Instead Matt is showing us how can we run a local MCP Server, via Docker, and utilize the available tools via `stdio`.
+
+The MCP Server that we will run inside our machine will be the <EL href="https://github.com/github/github-mcp-server">GitHub MCP Server</EL> that provide us plenty of tools to interact with our and public repos.
+
+The focus on this lesson will be in discovering the two fundamental functions that allow us to create an MCP Client, as such this will be capable of listing and calling the tools provided by the server, and to set up the transportation protocol.
+
+Since this integration, while stable, is still considered experimental the functions that we will import will have the same prefix. But do not get scared, they work great!
+
+In order to create the MCP Client we will import <EL href="https://ai-sdk.dev/docs/reference/ai-sdk-core/create-mcp-client">`experimental_createMCPClient`</EL> like so:
+```ts
+import { experimental_createMCPClient as createMCPClient } from 'ai';
+```
+This client will be in charge of converting the MCP tools into the ones that our AI SDK is capable of leveraging, and on top of that will give us plenty of useful methods to interact with resources, prompts and [even elicitation](#).
+
+`experimental_createMCPClient` provides us also a `transport.type` property inside our configuration object, but at this time we will not leverage it because we can only specify if the type of our transport protocol will be SSE or HTTP.
+
+Instead we want to monitor `stdin` and `stdout` to communicate with the server. To do so we need another package, this time from `ai/mcp-stdio`:
+```ts
+import { Experimental_StdioMCPTransport as StdioMCPTransport } from 'ai/mcp-stdio';
+```
+Now that we have all the functions we need, it's time to create our first client right inside our POST request:
+```ts
+const mcpClient = await createMCPClient({
+  transport: new StdioMCPTransport({
+    command: 'docker',
+    args: [
+      'run',
+      '-i',
+      '--rm',
+      '-e',
+      'GITHUB_PERSONAL_ACCESS_TOKEN',
+      'ghcr.io/github/github-mcp-server',
+    ],
+    env: {
+      GITHUB_PERSONAL_ACCESS_TOKEN:
+        process.env.GITHUB_PERSONAL_ACCESS_TOKEN!,
+    },
+  }),
+});
+```
+> Forgot to mention that you need to put in `.env`, the same one where you stored yours LLM tokens, your `GITHUB_PERSONAL_ACCESS_TOKEN`. No biggie, <EL href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens">go here</EL> and learn how to setup one yourself.
+
+As you can see `createMCPClient` is an `async` function, in the end we need to connect to a server and wait a response...
+
+While it is able to accept some properties inside the configuration object, when we instantiate a client we will spend more of our time inside the `transport` one.
+
+As I mentioned before, while `transport` it is capable to accept a `type` prop we will leverage the `StdioMCPTransport` function because we will not make remote request over HTTP, but instead we will send requests straight to the server via `stdio`.
+
+In this case we are implementing the GitHub MCP Server as the `README.md` suggests, by running it inside a Docker Container so everything you see with `command` and `args` are just the instructions we provide to our client in order to connect to the server.
+> Do not get confused though, if you have followed the [Master the Model Context Protocol](https://cupofcraft.dev/notes/master-mcp/), these are the same instructions you provided to the MCP Inspector in order to connect to the server created via the MCP TypeScript SDK 😉
+
+Now that we have created our client, the next thing that we need to do is to discover which tools our MCP Server provides and then pass them to the AI SDK function where we want to make them available.
+```ts
+const tools = await mcpClient.tools();
+```
+I decided to store the `tools` available inside their own variable, so it is going to be easier to bring them in inside the `streamText` function that we later use for our chat.
+
+Actually, **noting changes** inside `streamText`, all we have done now has been to get the tools that have been provided from an MCP Server but our AI SDK code hasn't changed at all!
+
+There is only one last step we need to take before we can consider this exercise complete.
+
+While before we defined all of our tools inside the same app, meaning they *"die"* when the app stops, we cannot say the same about the connection we established via our client. In order to make sure that we do not leave open connection to the server **we have to close them** once our utilization is completed.
+
+In order to do so we can leverage a callback function that is provided to us right inside `toUIMessageStreamResponse`, and is a function that we already met when we were inspecting the produced output of `toUIMessageStream` in a previous exercise.
+
+I am talking about `onFinish` and the capability of running the function we declare inside it once, you guess it, the `toUIMessageStreamResponse` had finished its work.
+
+Lucky for us, the `experimental_createMCPClient` makes this task incredibly easy! All we have to do is to call the `close` method on the instance of our client and everything will be taken care of!
+```ts
+return result.toUIMessageStreamResponse({
+  onFinish: async () => {
+    await mcpClient.close();
+  },
+});
+```
+And we're done!
+
+With this lesson I've addressed my big concern with the entire module. We discovered how it is possible to create our own tools with an MCP Server, meaning we can give these tools to any LLM with Agent capabilities, and we integrated them into AI SDK thanks to the conversion that it is happening behind the scene with and instance of `experimental_createMCPClient` and its `.tools()` method.
+
+But we learned how we can interrogate a local MCP Server, even though we run it through Docker since we run it on the same machine we can leverage `stdin`/`stdout`, let's see how the AI SDK allow us to get tools from a truly remote MCP Server with the next lesson.

@@ -1,0 +1,24 @@
+---
+title: Calling MCP Servers via HTTP
+course: ai-sdk-v5-crash-course
+module: agents
+order: 5
+description: Here we should've learned how to connect to a remote MCP Server, but there are some issues 😞
+---
+
+import EL from '@/components/ui/ExternalLink.astro';
+
+In this lesson we use the SSE transport `type` to connect to the remote GitHub MCP Server, unfortunately with no luck.
+
+```ts
+const mcpClient = await createMCPClient({
+  transport: {
+    type: 'sse',
+    url: 'https://api.githubcopilot.com/mcp',
+    headers: {
+      Authorization: `Bearer ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`,
+    },
+  },
+});
+```
+I'll get back to this later as this part really interests me.

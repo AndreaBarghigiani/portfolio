@@ -1,0 +1,16 @@
+---
+title: Message Parts
+course: ai-sdk-v5-crash-course
+module: agents
+order: 2
+description: Our LLM are capable of producing many different kind of messages, some are as detailed as possible while others focus more on providing a structure that we can easily consume.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+In this theoretical lesson, Matts presents to us the importance of the message parts that our LLM is capable of producing and it also show us the difference between the messages that are produced during a stream and the ones we get when we leverage the `onFinish` callback right inside the `streamText().toUIMessageStream()` method.
+
+The `toUIMessageStream` should not be a "new entry" for us, we already met it in the sixth lesson of our first module [AI SDK Basic](https://cupofcraft.dev/notes/ai-sdk-v5-crash-course/lesson/ui-message-streams/). Basically with this method we are able to get a stream of each step that our LLM is taking in order to fulfill our request.
+
+The full response is going to be an array of messages, to be more specific we will have array of <EL href="https://github.com/vercel/ai/blob/main/packages/ai/src/ui-message-stream/ui-message-chunks.ts">`UIMessageChunk`</EL>. This type is not commonly used, but it served me well to show you which kind of structure we, or better yet the `useChat` hook, is dealing with.
+
+On the other hand, the `onFinish` callback give us access to a single `messages` (type of `UIMessage`) object that has a standard `parts` prop that is holding an array of messages that are more concise if we compare it with the full stream we talked earlier. One of the most interesting thing about this kind of response is that all the tool chunks are no condensed inside a single object where its `type` is a string builded following this pattern: `tool-<toolName>`.

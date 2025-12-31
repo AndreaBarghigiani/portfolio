@@ -8,6 +8,7 @@ import GradientDivider from '@/components/ui/GradientDivider.astro';
 import { formatDate } from '@/lib/utils';
 import type { Seo } from '@/lib/constants';
 import AuthorSeparator from '@/components/partials/AuthorSeparator.astro';
+import MarkdownContent from '@/components/partials/MarkdownContent.astro';
 
 const owner = 'AndreaBarghigiani';
 const repository = 'portfolio';
@@ -127,7 +128,11 @@ const seo: Seo = {
                     <ExternalLink href={pr.html_url}>#{pr.number}</ExternalLink>
                   </heading>
 
-                  {pr?.body ? <p class="text-foreground text-xs font-light">{pr.body}</p> : null}
+                  {/* {pr?.body ? <p class="text-foreground text-xs font-light">{pr.body}</p> : null} */}
+                  <MarkdownContent
+                    class="text-foreground text-xs font-light"
+                    content={pr.body || ''}
+                  />
                 </section>
               </div>
             </li>

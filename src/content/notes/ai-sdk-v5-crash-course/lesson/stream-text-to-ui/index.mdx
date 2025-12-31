@@ -1,5 +1,5 @@
 ---
-title: Streaming to a UI
+title: Streaming to an UI
 course: ai-sdk-v5-crash-course
 module: ai-sdk-basics
 order: 5
@@ -81,7 +81,7 @@ const App = () => {
   // Rest of component
 }
 ```
-Now that we get `messages` and `sendMessage` from `useChat`, the only thing that we still have to do in our client is to wire the `submit` event with the `sendMessage` function so we are able to send the message(s) that our user has typed (and the responses our LLM provided with previous answers).
+Now that we get `messages` and `sendMessage` from `useChat`, the only thing that we still need to do is to wire the `submit` event with the `sendMessage` function so we are able to send the message(s) that our user has typed (and the responses our LLM provided with previous answers).
 
 All we have to do is to reach for the `ChatInput` component and wire the `onSubmit` prop:
 ```ts
@@ -193,7 +193,7 @@ This is a sample of the array I was sending after a little back and forth with t
     }
   ]
 ```
-As we can see, each if full of information! We have the `role` (useful value to let our UI understand who's *talking*) but most importantly we have a `parts` array that as saw in the precious lesson will allow us to connect different part of a text to build the response in a stream.
+As we can see, each object is full of information! We have the `role` (useful value to let our UI understand who's *'talking'*) but most importantly we have the `parts` array that will allow us to **connect different parts of a text** and build the response in our UI.
 
 The thing is: **our LLM does not care about all of this!**
 
@@ -201,7 +201,7 @@ The LLM is mostly interested in the conversation, the data we're sending, and th
 
 The thing is: *"How do we do that?"*
 
-Since we're using AI SDK this part is pretty simple, all we have to do is to import the `convertToModelMessages` function and it'll take care of this.
+Since we're using AI SDK this part is pretty simple, all we have to do is to import the <EL href="https://ai-sdk.dev/docs/reference/ai-sdk-ui/convert-to-model-messages#converttomodelmessages">`convertToModelMessages`</EL> function and it'll take care of this.
 ```ts
 const modelMessages: ModelMessage[] = convertToModelMessages(messages);
 ```

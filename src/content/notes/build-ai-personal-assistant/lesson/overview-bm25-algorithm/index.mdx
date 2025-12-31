@@ -1,0 +1,14 @@
+---
+title: Overview of the BM25 Algorithm
+course: build-ai-personal-assistant
+module: retrival-skill-building
+order: 2
+description: Discovering how the BM25 algorithm works with our dataset.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+In this theoretical lesson, we learn about the BM25 Algorithm that we will use to search inside all of our documents and is capable of scoring the relevance of each document to a set of keywords. And is able to do this following three steps:
+1. **Term Frequency**: how often the keywords we are searching are present in each document;
+2. **Inverse Document Frequency**: it gives a higher score to keywords that are rarer in our documents;
+3. **Length Normalization**: normalizes the weight that some larger documents could have based on the previous factor. Es. *"A larger document could have more instances of the keywords we're searching, but this does not mean that it is more relevant than smaller documents."*. 
+This is the first approach to help LLM to understand our documents, better yet to help it reduce the amount of documents to analyze so it can have a better context of the topic at hand.

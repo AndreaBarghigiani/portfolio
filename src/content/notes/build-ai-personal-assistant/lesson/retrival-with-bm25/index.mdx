@@ -1,0 +1,204 @@
+---
+title: Retrieval with BM25
+course: build-ai-personal-assistant
+module: retrival-skill-building
+order: 3
+description: Once we've discovered the capabilities of BM25 to score all our documents, it's time to implement the approach with our LLM.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+Inside this lesson, we will not only learn how to score our documents with BM25, but also how to leverage the LLM capabilities even before to run our first search!
+
+We learned how BM25 is in the context of document retrieval, and to implement it we will use `okapibm25` package that offers a simple `BM25` function to score our documents.
+```ts
+import BM25 from 'okapibm25';
+```
+Once we have it, let's see how we will use it in `api/chat.ts`  to give a score about the documents that we already have in memory.
+```ts
+const scores: number[] = (BM25 as any)(
+  emails.map((email) => `${email.subject} ${email.body}`),
+  keywords,
+);
+```
+The `BM25` function, accept several parameters:
+```ts
+export default function BM25(
+  documents: string[],
+  keywords: string[],
+  constants?: BMConstants,
+  sorter?: BMSorter
+): number[] | BMDocument[] {}
+```
+What you'll see here is the list of attributes the function is capable of accepting took <EL href="https://github.com/FurkanToprak/OkapiBM25/blob/master/BM25.ts#L49">right from their GitHub</EL>. We will skip over `constants` because... Well, I still need to figure out what the keys of `BMConstants`, `k` and `b`, actually mean 😅   
+
+Let's focus on how we prepare the `documents` we want to pass to the search. 
+
+We take all our already loaded `emails`, and we reduce the content to the most relevant sections by generating a **new array** that will simply hold the `subject` and the `body` of our emails.
+
+But then you see `keywords`... How can we have them? Do we need to ask a list of keywords from the user?
+
+Well, `keywords` has to be an array of strings, but the way we generate it is really interesting.
+
+We want our user to just ask simple questions:
+- `Which emails talks about mortgage?`
+- `What David sent between ${from} - ${to}?`
+- `Give me all the emails that have "report" in it.`
+
+Our human user has to interact with our interface like if he has someone really capable of running the task and generate an output that it can be given to the next operation in the chain.
+
+Lucky us, we already have one and it it the model integration that we have thanks to AI SDK.
+```ts
+const generatedKeywordsObj = await generateObject({
+  model: google('gemini-2.5-flash-lite'),
+  system: `You are a helpful email assistant, able to search through emails for information.
+  Your job is to generate a list of keywords which will be used to search emails.
+`,
+  schema: z.object({
+    keywords: z.array(z.string()),
+  }),
+  messages: convertToModelMessages(messages),
+});
+```
+We know we need to generate an array of strings, basically speaking the *structure* of our *object* is well defined, especially the output we need.
+
+`generateObject` is the function provided by the AI SDK that help us interrogate an LLM and specify exactly what we want. And what we want now is to instruct the LLM about its specialities (via the `system` key), with `schema` we want to define the structure of the object we want back and `messages` are nothing more then the list of messages that our `useChat` hook is sending to us via the `sendMessage` function present inside our component.
+> We leverage `convertToModelMessages` because it is the the proper way to convert a `UIMessage[]` that's coming from `useChat` into an `ModelMessage[]` that are compatible with the all AI core functions.
+
+The `generatedKeywordsObj` is the entire `generateObject` response and it does not only produce a list of strings as we requested, they're more nested inside its structure and you can find them just by looking inside the `object` key:
+```ts
+DefaultGenerateObjectResult {
+  object: { keywords: [ 'David', 'mortgage application' ] },
+  finishReason: 'stop',
+  usage: {},
+  warnings: [],
+  providerMetadata: {
+    google: {}
+  },
+  response: {},
+    body: {}
+  },
+  request: {},
+  reasoning: undefined
+}
+```
+The information to use to run a search with BM25 sits right in `generatedKeywordsObj.object.keywords`, once we extract the array we will have the `keywords` variable that we pass as a second argument to `BM25`.
+```ts
+const keywords = generatedKeywordsObj.object.keywords;
+```
+Then we will select 10 result from our `searchEmails` internal function:
+```ts
+const searchResults = await searchEmails(allKeywords);
+const topSearchResults = searchResults
+  .slice(0, 10)
+  .filter((result) => result.score > 0);
+```
+You can inspect the `searchEmails` function yourself, but it just `return` the `scores` we calculated a bit earlier with `BM25` transformed in order to give a proper structure and sorting to our entire `emails` documents.
+```ts
+return scores
+  .map((score, index) => ({
+    score,
+    email: emails[index],
+  }))
+  .sort((a, b) => b.score - a.score);
+```
+Once we have the `searchResults` we will `slice` the array and filter out the results that have a score of `0` or lower.
+
+And now we have a list of the 10 most relevant documents that contain the keywords generated by the prompt of our user, but the user didn't ask for all this content.
+
+With a simple question like *"What did David say about the mortgage application?"*, we've been able to extract a bunch of `keywords` (thanks LLM) that we used to run our `BM25` search inside all of our `emails` getting the 10 `topSearchResults`.
+
+But if we look into `topSearchResults` we will just see an array of objects that, while full of useful information, does not exactly answer the user question.
+
+He wants to know what did David opinions where about a subject, he does not want to read each email to discover by himself.
+
+For this reason, we now have to take `topSearchResults` and prepare a proper message that we can pass as instruction to our LLM.
+
+Since we're talking about emails, let's create a `emailSnippets` message where we define what we want:
+```ts
+const emailSnippets = [
+  '## Email Snippets',
+  // Generate email snippets,
+  '## Instructions',
+  "Based on the emails above, please answer the user's question. Always cite your sources using the email subject in markdown format.",
+].join('\n\n');
+```
+I've introduced the creation of `emailSnippets` like so because I believe that it is simplier to understand.
+
+This variable builds a message that is divided into two sections:
+- `## Email Snippets`: the collection of our `topSearchResults` formatted in a way that it is easy consumable by an LLM.
+- `## Instruction`: otherwise which action we want our LLM to take in order to satisfy the user request. Al you can see, we just asks to `answer the user's question` about the provided emails and we also require it to *cite the sources*.
+
+From the code above, in order to have a proper message that we want to send to our LLM, all we have to do is to convert each `topSearchResults` object into a MarkDown string that the AI can easily consume:
+```ts
+const generatedSnippets = topSearchResults.map(
+	(result, i) => {
+	  const from = result.email?.from || 'unknown';
+	  const to = result.email?.to || 'unknown';
+	  const subject = result.email?.subject || `email-${i + 1}`;
+	  const body = result.email?.body || '';
+	  const score = result.score;
+	
+	  return [
+		`### 📧 Email ${i + 1}: [${subject}](#${subject.replace(/[^a-zA-Z0-9]/g, '-')})`,
+		`**From:** ${from}`,
+		`**To:** ${to}`,
+		`**Relevance Score:** ${score.toFixed(3)}`,
+		body,
+		'---',
+	  ].join('\n\n');
+	},
+);
+
+const emailSnippets = [
+  '## Email Snippets',
+  ...generatedSnippets,
+  '## Instructions',
+  "Based on the emails above, please answer the user's question. Always cite your sources using the email subject in markdown format.",
+].join('\n\n');
+```
+I preferred to separate the generation of the snippet for each `topSearchResults` because it made it more readable for me. Basically we loop over each item and we take the `from`, `to`, `subject`, `body` and `score` from each and we create a single string that organize all these information wit ha bit of MarkDown.
+
+Then we spread the array of strings we just generated in order to compose the final `emailSnippets` variable string that we will pass to `streamText` so we will leverage the LLM into creating a summary with all the selected documents we provided.
+```ts
+const answer = streamText({
+	model: google('gemini-2.5-flash'),
+	system: `You are a helpful email assistant that answers questions based on email content.
+	  You should use the provided emails to answer questions accurately.
+	  ALWAYS cite sources using markdown formatting with the email subject as the source.
+	  Be concise but thorough in your explanations.
+	`,
+	messages: [
+	  ...convertToModelMessages(messages),
+	  {
+	    role: 'user',
+	    content: emailSnippets,
+	  },
+	],
+});
+```
+Still inside the same POST we will reach to the LLM once again (remember we called to get the list of keywords based on the user question?), but this time we will leverage `streamText` because we do not want to wait for the full response.
+
+The only interesting part for this section is `messages`, where we do not only pass the `messages` that we receive from `useChat`, but we also add another message with the `role` of `user` with the `emailSnippets` we just generated.
+
+In the first message we use the standard `convertToModelMessages` to take the `UIMessage[]` and transform it into a `ModelMessage[]`, this is kinda of a standard if we want to keep the conversation going with the LLM.
+
+But we add a new item to the `messages` array, and it will provide to the LLM all the context it needs to gather and summarize the information about the set of 10 most relevant email we selected with BM25.
+
+All of this is very cool but let's get back at the start of our endpoint, if you look closely you'll notice that instead of creating our `stream` variable from a single `streamText` call this time we leverage the power of `createUIMessageStream`.
+
+This is a really cool function that the AI SDK provides us when we want to **make multiple steps** to generate a single response.
+
+Which steps are taken you may ask, let's see together:
+1. **LLM Call #1** we start the build of our streamed message by making a first LLM call with `generateObject` where we ask to generate a set of `keywords` from the user prompt
+2. **Tool Call** once we have our `keywords` we then leverage the `searchEmail` function to query our database with BM25
+3. **Internal procedure** we format the information we got from the `searchEmail` into a nicely formatted MarkDown text and add a bit of instructions we want to pass to our final prompt
+4. **LLM Call #2** this is where we get ready to stream the final response of our LLM. With the help of `streamText` we provide a clear `system` prompt and we merge into `messages` all the previous messages as well as the `emailSnippet` we built.
+5. **Unify the stream** while in this exercise we do not have multiple streams running at once, at the end of the `execute` callback provided by  `createUIMessageStream`, we call `writer.merge` with the `answer.toUIMessageStream()` to merge our current stream to the general one that we already handle.
+
+Identify this approach is really important because what I've just defined is a blueprint for a workflow that our LLM will follow each time the user will hit our endpoint!
+
+That's the real kicker!
+
+We know that we can define `tools` for our LLM right inside `streamText`, but doing so **we lose control** and we let the LLM decide which tools use and in which order.
+
+For this exercise we had a **specific list of tasks that we need to follow** in order to leverage the power of the LLM in accomplish the task at hand, on top of that think about how many token we saved running a BM25 search instead of having the LLM look into our entire database just to understand which emails would better respond to our user query.

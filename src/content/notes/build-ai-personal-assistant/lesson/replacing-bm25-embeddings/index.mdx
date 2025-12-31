@@ -1,0 +1,229 @@
+---
+title: Replacing BM25 with Embeddings
+course: build-ai-personal-assistant
+module: retrival-skill-building
+order: 4
+description: In this lesson we discover the power of Embeddings that helps us build a vector database that is capable of better understand the meaning of our documents and improve the BM25 approach that is based on keywords.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+While powerful, the BM25 algorithm is useful only when the user that needs to search for something actually knows the exact keywords that are used inside our documents.
+
+Even though we got some help from the LLM in the generation of the keywords based on the query the user sent, it is almost impossible for it to generate keywords related to an eclipse if our user writes something like *"Find the emails that talks about the moon that covers the sun."*.
+
+In order to understand the meaning of something, we need to embed both our documents and the query the user is making.
+
+Embedding is a complex topic, and we can dive deep into research and YouTube videos all they long, but for the scope of our usage it does not matter that much because we can leverage some solution already made to make our life easier.
+
+But before go ahead, let's share the meaning of Embeddings in LLM: this is the transformation process that takes words and the context of them and turn everything into a list of vectors that held multiple numbers and help describe the relationship between the words processed in the specific context we provided.
+
+I know, it's kinda hard to wrap our head around it, so let's just say that **with embedding the LLM is able to understand better our documents and queries**.
+
+For this lesson our exercise is to implement the conversion of both, our documents and the query that is coming from our user. As usual Matt provided us plenty of code that will simplify our learnings and everything is neatly organized into specific functions that do most of our work.
+
+In order to solve this exercise we have to work on two different aspects of our application:
+1. first we will work inside the `api/create-embeddings.ts` file so we can create both, the embeddings from our emails and the one for the current query.
+2. once we have setup all the business logic, we will move into the actual implementation inside the `api/chat.ts` file where we define the endpoint our AI will use to provide the chat experience our users expect.
+
+While I was working on this exercise, one question kept coming into my mind: *"When the `embedEmails` function gets called?*
+
+You see, if you open the `create-embeddings.ts` file, you'll soon discover that the first function that you have to complete is the `embedsLotsOfText`, that it is been called right inside the `embedEmails`...
+
+I've been searching for the invocation of this last function, but couldn't find any!
+
+The thing is that Matt decided to put the invocation of this function right inside the `main.ts` file, the file that is called from the exercise to start the developer server.
+
+We have a cache system, so we do not have to call the model each time we fire the server, that leverages our filesystem by creating a JSON file that contains the embedded (or vectorized) version of all of our emails. If you check the `data/emails-google.json` (assuming that `EMBED_CACHE_KEY` has `emails-google` assigned to it), you'll see how the process ~~stored~~ embedded all our emails.
+
+Let's quickly describe how the process is ran depending on the presence of the cache file.
+
+### First run, we do not have an embed cache file
+1. we start the dev server with `pnpm run dev` by selecting the exercise
+2. once we selected the exercise we load `main.ts` that calls `embedEmails`
+3. the first thing that `embedEmails` does is to `loadEmails` and then checks if exists the embed cache with `getExistingEmbeddings`
+4. since it is the first run and we do not have a cache, we divide the `emails` into chunks that contains 99 emails each
+5. then we pass each chunk to `embedLotsOfText` that is the function in charge of calling the <EL href="https://ai-sdk.dev/docs/reference/ai-sdk-core/embed-many#embedmany">`embedMany`</EL> function leveraging the embed model we chose
+6. at each pass we add the result of `embedLotsOfText` into the `embeddings` array
+7. we store the generated `embeddings` thanks to the `saveEmbeddings` function that leverages the `writeFile` function to write the JSON file that works as cache for our next searches via the chat
+8. once this process is done, we delegate all user interactions to our `chat.ts` endpoint that leverages the `searchEmails` function to answer user queries
+
+### Run with a cache file
+1. we start the dev server with `pnpm run dev` by selecting the exercise
+2. once we selected the exercise we load `main.ts` that calls `embedEmails`
+3. after calling `loadEmails`, `embedEmails` finds the cache file and does not do anything else
+4. we delegate all user interactions to our `chat.ts` endpoint that leverages the `searchEmails` function to answer user queries
+
+Now that we understand how everything is working together, let's implement the `embedLotsOfText` function!
+
+## Implementing `embedLotsOfText`
+Now that we know the entire process we understand that this function get's called for each chunk of emails we will work with. As Matt suggests we have to leverage an embedding model and the `embedMany` function.
+
+First and foremost, let's see the embedding model;
+```ts
+const myEmbeddingModel = google.textEmbeddingModel(
+  'text-embedding-004',
+);
+```
+
+And now let's see how we implement the embedding with the `embedLotsOfText`. 
+
+We know that we will call this function with each chunk of our emails, 99 of them to be exact, so this is the param we will set for the function. 
+
+Then we will invoke the `embedMany` function that will accept a config object, for our scope we will define only the following parameters:
+- `model` the model that we want to use for the embedding,
+- `values` in this case the value depends by the model we selected, for our scope `text-embedding-004` an array of strings will do the trick (that's why we `map` over the emails and return a string where we merge the `subject` and the `body` into a single one)
+- `maxRetries` this is a common parameter, in this case we set it to `0` to discover early if something goes wrong.
+```ts
+const result = await embedMany({
+	model: myEmbeddingModel,
+	values: emails.map(
+	  (email) => `${email.subject} ${email.body}`,
+	),
+	maxRetries: 0,
+});
+```
+We store the response into a variable `result` because we do not want to return the entire response, we want just to `map` over all the `embeddings` and return an array that provides the `id` of the email as well as its embedding.
+```ts
+result.embeddings.map((embedding, index) => ({
+	id: emails[index]!.id,
+	embedding,
+}));
+```
+Let's check the entire function:
+```ts
+const embedLotsOfText = async (
+  emails: Email[],
+): Promise<
+  {
+    id: string;
+    embedding: number[];
+  }[]
+> => {
+  const result = await embedMany({
+    model: myEmbeddingModel,
+    values: emails.map(
+      (email) => `${email.subject} ${email.body}`,
+    ),
+    maxRetries: 0,
+  });
+
+  return result.embeddings.map((embedding, index) => ({
+    id: emails[index]!.id,
+    embedding,
+  }));
+};
+```
+## Implementing `embedOnePieceOfText`
+Now that we embedded all the emails it's time to let the LLM understand also the user query, the message he'll send from the chat experience we're providing.
+
+Since it'll be just a single string, we do not need to leverage the power of `embedMany` this time, the simpler <EL href="https://ai-sdk.dev/docs/reference/ai-sdk-core/embed#embed">`embed`</EL> will do the trick.
+```ts
+const embedOnePieceOfText = async (
+  text: string,
+): Promise<number[]> => {
+  const result = await embed({
+    model: myEmbeddingModel,
+    value: text,
+  });
+
+  return result.embedding;
+};
+```
+Since `result.embedding` is just the array of the calculated embeddings we return just that and we satisfy our type definition.
+
+Now the LLM has everything it needs to calculate the similarity between our `emails` and the `query` (or `text`) the user has provided, but how do actually is able to understand how close are two array of numbers?
+
+Here's where the `calculateScore` function comes into play!
+
+## Implementing `calculateScore`
+As stated a moment ago, we have `embedLotsOfText` that is returning an array of objects that contain an `embedding` array of numbers for each email (we know that because we passed the `id` of each email) and the `embedOnePieceOfText` that is returning the array of numbers for the single user query.
+
+How do we tell the LLM that we want to compare each `embedding` from the `embedLotsOfText` to the user query embedding?
+
+We need a loop!
+
+Inside `searchEmails` (the function that we will implement in our chat), we have a loop for every embedding that has been generated by `embedLotsOfText` and for each item we will invoke the  `calculateScore` function to understand how close the meaning of the user query is to a specific email. Let's see for a moment the entire `searchEmails` function:
+```ts
+export const searchEmails = async (query: string) => {
+  const embeddings =
+    await getExistingEmbeddings(EMBED_CACHE_KEY);
+
+  if (!embeddings) {
+    throw new Error(
+      `Embeddings not yet created under this cache key: ${EMBED_CACHE_KEY}`,
+    );
+  }
+  const emails = await loadEmails();
+  const emailsMap = new Map(
+    emails.map((email) => [email.id, email]),
+  );
+
+  const queryEmbedding = await embedOnePieceOfText(query);
+
+  const scores = Object.entries(embeddings).map(
+    ([key, value]) => {
+      return {
+        score: calculateScore(queryEmbedding, value),
+        email: emailsMap.get(key)!,
+      };
+    },
+  );
+
+  return scores.sort((a, b) => b.score - a.score);
+};
+```
+As you can see we, possibly, get all the `embeddings` from our cache via `getExistingEmbeddings` (the function we described earlier to handle the generation and retrival of the embeddings from the cache).
+
+We then generate the `emailsMap` to simplify the retrival of the content of a specific email and then, once we get the embedding of the user query, we start our loop where we calculate the similarities between the embed email and the embed user query.
+
+Let's focus on that:
+```ts
+const scores = Object.entries(embeddings).map(
+  ([key, value]) => {
+    return {
+      score: calculateScore(queryEmbedding, value),
+      email: emailsMap.get(key)!,
+    };
+  },
+);
+```
+In this case `scores` will be an array of objects with:
+- `score` as the actual value that defines the similarities between the embed query and the embed email
+- `email` as the entire email objects that we are able to get thanks to the mapping we did few lines above
+
+Knowing that `calculateScore` is called against each email, let's understand **how** can we calculate the similarity in meaning between two embeds.
+
+This is done thanks to the <EL href="https://ai-sdk.dev/docs/reference/ai-sdk-core/cosine-similarity">`cosineSimilarity`</EL> function provided by the AI SDK package itself and since is just a mathematical utility will not consume any token!
+```ts
+import { cosineSimilarity } from 'ai'
+
+const calculateScore = (
+  queryEmbedding: number[],
+  embedding: number[],
+): number => {
+  return cosineSimilarity(queryEmbedding, embedding);
+};
+```
+Since `cosineSimilarity` will just return a number, from our `calculateScore` function we return just that.
+
+> Of course we could just have used `cosineSimilarity` inline within the loop, but I believe Matt's point here was to be clear as much as possible about where we should work.
+
+Now that we've collected all the information we needed, it's time to integrate our work inside the `api/chat` endpoint and test our work.
+## Implementing embeddings into the chat
+We have to understand that we are building a very specific chat here, our endpoint will receive the Request from `useChat` and by know we should remember that, with others, we have a key `messages` where each is an `UIMessage`. 
+
+As discovered in the [Stream to UI](https://cupofcraft.dev/notes/ai-sdk-v5-crash-course/lesson/stream-text-to-ui/) lesson of the crash course on AI SDK, we have an handy function called <EL href="https://ai-sdk.dev/docs/reference/ai-sdk-ui/convert-to-model-messages">`convertToModelMessages`</EL> that helps us in converting a `UIMessage` into a more appropriate `ModelMessage`.
+
+But the new `searchEmails` does not take in an array of `UIMessage`, it want's just a string with all the history of our chat.
+
+And all we have to do to generate it is to call the function `formatMessageHistory` that takes all the `UIMessage[]` and generate a single string where it concatenates the `role` and `parts` (to be exact, only the `text` in each `part`).
+
+> This is why I try to let you think about the difference with a standard chat and what we're building here. In this case we invoke `searchEmails` **every content the user will insert a query**.
+
+Beside this, implementing `searchEmails` into our endpoint is a simple task:
+```ts
+ const searchResults = searchEmails(
+	formatMessageHistory(messages),
+);
+```
+Since `searchEmails` already sorts the results by the score, all we have to do is to `slice` the `searchResults` array and prepare the instructions to our LLM as we did in the previous lesson. 

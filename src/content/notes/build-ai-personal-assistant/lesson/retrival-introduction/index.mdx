@@ -1,0 +1,24 @@
+---
+title: Retrival Introduction
+course: build-ai-personal-assistant
+module: retrival-skill-building
+order: 1
+description: When working with an LLM that needs to access our own data, the general accepted approach was to train a model leveraging the data itself. But there's something better...
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+In this first lesson Matt explain to us why retrieval is so important for current LLMs.
+
+He compares the previous *"best practice"* of training a model with the retrieval one. With the first approach, you had to collect all the data at once, pre-train the model giving it as a source of truth and you'll get a list of parameters that the model will use from now on to answer our queries.
+
+Talking about numbers, the example provided show us a 10 TB training data that get's smashed down to 140 GB. This kind of compression is not much good. Yes, the model will have parameters that will help it respond to queries based on our training data, but since the compression is so high the chances of hallucinations or simply the inability of the LLM to properly understand all the data has got lost.
+
+With retrieval the things are different.
+
+If you give to your LLM the ability to retrieve the data at inference time, the time where the LLM is generating the response based on your query, then things change. It does not have to dive into the parameters it built during the training, it just have to look around and find the most relevant information that it could answer to your query.
+
+This approach reduces the possibilities of hallucination and improves the quality of the output.
+
+The thing is... How do we give access to our private information to an LLM?
+
+This is the focus of this section where we will learn many cool approaches, like the BM25 algorithm, that help optimize how the LLM access and retrieve our data.

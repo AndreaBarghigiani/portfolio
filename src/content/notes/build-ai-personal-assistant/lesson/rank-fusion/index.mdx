@@ -1,0 +1,67 @@
+---
+title: Rank Fusion
+course: build-ai-personal-assistant
+module: retrival-skill-building
+order: 5
+description: We discovered how the BM25 is a great approach for keywords matching, while being able to leverage the embedding is great to have a vector capable of helping us understand the meaning of a resource. Let's discover how can we combine the two!
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+Let's be clear: there's no search ranking factor that is absolutely better than another.
+
+Some search algo are good for something (like BM25 is great for keywords matching), while others are good at something else (like embedding our data).
+
+So a popular technique is to **mix them** with the Rank Fusion approach.
+
+While the math behind this finding can be quite complex, at the end the concept is incredibly simple and we just need to study the function that Matt provided to us to clearly understand what is going on.
+```ts
+export function reciprocalRankFusion(
+  rankings: { email: Email; score: number }[][],
+): { email: Email; score: number }[] {
+  const rrfScores = new Map<string, number>();
+  const documentMap = new Map<
+    string,
+    { email: Email; score: number }
+  >();
+
+  // Process each ranking list
+  rankings.forEach((ranking) => {
+    ranking.forEach((doc, rank) => {
+      // Get current RRF score for this document
+      const currentScore = rrfScores.get(doc.email.id) || 0;
+
+      // Add contribution from this ranking list
+      const contribution = 1 / (RRF_K + rank);
+      rrfScores.set(doc.email.id, currentScore + contribution);
+
+      // Store document reference
+      documentMap.set(doc.email.id, doc);
+    });
+  });
+
+  // Sort by RRF score (descending)
+  return Array.from(rrfScores.entries())
+    .sort(([, scoreA], [, scoreB]) => scoreB - scoreA)
+    .map(([emailId, score]) => {
+      return {
+        email: documentMap.get(emailId)!.email,
+        score,
+      };
+    });
+}
+```
+The focus of this exercise is let us understand that does not matter which algorithm we will use to rank our search results, the mandatory part is that every rankings has to output the same shape.
+
+In fact, both the `searchEmailsViaBM25` and `embeddingsSearchResults` output the same result:`{email: Email; score: number}[]` **sorted via `score`**. What truly changes between the two is the `score` evaluation.
+
+The most interesting thing about all of this is that **we do not even need to care about the `score`**.
+
+This kind of approach only cares about the **position** of the result.
+
+We then loop over all the rankings we collected and we calculate how much each contributes to the same resource. The higher they contribute, the better they will rank in the end.
+
+That's it!
+
+There are a couple more concepts like how we calculate the `contribution` and the parameter we use, but it is outside the scope of this simple lesson.
+
+All we have to remember is that: **with Rank Fusion** we can combine multiple ranking systems and improve the quality of our searches.

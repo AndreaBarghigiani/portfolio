@@ -1,0 +1,68 @@
+---
+title: Query Rewriting
+course: build-ai-personal-assistant
+module: retrival-skill-building
+order: 6
+description: Don't rely on the user query to search your data. In this lesson you'll learn how to leverage LLM to not only create a set of keywords, but even to rewrite the query for the semantic search.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+In a [previous lesson](#) we learned how it was possible to leverage the power of the LLM to help us generate an array of keywords that will help us searching with BM25.
+
+Well now it's time to use the same power to create an optimized search query that will help our embeddings as well!
+
+The lesson is pretty simple and it helps us combine all we learned in this module, optimize our search query so we do not have to run the semantic search with incomplete or irrelevant text.
+
+We will leverage the `generateObject` call we implemented in the lesson where we had to generate the keywords for the BM25 search, all we have to do in this case is to expand the `system` prompt as well as the `schema` that defines the output format for the object we want to receive from the LLM work.
+
+This is how the call to `generateObject` looked when we first open the problem:
+```ts
+const keywords = await generateObject({
+  model: google('gemini-2.5-flash'),
+  system: `You are a helpful email assistant, able to search emails for information.
+    Your job is to generate a list of keywords which will be used to search the emails.
+  `,
+  schema: z.object({
+    keywords: z
+      .array(z.string())
+      .describe(
+        'A list of keywords to search the emails with. Use these for exact terminology.',
+      ),
+  }),
+  messages: convertToModelMessages(messages),
+});
+```
+As you can see, our `system` was specifically designed to only generate a list of keywords and the output schema only has a `keywords` array defined for it.
+
+As already stated, we have to expand both the `system` and the `schema` that we output. The following is how I changed before checking the solution:
+```ts
+const keywords = await generateObject({
+  model: google('gemini-2.5-flash'),
+  system: `You are a helpful email assistant, able to search emails for information.
+    Your job is divided in two steps:
+    1. generate a list of keywords,
+    2. generate a searchQuery able to describe the meaning of the user request.
+    Both will be used to search the emails with different approaches: keywords will be used with BM25
+    while searchQuery will be used for semantic search.
+  `,
+  schema: z.object({
+    keywords: z
+      .array(z.string())
+      .describe(
+        'A list of keywords to search the emails with. Use these for exact terminology.',
+      ),
+    searchQuery: z
+      .string()
+      .describe(
+        'The query that will be used to search emails with. Use these for semantic search.',
+      ),
+  }),
+  messages: convertToModelMessages(messages),
+});
+```
+
+As you can see, I've expanded the `system` by giving it two separate tasks as well as the `schema` where now I describe `searchQuery` as the query itself that will be used to search the data.
+
+Checking out the solution Matt made I can say that looks pretty similar.
+
+But there is a last step we need to do in order to make our chat application work as expected, and that is to pass `searchQuery` to the actual `searchEmails` function that is in charge of orchestrating the two different kind of searches we just implemented.

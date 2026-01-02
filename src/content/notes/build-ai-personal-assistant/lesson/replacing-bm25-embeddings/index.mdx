@@ -1,7 +1,7 @@
 ---
 title: Replacing BM25 with Embeddings
 course: build-ai-personal-assistant
-module: retrival-skill-building
+module: retrieval-skill-building
 order: 4
 description: In this lesson we discover the power of Embeddings that helps us build a vector database that is capable of better understand the meaning of our documents and improve the BM25 approach that is based on keywords.
 ---
@@ -172,9 +172,9 @@ export const searchEmails = async (query: string) => {
   return scores.sort((a, b) => b.score - a.score);
 };
 ```
-As you can see we, possibly, get all the `embeddings` from our cache via `getExistingEmbeddings` (the function we described earlier to handle the generation and retrival of the embeddings from the cache).
+As you can see we, possibly, get all the `embeddings` from our cache via `getExistingEmbeddings` (the function we described earlier to handle the generation and retrieval of the embeddings from the cache).
 
-We then generate the `emailsMap` to simplify the retrival of the content of a specific email and then, once we get the embedding of the user query, we start our loop where we calculate the similarities between the embed email and the embed user query.
+We then generate the `emailsMap` to simplify the retrieval of the content of a specific email and then, once we get the embedding of the user query, we start our loop where we calculate the similarities between the embed email and the embed user query.
 
 Let's focus on that:
 ```ts

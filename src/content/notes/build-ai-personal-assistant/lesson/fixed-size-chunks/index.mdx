@@ -1,0 +1,27 @@
+---
+title: Fixed Size Chunks
+course: build-ai-personal-assistant
+module: advanced-retrieval-skill-building
+order: 1
+description: We get introduced to the concept of chunking large documents into smaller pieces by leveraging the `TokenTextSplitter` from LangChain.
+---
+import EL from '@/components/ui/ExternalLink.astro';
+
+Having an LLM capable of searching through our documents is really powerful, we can chat with it and let it discover for us the most relevant documents that we have in our vault.
+
+But having large documents is not helpful when we ran a search, because the length of the document and the various arguments do not provide specific informations about the user query.
+
+That's why implementing a sort of chunk mechanism is really helpful. It provides us a way to leverage an embedding model so it can create specific vectors about the argument treated in the chunk itself.
+
+In this lesson Matt introduces us to the `TokenTextSplitter` from the `@langchain/textsplitters` package.
+
+This constructor let us instantiate a new splitter that we can configure as we wish, in the lesson he show us how to configure it with `chunkSize` and `chunkOverlap`.
+```ts
+const splitter = new TokenTextSplitter({
+  chunkSize: 500,
+  chunkOverlap: 200,
+});
+```
+This is a somewhat limited experience because, while the `chunkOverlap` is helpful in not cut middle of sentences, we divide our long content only based on the length of our text without any consideration about the meaning of the chunk itself.
+
+We will discover more techniques to improve the situation, in the meantime if you want to have a sneak peak you can check <EL href="https://langchain-doc.readthedocs.io/en/latest/modules/indexes/examples/textsplitter.html">LangChan documentation</EL> about this.

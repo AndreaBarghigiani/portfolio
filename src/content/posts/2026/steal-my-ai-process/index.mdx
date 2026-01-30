@@ -1,0 +1,85 @@
+---
+title: Steal my AI process for 2026
+date: 2026-01-23
+tags: AI, Agents
+seo:
+  title: Steal my AI process
+  description: A simple introductory article were I explain my custom workflow working with agents and skills inside OpenCode.
+  type: article
+  keywords: AI Enginering, Development, OpenCode 
+---
+
+import EL from '@/components/ui/ExternalLink.astro';
+
+I’ve been experimenting extensively with AI coding agents lately, refining how to best integrate them into a professional workflow. I’ve become so immersed in this process that stepping away to write this article actually feels like a distraction. I’m eager to get back to reviewing my agent’s output and planning new features 😅
+
+The current landscape is cluttered with information that is either outdated or inefficient, often leading to wasted tokens and frustrated developers. This guide isn't a "magic formula," but rather a high-performance framework based on real-world experience. It is designed for you to **personalize** according to your project needs and coding style.
+
+## The Shift from Autocomplete to Agency
+
+We’ve moved far beyond the "autocomplete on steroids" era of early GitHub Copilot. My recent focus has been on IDEs empowered by AI, specifically tools like Windsurf. While I appreciated its UI, I eventually felt it lost its way, which pushed me toward more robust alternatives.
+
+I initially looked at Claude Code, but one alternative kept surfacing in my feed: <EL href="https://opencode.ai/">**OpenCode**</EL>.
+
+OpenCode offers everything Claude Code does, with two critical advantages:
+1. It is **open source**.
+2. It allows you to use **any model** you prefer.
+
+Currently, I rely on <EL href="https://z.ai/subscribe?ic=DUI9BTAUNU">GLM 4.7</EL>. It’s a powerhouse model with a generous yearly plan that offers incredible value for the performance it delivers.
+
+## Solving the Configuration Chaos
+
+While OpenCode is powerful, working purely via the terminal can feel daunting. I missed the IDE experience but wanted to leverage my GLM 4.7 credits; something Windsurf doesn't allow. To solve this, I returned to VS Code and installed the **KiloCode extension**.
+
+KiloCode provides <EL href="https://kilo.ai/docs/basic-usage/using-modes#built-in-modes">five distinct agents</EL> that I’ve come to rely on. However, I didn't want to be locked into one tool. I wanted my agents, prompts, and knowledge to follow me across OpenCode, VS Code, and any other tool I might test.
+
+### The `.ai-config` Strategy
+Most tools create their own hidden folders (`.claude`, `.opencode`, `.kilocode` just to say a few). 
+
+If you create a custom skill in one, it’s invisible to the others. 
+
+To fix this, I implemented a **"Write Once, Read Everywhere"** approach:
+
+1. I created a central `.ai-config/` folder in my project root.
+2. I moved all `AGENTS.md` files, custom agents, skills, and MCP configurations there.
+3. I used **symbolic links** to point the tool-specific folders to my central config.
+
+For example if I need to bring the skills into KiloCode (it doesn't read `agents/` as it relies on its own implementation): `ln -s .ai-config .kilocode`
+
+Once I created a symlink for my setup, every tool accesses the same brain. If I update a skill in one, the improvement is instantly available across my entire stack.
+
+## Knowledge and Skills: The Importance of Context
+
+To handle modern frameworks like Tanstack Start, I use the <EL href="https://context7.com/">Context7 MCP</EL> server. This allows agents to pull real-time documentation and latest implementations on demand.
+
+But "correct" code isn't always "good" code. I found the agents often produced solid logic that lacked my specific architectural taste. Files were too large, folder structures felt messy or any other *"best practice"* you have in your workflow. 
+
+This is where `SKILL.md` files become mandatory.
+
+### Leverage `SKILL.md`
+Skills are pieces of knowledge that describe **your** preferences. 
+
+If you want every `useQuery` to use `queryOptions()`, don't manually fix it every time. 
+
+Create a `skills/tanstack-query-options.md` file describing that pattern. Even better? Ask your agent to write the skill for you based on a piece of code you like.
+
+## The Optimized Process
+
+This workflow has allowed me to complete complex Pull Requests in hours that would have otherwise taken a week of manual implementation.
+
+### For New Features
+1. **The Architect:** Always start a session with an "Architect" agent. Describe the feature in detail.
+2. **Context Efficiency:** Mention relevant files, but don't "at" (`@`) them immediately. Tell the agent the filename; it will use `grep` to find specific sections, saving you thousands of tokens.
+3. **The Plan:** Ask the Architect for a Markdown version of the implementation plan. Challenge its decisions and ensure it has accounted for your existing skills.
+4. **Delegation:** Tell the Architect to **delegate** the implementation to the "Task Orchestrator." Never mix your planning context with your execution context.
+5. **Review:** Request frequent commits with descriptive messages. Review each commit as they arrive (or later with a coffee or tea).
+6. **Refinement:** If patterns emerge during implementation, tell the Architect to update your `skills/` directory before closing the task.
+
+### For Bug Fixing
+1. **The Debugger:** Start immediately with a specialized "Debug" agent.
+2. **Context:** Provide the specific error and remind the agent it has access to the Context7 MCP.
+3. **The Knowledge Loop:** Once solved, the most important step is to ask the agent: *"Do we need to update our current skills or create a new one to prevent this bug in the future?"*
+
+## Conclusion
+
+The "secret" isn't a specific prompt; it’s the **configuration ecosystem** you build around your project. By centralizing your AI logic in `.ai-config` and treating `SKILL.md` files as a living library of your coding standards, you transform AI from a simple assistant into a high-level engineering partner.

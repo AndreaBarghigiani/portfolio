@@ -16,7 +16,7 @@ After years of skepticism, AI agents are now central to my workflow. While I don
 Every time you start a new session, it is like hiring a new coworker who is seeing your codebase for the first time. If you use a CLI-based agent, you are already ahead; the terminal is a powerful tool for discovery. However, there is a hidden cost: your agent must read and process the output of every `grep`, `ls`, or `cat` command it runs. This is a massive waste of tokens.
 
 ## The Problem: Inefficient Discovery
-How does an agent "learn" your code? Usually, you provide a starting point: *"Hey, I want to implement a feature in this React component."* 
+How does an agent "learn" your code? Usually, you provide a starting point: *"Hey, I want to implement a feature in this React component."*
 
 The agent reads that component and its imports, loading relevant snippets into its context. But then it starts exploring. It runs `ls` to map the directory structure, then another `ls` on a `features` folder, and then `cat` on a `utils.ts` file just to see what is inside. Even "smart" agents that use `grep` often pull in more data than necessary.
 
@@ -53,9 +53,9 @@ For those using **OpenCode**, you can integrate the <EL href="https://github.com
 
 ### "Inviting" Your Agent to Be Efficient
 
-Simply installing the MCP is not enough. Agents often default to familiar tools like ⁠`ls` and `⁠grep` because they do not instinctively know when to switch to a specialized index. In my tests, agents frequently ignored the MCP entirely, wasting tokens on standard CLI commands.
+Simply installing the MCP is not enough. Agents often default to familiar tools like `ls` and `grep` because they do not instinctively know when to switch to a specialized index. In my tests, agents frequently ignored the MCP entirely, wasting tokens on standard CLI commands.
 
-You should not disable ⁠grep or ⁠ls entirely, as they remain useful for various tasks. Instead, you should provide specific instructions in your ⁠AGENTS.md file to enforce a **Token-Saving Protocol**:
+You should not disable `grep` or `ls` entirely, as they remain useful for various tasks. Instead, you should provide specific instructions in your `AGENTS.md` file to enforce a **Token-Saving Protocol**:
 
   
 ```markdown
@@ -71,12 +71,14 @@ You should not disable ⁠grep or ⁠ls entirely, as they remain useful for vari
 
 ## The Value of `⁠AGENTS.md`
 
-Some <EL href="https://arxiv.org/abs/2602.11988">recent research</EL> has suggested that `⁠AGENTS.md` files can actually degrade performance, leading some to claim the format is "dead." 
+Some <EL href="https://arxiv.org/abs/2602.11988">recent research</EL> has suggested that `AGENTS.md` files can actually degrade performance, leading some to claim the format is "dead." 
 
-However, the issue is not the file itself; it is the poor quality of auto-generated `⁠/init` drafts. 
+However, the issue is not the file itself; it is the poor quality of auto-generated `/init` drafts. 
 
 When used intentionally to define tool hierarchies, these instructions are incredibly effective. 
-![[Attachments/jcodemunch-tool-calls.jpg]]
+
+![Sample of MCP jCodeMunch calls](./jcodemunch-tool-calls.jpg)
+
 Seeing an agent execute surgical tool calls instead of dumping entire files into the context is deeply satisfying and much cheaper. 
 
 ## Conclusion

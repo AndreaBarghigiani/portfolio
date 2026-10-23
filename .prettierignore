@@ -1,4 +1,7 @@
 # Ignore markdown files
+# Shared library owns its formatting configuration
+.agent-workflows/
+
 *.md
 *.mdx
 *.yaml

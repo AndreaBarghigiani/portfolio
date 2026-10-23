@@ -1,0 +1,3 @@
+[submodule ".agent-workflows"]
+	path = .agent-workflows
+	url = https://github.com/AndreaBarghigiani/agent-workflows.git

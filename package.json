@@ -5,6 +5,8 @@
   "packageManager": "pnpm@10.24.0",
   "scripts": {
     "dev": "astro dev",
+    "dev:serve": "tailscale serve --yes --bg --https=8448 http://127.0.0.1:4322",
+    "dev:tailscale": "pnpm dev:serve && ASTRO_TAILSCALE=1 astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",

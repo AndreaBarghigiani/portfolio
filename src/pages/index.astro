@@ -3,7 +3,9 @@ import Container from '@/components/Container.astro';
 import CoffeeHeading from '@/components/partials/CoffeeHeading.astro';
 import Drops from '@/components/partials/Drops.astro';
 import WorkExperience from '@/components/ui/WorkExperience.astro';
+import ProjectPreview from '@/components/ui/ProjectPreview.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPublishedProjects } from '@/lib/projects';
 import { sortJobsByDate } from '@/lib/utils';
 import { getCollection, getEntry, render } from 'astro:content';
 
@@ -19,6 +21,7 @@ const links = await getCollection('links');
 
 const jobs = await getCollection('jobs');
 const sortedJobs = sortJobsByDate(jobs);
+const featuredProjects = (await getPublishedProjects()).filter((project) => project.data.featured);
 ---
 
 <BaseLayout>
@@ -54,6 +57,19 @@ const sortedJobs = sortJobsByDate(jobs);
             ))}
           </ul>
         </div>
+      </Container>
+    )
+  }
+
+  {
+    featuredProjects.length > 0 && (
+      <Container as="section" class="flex scroll-mt-32 flex-col gap-5 py-8" id="projects">
+        <CoffeeHeading icon="drop-4">Selected projects</CoffeeHeading>
+        <ul>
+          {featuredProjects.map((entry) => (
+            <ProjectPreview entry={entry} />
+          ))}
+        </ul>
       </Container>
     )
   }

@@ -119,6 +119,68 @@ const courseLessonCollection = defineCollection({
   }),
 });
 
+const projectUrl = z
+  .string()
+  .url()
+  .refine((value) => /^https?:\/\//i.test(value), {
+    message: 'Project links must use http or https.',
+  });
+
+const projectImage = (image: ImageFunction) =>
+  z.object({
+    src: image(),
+    alt: z.string().trim().min(1, 'Provide meaningful alternative text.'),
+    caption: z.string().trim().min(1).optional(),
+  });
+
+const projectMediaUrl = z.string().refine((value) => {
+  if (value.startsWith('/') && !value.startsWith('//')) return true;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}, 'Media sources must be root-relative paths or http(s) URLs.');
+
+const projectCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/projects' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string().trim().min(1),
+      summary: z.string().trim().min(1),
+      order: z.number().int().nonnegative(),
+      featured: z.boolean().default(false),
+      draft: z.boolean().default(false),
+      logo: projectImage(image).optional(),
+      cover: projectImage(image).optional(),
+      media: z
+        .array(
+          z.discriminatedUnion('type', [
+            z.object({ type: z.literal('image'), ...projectImage(image).shape }),
+            z.object({
+              type: z.literal('video'),
+              src: projectMediaUrl,
+              title: z.string().trim().min(1),
+              width: z.number().int().positive(),
+              height: z.number().int().positive(),
+              transcript: z.string().trim().min(1),
+              captions: z
+                .object({
+                  src: projectMediaUrl,
+                  label: z.string().trim().min(1),
+                  srclang: z.string().trim().min(1),
+                })
+                .optional(),
+            }),
+          ])
+        )
+        .optional(),
+      website: projectUrl.optional(),
+      github: projectUrl.optional(),
+    }),
+});
+
 export const collections = {
   pages: pageCollection,
   jobs: jobCollection,
@@ -128,4 +190,5 @@ export const collections = {
   notes: courseNotesCollection,
   courseModules: courseModulesCollection,
   lessonNotes: courseLessonCollection,
+  projects: projectCollection,
 };

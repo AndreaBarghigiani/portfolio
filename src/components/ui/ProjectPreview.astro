@@ -1,0 +1,33 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { ArrowUpRightIcon } from '@lucide/astro';
+
+interface Props {
+  entry: CollectionEntry<'projects'>;
+}
+
+const { entry } = Astro.props;
+---
+
+<li class="border-muted-foreground border-b py-6 first:border-t">
+  <a
+    class="group flex min-h-20 items-center gap-5 rounded-sm py-2 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+    href={`/projects/${entry.id}/`}
+  >
+    {
+      entry.data.logo && (
+        <Image
+          src={entry.data.logo.src}
+          alt={entry.data.logo.alt}
+          class="size-12 shrink-0 rounded-md object-contain"
+        />
+      )
+    }
+    <span class="flex min-w-0 flex-1 flex-col gap-1">
+      <span class="text-headings text-xl font-semibold">{entry.data.title}</span>
+      <span class="text-foreground text-sm leading-relaxed">{entry.data.summary}</span>
+    </span>
+    <ArrowUpRightIcon aria-hidden="true" class="text-headings size-4 shrink-0" />
+  </a>
+</li>

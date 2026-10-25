@@ -7,7 +7,13 @@
           "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
         }
       },
-      "format_on_save": "on"
+      "format_on_save": "on",
+      "code_actions_on_format": {
+        "source.organizeImports": false,
+        "source.fixAll": false,
+        "source.fixAll.eslint": false,
+        "source.fixAll.oxc": false
+      }
     },
     "CSS": {
       "formatter": {
@@ -16,7 +22,13 @@
           "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
         }
       },
-      "format_on_save": "on"
+      "format_on_save": "on",
+      "code_actions_on_format": {
+        "source.organizeImports": false,
+        "source.fixAll": false,
+        "source.fixAll.eslint": false,
+        "source.fixAll.oxc": false
+      }
     },
     "JavaScript": {
       "formatter": {
@@ -25,7 +37,13 @@
           "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
         }
       },
-      "format_on_save": "on"
+      "format_on_save": "on",
+      "code_actions_on_format": {
+        "source.organizeImports": false,
+        "source.fixAll": false,
+        "source.fixAll.eslint": false,
+        "source.fixAll.oxc": false
+      }
     },
     "JSON": {
       "formatter": {
@@ -34,7 +52,13 @@
           "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
         }
       },
-      "format_on_save": "on"
+      "format_on_save": "on",
+      "code_actions_on_format": {
+        "source.organizeImports": false,
+        "source.fixAll": false,
+        "source.fixAll.eslint": false,
+        "source.fixAll.oxc": false
+      }
     },
     "JSONC": {
       "formatter": {
@@ -43,15 +67,37 @@
           "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
         }
       },
-      "format_on_save": "on"
+      "format_on_save": "on",
+      "code_actions_on_format": {
+        "source.organizeImports": false,
+        "source.fixAll": false,
+        "source.fixAll.eslint": false,
+        "source.fixAll.oxc": false
+      }
     },
     "MDX": {
       "formatter": "none",
-      "format_on_save": "off"
+      "format_on_save": "off",
+      "code_actions_on_format": {
+        "source.organizeImports": false,
+        "source.fixAll": false,
+        "source.fixAll.eslint": false,
+        "source.fixAll.oxc": false
+      },
+      "remove_trailing_whitespace_on_save": false,
+      "ensure_final_newline_on_save": false
     },
     "Markdown": {
       "formatter": "none",
-      "format_on_save": "off"
+      "format_on_save": "off",
+      "code_actions_on_format": {
+        "source.organizeImports": false,
+        "source.fixAll": false,
+        "source.fixAll.eslint": false,
+        "source.fixAll.oxc": false
+      },
+      "remove_trailing_whitespace_on_save": false,
+      "ensure_final_newline_on_save": false
     },
     "TypeScript": {
       "formatter": {
@@ -60,7 +106,13 @@
           "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
         }
       },
-      "format_on_save": "on"
+      "format_on_save": "on",
+      "code_actions_on_format": {
+        "source.organizeImports": false,
+        "source.fixAll": false,
+        "source.fixAll.eslint": false,
+        "source.fixAll.oxc": false
+      }
     },
     "TSX": {
       "formatter": {
@@ -69,7 +121,13 @@
           "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
         }
       },
-      "format_on_save": "on"
+      "format_on_save": "on",
+      "code_actions_on_format": {
+        "source.organizeImports": false,
+        "source.fixAll": false,
+        "source.fixAll.eslint": false,
+        "source.fixAll.oxc": false
+      }
     },
     "YAML": {
       "formatter": {
@@ -78,7 +136,15 @@
           "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
         }
       },
-      "format_on_save": "on"
+      "format_on_save": "on",
+      "code_actions_on_format": {
+        "source.organizeImports": false,
+        "source.fixAll": false,
+        "source.fixAll.eslint": false,
+        "source.fixAll.oxc": false
+      },
+      "remove_trailing_whitespace_on_save": false,
+      "ensure_final_newline_on_save": false
     }
   }
 }

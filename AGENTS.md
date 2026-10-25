@@ -11,14 +11,17 @@ Run commands from the repository root using the package manager declared in
 
 - Development server: `pnpm dev`.
 - Production build: `pnpm build`.
-- Read-only formatting validation: `pnpm format:check`, using the existing
-  Prettier configuration and ignore rules.
-- Format assigned changes with the configured Prettier tool before validation.
+- Read-only formatting validation: `pnpm format:check`, using the project-local
+  Oxfmt configuration and ignore rules.
+- Format assigned changes with the configured Oxfmt tool before validation.
   `pnpm format` rewrites the whole project; keep formatting edits scoped to the task.
 - No dedicated lint or test command is currently declared in `package.json`.
 
 Run the production build for application changes. For workflow-only setup,
 verify the selected library installation with its helper's `--check` command.
+
+See [the Oxfmt and Zed setup](docs/oxfmt-pilot.md) for runtime requirements,
+formatting exclusions, editor setup, and pilot limitations.
 
 <!-- agent-workflows:collaboration:start -->
 ## Working with the owner

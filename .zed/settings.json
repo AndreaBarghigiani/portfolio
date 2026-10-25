@@ -1,0 +1,84 @@
+{
+  "languages": {
+    "Astro": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
+        }
+      },
+      "format_on_save": "on"
+    },
+    "CSS": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
+        }
+      },
+      "format_on_save": "on"
+    },
+    "JavaScript": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
+        }
+      },
+      "format_on_save": "on"
+    },
+    "JSON": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
+        }
+      },
+      "format_on_save": "on"
+    },
+    "JSONC": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
+        }
+      },
+      "format_on_save": "on"
+    },
+    "MDX": {
+      "formatter": "none",
+      "format_on_save": "off"
+    },
+    "Markdown": {
+      "formatter": "none",
+      "format_on_save": "off"
+    },
+    "TypeScript": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
+        }
+      },
+      "format_on_save": "on"
+    },
+    "TSX": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
+        }
+      },
+      "format_on_save": "on"
+    },
+    "YAML": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "oxfmt", "--stdin-filepath={buffer_path}"]
+        }
+      },
+      "format_on_save": "on"
+    }
+  }
+}

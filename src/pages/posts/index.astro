@@ -19,30 +19,28 @@ const sortedPosts = sortPostsByDate(posts);
 
 <BaseLayout seo={entry.data.seo}>
   <Container as="section" class="flex flex-col gap-6">
-    {
-      sortedPosts.length === 0 ? (
-        <p>No posts found</p>
-      ) : (
-        <>
-          <header class="flex flex-col gap-3">
-            <h1 class="text-headings text-3xl font-semibold">Latest posts</h1>
-            <p class="text-foreground">
-              Writing about my experiences and thoughts. This is the part of my portfolio where you
-              find more structured content, crafted to share my experiences with the focus of
-              helping you learning something new.
-            </p>
-          </header>
+    {sortedPosts.length === 0 ? (
+      <p>No posts found</p>
+    ) : (
+      <>
+        <header class="flex flex-col gap-3">
+          <h1 class="text-3xl font-semibold text-headings">Latest posts</h1>
+          <p class="text-foreground">
+            Writing about my experiences and thoughts. This is the part of my portfolio where you
+            find more structured content, crafted to share my experiences with the focus of helping
+            you learning something new.
+          </p>
+        </header>
 
-          <GradientDivider />
+        <GradientDivider />
 
-          <ul class="flex flex-col gap-3">
-            {sortedPosts.map((post) => (
-              <PostPreview entry={post} />
-            ))}
-          </ul>
-        </>
-      )
-    }
+        <ul class="flex flex-col gap-3">
+          {sortedPosts.map((post) => (
+            <PostPreview entry={post} />
+          ))}
+        </ul>
+      </>
+    )}
 
     <AuthorSeparator />
   </Container>

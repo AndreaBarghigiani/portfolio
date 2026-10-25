@@ -14,16 +14,14 @@ const { as: Tag = 'h3', icon, iconClass, class: className } = Astro.props as Pro
 ---
 
 <header class="flex items-center gap-2">
-  <Tag class:list={['text-headings flex items-start gap-2 text-xl font-semibold', className]}>
+  <Tag class:list={['flex items-start gap-2 text-xl font-semibold text-headings', className]}>
     <slot />
 
-    {
-      icon && (
-        <Icon
-          name={icon}
-          class:list={['dark:text-coffee-800 text-coffee-200 size-3 rotate-45', iconClass]}
-        />
-      )
-    }
+    {icon && (
+      <Icon
+        name={icon}
+        class:list={['size-3 rotate-45 text-coffee-200 dark:text-coffee-800', iconClass]}
+      />
+    )}
   </Tag>
 </header>

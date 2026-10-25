@@ -16,7 +16,7 @@ const isCurrentLink = isCurrent(pathname, href);
     class:list={[
       'block px-5 py-2 font-medium transition-colors',
       'hover:text-headings',
-      isCurrentLink && 'text-coffee-100 bg-muted-foreground/40 rounded-full',
+      isCurrentLink && 'rounded-full bg-muted-foreground/40 text-coffee-100',
     ]}
   >
     <slot />

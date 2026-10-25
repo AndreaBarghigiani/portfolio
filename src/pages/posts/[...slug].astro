@@ -34,19 +34,17 @@ const { Content } = await render(entry);
   <Container as="section" class="flex flex-col gap-6">
     <article class="flex flex-col gap-6">
       <div class="flex flex-col gap-2">
-        {
-          !seriesData ? (
-            <a
-              href="/posts"
-              class="text-muted-foreground hover:text-foreground flex w-max items-center gap-2 pb-4 text-sm transition-all"
-            >
-              <ArrowLeftIcon class="size-3" /> Back to archive
-            </a>
-          ) : (
-            <SeriesNavigation entry={entry} seriesData={seriesData} />
-          )
-        }
-        <h1 class="text-headings text-4xl font-semibold">{entry.data.title}</h1>
+        {!seriesData ? (
+          <a
+            href="/posts"
+            class="flex w-max items-center gap-2 pb-4 text-sm text-muted-foreground transition-all hover:text-foreground"
+          >
+            <ArrowLeftIcon class="size-3" /> Back to archive
+          </a>
+        ) : (
+          <SeriesNavigation {entry} {seriesData} />
+        )}
+        <h1 class="text-4xl font-semibold text-headings">{entry.data.title}</h1>
       </div>
 
       <!-- {

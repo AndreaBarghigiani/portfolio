@@ -35,58 +35,48 @@ const featuredProjects = (await getPublishedProjects()).filter((project) => proj
     </div>
   </Container>
 
-  {
-    links.length > 0 && (
-      <Container as="section" class="py-8">
-        <div class="flex flex-col gap-5">
-          <CoffeeHeading icon="drop-3">Where you can find me</CoffeeHeading>
+  {links.length > 0 && <Container as="section" class="py-8">
+    <div class="flex flex-col gap-5">
+      <CoffeeHeading icon="drop-3">Where you can find me</CoffeeHeading>
 
-          <ul class="flex flex-col gap-3">
-            {links.map((link) => (
-              <li class="flex items-center gap-5 py-0.5 text-sm">
-                <span class="text-muted-foreground min-w-28">{link.data.label}</span>
-                <a
-                  class="text-headings font-medium"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  href={link.data.url}
-                >
-                  {link.data.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Container>
-    )
-  }
+      <ul class="flex flex-col gap-3">
+        {links.map((link) => <li class="flex items-center gap-5 py-0.5 text-sm">
+          <span class="min-w-28 text-muted-foreground">{link.data.label}</span>
+          <a
+            class="font-medium text-headings"
+            rel="noopener noreferrer"
+            target="_blank"
+            href={link.data.url}
+          >
+            {link.data.name}
+          </a>
+        </li>)}
+      </ul>
+    </div>
+  </Container>}
 
-  {
-    featuredProjects.length > 0 && (
-      <Container as="section" class="flex scroll-mt-32 flex-col gap-5 py-8" id="projects">
-        <CoffeeHeading icon="drop-4">Selected projects</CoffeeHeading>
-        <ul>
-          {featuredProjects.map((entry) => (
-            <ProjectPreview entry={entry} />
-          ))}
-        </ul>
-      </Container>
-    )
-  }
+  {featuredProjects.length > 0 && <Container
+    as="section"
+    class="flex scroll-mt-32 flex-col gap-5 py-8"
+    id="projects"
+  >
+    <CoffeeHeading icon="drop-4">Selected projects</CoffeeHeading>
+    <ul>
+      {featuredProjects.map((entry) => (
+        <ProjectPreview {entry} />
+      ))}
+    </ul>
+  </Container>}
 
-  {
-    sortedJobs.length > 0 ? (
-      <Container as="section" class="flex flex-col gap-5 py-6">
-        <CoffeeHeading icon="stain" iconClass="size-5">
-          What I've done over the years
-        </CoffeeHeading>
+  {sortedJobs.length > 0 ? (
+    <Container as="section" class="flex flex-col gap-5 py-6">
+      <CoffeeHeading icon="stain" iconClass="size-5"> What I've done over the years </CoffeeHeading>
 
-        <ul class="flex flex-col gap-8">
-          {sortedJobs.map((job) => (
-            <WorkExperience entry={job} />
-          ))}
-        </ul>
-      </Container>
-    ) : null
-  }
+      <ul class="flex flex-col gap-8">
+        {sortedJobs.map((job) => (
+          <WorkExperience entry={job} />
+        ))}
+      </ul>
+    </Container>
+  ) : null}
 </BaseLayout>

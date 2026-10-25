@@ -22,29 +22,27 @@ const courseSlug = courseEntry ? getNotesSlugFromId(courseEntry.id) : '';
 const courseHref = courseSlug ? `/notes/${courseSlug}/` : '/notes';
 ---
 
-<aside class="border-coffee-300/65 mb-4 flex flex-col gap-4 rounded-lg border bg-black/25 p-4">
+<aside class="mb-4 flex flex-col gap-4 rounded-lg border border-coffee-300/65 bg-black/25 p-4">
   <header class="flex flex-col gap-3">
-    {
-      courseEntry ? (
-        <>
-          <span class="text-muted-foreground text-sm">This lesson note is part of:</span>
+    {courseEntry ? (
+      <>
+        <span class="text-sm text-muted-foreground">This lesson note is part of:</span>
 
-          <h3 class="text-headings text-xl font-semibold">{courseEntry.data.title}</h3>
+        <h3 class="text-xl font-semibold text-headings">{courseEntry.data.title}</h3>
 
-          {courseEntry.data.description && (
-            <p class="text-coffee-700/85 dark:text-coffee-300/85 text-base">
-              {courseEntry.data.description}
-            </p>
-          )}
-        </>
-      ) : null
-    }
+        {courseEntry.data.description && <p
+          class="text-base text-coffee-700/85 dark:text-coffee-300/85"
+        >
+          {courseEntry.data.description}
+        </p>}
+      </>
+    ) : null}
   </header>
 
   <footer>
     <a
       href={courseHref}
-      class="text-muted-foreground hover:text-foreground flex w-max items-center gap-2 text-sm transition"
+      class="flex w-max items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
     >
       <ArrowLeftIcon class="size-3" /> Back to course
     </a>

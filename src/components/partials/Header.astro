@@ -12,11 +12,11 @@ const isActivePath =
 
 <Container
   as="header"
-  class="bg-background shadow-coffee-2xl fixed z-50 flex w-full max-w-full items-center justify-center gap-8 py-5 transition-all duration-200"
+  class="fixed z-50 flex w-full max-w-full items-center justify-center gap-8 bg-background py-5 shadow-coffee-2xl transition-all duration-200"
 >
-  <Avatar class="border-border border" />
+  <Avatar class="border border-border" />
 
-  <div class="bg-muted-foreground/50 border-border w-max rounded-full border p-1 backdrop-blur-md">
+  <div class="w-max rounded-full border border-border bg-muted-foreground/50 p-1 backdrop-blur-md">
     <nav class="flex items-center">
       <ul class="flex items-center gap-1">
         <NavLink href="/">Home</NavLink>
@@ -25,8 +25,8 @@ const isActivePath =
           <button
             type="button"
             class:list={[
-              'hover:text-headings flex items-center gap-2 py-2 pr-2 pl-5 font-medium transition-colors',
-              isActivePath ? 'text-coffee-100 bg-muted-foreground/40 rounded-full' : '',
+              'flex items-center gap-2 py-2 pr-2 pl-5 font-medium transition-colors hover:text-headings',
+              isActivePath ? 'rounded-full bg-muted-foreground/40 text-coffee-100' : '',
             ]}
             aria-haspopup="true"
             aria-expanded="false"
@@ -38,14 +38,14 @@ const isActivePath =
             class="invisible absolute top-full left-1/2 z-50 mt-1 -translate-x-1/2 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100"
           >
             <div
-              class="bg-background border-border min-w-[120px] rounded-lg border p-1 backdrop-blur-md"
+              class="min-w-[120px] rounded-lg border border-border bg-background p-1 backdrop-blur-md"
             >
               <a
                 href="/posts"
                 class:list={[
                   'block rounded-md px-4 py-2 text-sm transition-colors',
                   'hover:text-headings',
-                  pathname === '/posts' && 'text-headings bg-muted-foreground/40',
+                  pathname === '/posts' && 'bg-muted-foreground/40 text-headings',
                 ]}
               >
                 Posts
@@ -55,7 +55,7 @@ const isActivePath =
                 class:list={[
                   'block rounded-md px-4 py-2 text-sm transition-colors',
                   'hover:text-headings',
-                  pathname === '/series' && 'text-headings bg-muted-foreground/40',
+                  pathname === '/series' && 'bg-muted-foreground/40 text-headings',
                 ]}
               >
                 Series
@@ -65,7 +65,7 @@ const isActivePath =
                 class:list={[
                   'block rounded-md px-4 py-2 text-sm transition-colors',
                   'hover:text-headings',
-                  pathname === '/notes' && 'text-headings bg-muted-foreground/40',
+                  pathname === '/notes' && 'bg-muted-foreground/40 text-headings',
                 ]}
               >
                 Notes

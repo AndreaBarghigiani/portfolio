@@ -27,129 +27,111 @@ const seo = {
       <header class="flex flex-col gap-4">
         <a
           href="/#projects"
-          class="text-foreground flex min-h-11 w-max items-center gap-2 rounded-sm text-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+          class="flex min-h-11 w-max items-center gap-2 rounded-sm text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
         >
           <ArrowLeftIcon class="size-3" /> Back to projects
         </a>
-        {
-          entry.data.logo && (
-            <Image
-              src={entry.data.logo.src}
-              alt={entry.data.logo.alt}
-              class="size-16 rounded-lg object-contain"
-            />
-          )
-        }
-        <h1 class="text-headings text-4xl font-semibold tracking-tight sm:text-5xl">
+        {entry.data.logo && (
+          <Image
+            src={entry.data.logo.src}
+            alt={entry.data.logo.alt}
+            class="size-16 rounded-lg object-contain"
+          />
+        )}
+        <h1 class="text-4xl font-semibold tracking-tight text-headings sm:text-5xl">
           {entry.data.title}
         </h1>
-        <p class="text-foreground max-w-2xl text-lg leading-relaxed">{entry.data.summary}</p>
-        {
-          (entry.data.website || entry.data.github) && (
-            <nav
-              aria-label={`${entry.data.title} links`}
-              class="flex flex-wrap gap-x-6 gap-y-3 pt-1"
-            >
-              {entry.data.website && (
-                <a
-                  class="text-headings decoration-border inline-flex min-h-11 items-center gap-2 underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
-                  href={entry.data.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Website <ArrowUpRightIcon class="size-4" />
-                </a>
-              )}
-              {entry.data.github && (
-                <a
-                  class="text-headings decoration-border inline-flex min-h-11 items-center gap-2 underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
-                  href={entry.data.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Source code <ArrowUpRightIcon class="size-4" />
-                </a>
-              )}
-            </nav>
-          )
-        }
+        <p class="max-w-2xl text-lg leading-relaxed text-foreground">{entry.data.summary}</p>
+        {(entry.data.website || entry.data.github) && <nav
+          aria-label={`${entry.data.title} links`}
+          class="flex flex-wrap gap-x-6 gap-y-3 pt-1"
+        >
+          {entry.data.website && <a
+            class="inline-flex min-h-11 items-center gap-2 text-headings underline decoration-border underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+            href={entry.data.website}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Website <ArrowUpRightIcon class="size-4" />
+          </a>}
+          {entry.data.github && <a
+            class="inline-flex min-h-11 items-center gap-2 text-headings underline decoration-border underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+            href={entry.data.github}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Source code <ArrowUpRightIcon class="size-4" />
+          </a>}
+        </nav>}
       </header>
 
-      {
-        entry.data.cover && (
-          <figure class="border-border overflow-hidden rounded-lg border">
+      {entry.data.cover && <figure class="overflow-hidden rounded-lg border border-border">
+        <Image
+          src={entry.data.cover.src}
+          alt={entry.data.cover.alt}
+          class="h-auto w-full"
+          widths={[640, 960, 1280]}
+          sizes="(max-width: 48rem) 100vw, 48rem"
+        />
+        {entry.data.cover.caption && <figcaption
+          class="px-4 py-3 text-sm leading-relaxed text-foreground"
+        >
+          {entry.data.cover.caption}
+        </figcaption>}
+      </figure>}
+
+      {entry.data.media?.map((item) =>
+        item.type === 'image' ? (
+          <figure class="overflow-hidden rounded-lg border border-border">
             <Image
-              src={entry.data.cover.src}
-              alt={entry.data.cover.alt}
+              src={item.src}
+              alt={item.alt}
               class="h-auto w-full"
               widths={[640, 960, 1280]}
               sizes="(max-width: 48rem) 100vw, 48rem"
             />
-            {entry.data.cover.caption && (
-              <figcaption class="text-foreground px-4 py-3 text-sm leading-relaxed">
-                {entry.data.cover.caption}
-              </figcaption>
-            )}
+            {item.caption && <figcaption class="px-4 py-3 text-sm leading-relaxed text-foreground">
+              {item.caption}
+            </figcaption>}
           </figure>
-        )
-      }
-
-      {
-        entry.data.media?.map((item) =>
-          item.type === 'image' ? (
-            <figure class="border-border overflow-hidden rounded-lg border">
-              <Image
-                src={item.src}
-                alt={item.alt}
-                class="h-auto w-full"
-                widths={[640, 960, 1280]}
-                sizes="(max-width: 48rem) 100vw, 48rem"
-              />
-              {item.caption && (
-                <figcaption class="text-foreground px-4 py-3 text-sm leading-relaxed">
-                  {item.caption}
-                </figcaption>
+        ) : (
+          <section class="flex flex-col gap-3" aria-label={item.title}>
+            <video
+              class="h-auto w-full rounded-lg"
+              width={item.width}
+              height={item.height}
+              controls
+              preload="metadata"
+              aria-label={item.title}
+            >
+              <source src={item.src} />
+              {item.captions && (
+                <track
+                  kind="captions"
+                  src={item.captions.src}
+                  srclang={item.captions.srclang}
+                  label={item.captions.label}
+                  default
+                />
               )}
-            </figure>
-          ) : (
-            <section class="flex flex-col gap-3" aria-label={item.title}>
-              <video
-                class="h-auto w-full rounded-lg"
-                width={item.width}
-                height={item.height}
-                controls
-                preload="metadata"
-                aria-label={item.title}
-              >
-                <source src={item.src} />
-                {item.captions && (
-                  <track
-                    kind="captions"
-                    src={item.captions.src}
-                    srclang={item.captions.srclang}
-                    label={item.captions.label}
-                    default
-                  />
-                )}
-                Your browser does not support embedded video. Read the transcript below.
-              </video>
-              <details class="border-border border-b py-3">
-                <summary class="text-headings min-h-11 cursor-pointer py-3 font-medium">
-                  Video transcript
-                </summary>
-                <p class="text-foreground max-w-prose leading-relaxed">{item.transcript}</p>
-              </details>
-            </section>
-          )
+              Your browser does not support embedded video. Read the transcript below.
+            </video>
+            <details class="border-b border-border py-3">
+              <summary class="min-h-11 cursor-pointer py-3 font-medium text-headings">
+                Video transcript
+              </summary>
+              <p class="max-w-prose leading-relaxed text-foreground">{item.transcript}</p>
+            </details>
+          </section>
         )
-      }
+      )}
 
-      <section class="prose prose-coffee dark:prose-invert max-w-none">
+      <section class="prose max-w-none prose-coffee dark:prose-invert">
         <Content />
       </section>
       <a
         href="/#projects"
-        class="text-foreground flex min-h-11 w-max items-center gap-2 rounded-sm text-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+        class="flex min-h-11 w-max items-center gap-2 rounded-sm text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
       >
         <ArrowLeftIcon class="size-3" /> Back to projects
       </a>

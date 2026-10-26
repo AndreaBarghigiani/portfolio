@@ -25,68 +25,60 @@ const seriesPosts = allPosts.sort(
 const currentSlug = getPostSlugFromId(entry.id);
 ---
 
-<section class="border-coffee-300/65 mb-4 flex flex-col gap-4 rounded-lg border bg-black/25 p-4">
+<section class="mb-4 flex flex-col gap-4 rounded-lg border border-coffee-300/65 bg-black/25 p-4">
   <div class="flex flex-col gap-2">
-    <div class="text-muted-foreground flex items-center gap-2 text-sm">
+    <div class="flex items-center gap-2 text-sm text-muted-foreground">
       <span>This article is part of this series:</span>
     </div>
 
     <div class="flex flex-col gap-3">
-      <h3 class="text-headings text-xl font-semibold">{seriesData.data.title}</h3>
-      {
-        seriesData.data.description && (
-          <p class="text-coffee-700/85 dark:text-coffee-300/85 text-base">
-            {seriesData.data.description}
-          </p>
-        )
-      }
+      <h3 class="text-xl font-semibold text-headings">{seriesData.data.title}</h3>
+      {seriesData.data.description && <p
+        class="text-base text-coffee-700/85 dark:text-coffee-300/85"
+      >
+        {seriesData.data.description}
+      </p>}
     </div>
   </div>
 
-  {
-    seriesPosts.length > 1 && (
-      <div class="flex flex-col gap-4">
-        <details class="group">
-          <summary class="text-headings flex cursor-pointer list-none items-center gap-2 text-lg font-medium">
-            <span>In this series</span>
-            <ChevronDown class="size-4 transition-transform group-open:-rotate-180" />
-          </summary>
+  {seriesPosts.length > 1 && <div class="flex flex-col gap-4">
+    <details class="group">
+      <summary
+        class="flex cursor-pointer list-none items-center gap-2 text-lg font-medium text-headings"
+      >
+        <span>In this series</span>
+        <ChevronDown class="size-4 transition-transform group-open:-rotate-180" />
+      </summary>
 
-          <div class="grid gap-2 py-4">
-            {seriesPosts.map((post) => {
-              const postSlug = getPostSlugFromId(post.id);
-              return (
-                <div class="flex items-center gap-4">
-                  <SeriesCounter number={post.data.series!.number} size="sm" />
+      <div class="grid gap-2 py-4">
+        {seriesPosts.map((post) => {
+          const postSlug = getPostSlugFromId(post.id);
+          return <div class="flex items-center gap-4">
+            <SeriesCounter number={post.data.series!.number} size="sm" />
 
-                  <a
-                    href={`/posts/${postSlug}/`}
-                    class:list={[
-                      'hover:text-headings flex-1 text-sm transition-colors',
-                      postSlug === currentSlug
-                        ? 'text-coffee-100 font-medium'
-                        : 'text-muted-foreground',
-                    ]}
-                  >
-                    {post.data.title}
-                  </a>
-                  {postSlug === currentSlug && (
-                    <span class="text-coffee-400 text-xs font-medium">Current</span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </details>
+            <a
+              href={`/posts/${postSlug}/`}
+              class:list={[
+                'flex-1 text-sm transition-colors hover:text-headings',
+                postSlug === currentSlug ? 'font-medium text-coffee-100' : 'text-muted-foreground',
+              ]}
+            >
+              {post.data.title}
+            </a>
+            {postSlug === currentSlug && <span class="text-xs font-medium text-coffee-400"
+              >Current</span
+            >}
+          </div>;
+        })}
       </div>
-    )
-  }
+    </details>
+  </div>}
 
   <div class="flex items-center justify-between">
     <div class="group/back relative">
       <button
         type="button"
-        class="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm"
+        class="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
         aria-haspopup="true"
       >
         <ArrowLeftIcon class="size-3" />
@@ -96,14 +88,14 @@ const currentSlug = getPostSlugFromId(entry.id);
         class="invisible absolute top-full left-0 z-50 mt-1 opacity-0 group-hover/back:visible group-hover/back:opacity-100 before:absolute before:-top-1 before:right-0 before:left-0 before:h-1 before:content-['']"
       >
         <div
-          class="bg-muted-foreground/50 border-border min-w-[140px] rounded-lg border p-1 backdrop-blur-md"
+          class="min-w-[140px] rounded-lg border border-border bg-muted-foreground/50 p-1 backdrop-blur-md"
         >
-          <a href="/posts" class="hover:text-headings block rounded-md px-3 py-2 text-sm">
+          <a href="/posts" class="block rounded-md px-3 py-2 text-sm hover:text-headings">
             Back to archive
           </a>
           <a
             href={`/series/${seriesData.id}/`}
-            class="hover:text-headings block rounded-md px-3 py-2 text-sm"
+            class="block rounded-md px-3 py-2 text-sm hover:text-headings"
           >
             View all in series
           </a>

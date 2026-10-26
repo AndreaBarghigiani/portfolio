@@ -1,0 +1,48 @@
+{
+  "$schema": "https://oxc.rs/oxfmtrc.schema.json",
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "useTabs": false,
+  "printWidth": 100,
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "singleAttributePerLine": false,
+  "astro": {
+    "allowShorthand": true,
+    "compressHTML": "html"
+  },
+  "htmlWhitespaceSensitivity": "css",
+  "quoteProps": "as-needed",
+  "jsxSingleQuote": false,
+  "proseWrap": "preserve",
+  "ignorePatterns": [
+    ".agent-workflows/**",
+    ".agents/**",
+    ".codex/**",
+    "*.md",
+    "*.mdx",
+    "*.yaml",
+    ".astro/**",
+    ".vercel/**",
+    "dist/**",
+    "node_modules/**"
+  ],
+  "overrides": [
+    {
+      "files": ["*.mdx"],
+      "options": {
+        "embeddedLanguageFormatting": "off"
+      }
+    }
+  ],
+  "sortImports": false,
+  "sortPackageJson": false,
+  "sortTailwindcss": {
+    "stylesheet": "./src/styles/global.css",
+    "functions": ["clsx"]
+  }
+}

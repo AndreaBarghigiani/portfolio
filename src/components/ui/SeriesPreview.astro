@@ -7,10 +7,10 @@ interface Props {
 const { entry } = Astro.props;
 ---
 
-<li class="hover:bg-foreground/5 h-full rounded-lg p-2 transition-colors">
+<li class="h-full rounded-lg p-2 transition-colors hover:bg-foreground/5">
   <div class="flex gap-5">
     <a href={`/series/${entry.id}/`} class="flex flex-col gap-3">
-      <h3 class="text-headings text-3xl font-medium">{entry.data.title}</h3>
+      <h3 class="text-3xl font-medium text-headings">{entry.data.title}</h3>
       <p>{entry.data.seo.description}</p>
     </a>
   </div>

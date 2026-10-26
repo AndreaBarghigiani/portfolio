@@ -12,15 +12,15 @@ const slug = getPostSlugFromId(entry.id);
 <li class="py-2">
   <div class="flex items-center gap-5">
     <div class="relative min-w-22 shrink-0">
-      <span class="text-muted-foreground text-sm">{formatDate(entry.data.date)}</span>
+      <span class="text-sm text-muted-foreground">{formatDate(entry.data.date)}</span>
     </div>
 
     <a
       href={`/posts/${slug}/`}
-      class="hover:bg-foreground/5 flex flex-col gap-3 rounded-2xl p-2 transition-colors"
+      class="flex flex-col gap-3 rounded-2xl p-2 transition-colors hover:bg-foreground/5"
     >
       <div class="flex flex-col">
-        <span class="text-headings font-medium">{entry.data.title}</span>
+        <span class="font-medium text-headings">{entry.data.title}</span>
         <p class="text-sm">{entry.data.seo.description}</p>
       </div>
     </a>

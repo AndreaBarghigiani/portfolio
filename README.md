@@ -40,6 +40,12 @@ Consider this as a live project, I'm always working on it and improving it, so i
 - [Astro Icon](https://astro-icon.vercel.app)
 - [Motion](https://motion.dev)
 
+### Formatting
+
+Run `pnpm format` to format project code and `pnpm format:check` to validate it.
+See [the Oxfmt and Zed setup](docs/oxfmt-pilot.md) for setup requirements and
+the Markdown/MDX/YAML exclusions.
+
 ### Private development over Tailscale
 
 On the Linux tower (`cupofos`), run `pnpm install --frozen-lockfile` once, then

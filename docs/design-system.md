@@ -1,309 +1,346 @@
 # cupofcraft design system
 
-Design specification for Andrea Barghigiani’s personal portfolio.
+Design specification for Andrea Barghigiani’s personal portfolio: the “spec sheet” direction.
 
-Version: 1.0 · Source reviewed: 23 October 2026.
+Version: 2.0 · Source reviewed: 28 October 2026.
 
-This document describes the visual language, reusable patterns, content structure, and interaction requirements. It contains no implementation code. It uses the approved Paper direction and records remaining differences explicitly, so another designer or builder can continue without treating every historical frame as a new rule.
+This document describes the visual language, reusable parts, page patterns, behaviour, and open decisions. It contains no implementation code. It replaces the earlier 1.0 document, which described a different (light-first, pill-based) direction that has been retired. Nothing in 1.0 should be treated as current unless it is restated here.
 
 ## 1. Design sources and authority
 
-The working design file is [cupofcraft portfolio in Paper](https://app.paper.design/file/01M5KG3D6C0HQBV14KH1M6ZSAJ).
+The design lives in one Paper file: [cupofcraft portfolio](https://app.paper.design/file/01M5KG3D6C0HQBV14KH1M6ZSAJ).
 
-| Reference                                                                          | Use                                                                                                                                |
-| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| [Portfolio system](https://app.paper.design/file/01M5KG3D6C0HQBV14KH1M6ZSAJ/p-1-0) | Light layouts, original foundation board, reading and archive patterns.                                                            |
-| [Dark theme](https://app.paper.design/file/01M5KG3D6C0HQBV14KH1M6ZSAJ/p-2-0)       | Current avatar-free desktop navigation, dark layouts, revised row highlights in 02, 04, and 07.                                    |
-| [Project detail](https://app.paper.design/file/01M5KG3D6C0HQBV14KH1M6ZSAJ/p-4-0)   | Expanded desktop project presentation in both themes.                                                                              |
-| [Mobile layouts](https://app.paper.design/file/01M5KG3D6C0HQBV14KH1M6ZSAJ/p-5-0)   | Mobile home composition, stacked content, and outer spacing. Some controls and project-detail content predate desktop refinements. |
+| Paper page      | Contains                                                                                                                      |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Design system   | Tokens, colour, type, layout, parts, contrast, **States & parts**, and the **Behaviour** sheet (header reveal, reading bar).  |
+| Home            | Desktop home (`Home — Spec sheet / dark`).                                                                                    |
+| Writing archive | Posts archive; the reference for every archive.                                                                               |
+| Course notes    | Notes archive.                                                                                                                |
+| Series archive  | Series list.                                                                                                                  |
+| Changelog       | Merged-PR changelog.                                                                                                          |
+| Article detail  | The reference for every detail page.                                                                                          |
+| Course detail   | Course with modules and lessons.                                                                                              |
+| Lesson detail   | One lesson inside a course.                                                                                                   |
+| Series detail   | Series with ordered entries.                                                                                                  |
+| Project detail  | One project.                                                                                                                  |
+| Mobile          | 390px home, archive template, detail template, and mobile behaviour. Archive and detail are templates, not one page per type. |
 
-Use the latest owner edits and explicit decisions first, then the relevant current composition. The original “00 — Design system” board is a foundation reference, not proof that its older interaction notes supersede later work. The “Round 2” exploration page does not automatically override the selected direction.
+Precedence: the owner’s latest explicit decision, then the Design system page, then the page compositions. Where a composition disagrees with the Design system page, the Design system page wins and the composition is out of date.
 
 Status labels used here:
 
-- **Established:** present in the selected compositions or explicitly retained by the owner.
-- **Requirement:** behavior or accessibility constraint the finished experience must satisfy; a static drawing alone does not verify it.
-- **Open:** not yet consistent or decided. Do not silently promote a suggestion into an approved decision.
+- **Established:** drawn in the Paper file and accepted by the owner.
+- **Requirement:** behaviour or accessibility a finished build must satisfy. A static drawing does not verify it.
+- **Open:** undecided or only proposed. Do not promote an Open item into a rule.
 
 ## 2. Character and principles
 
-**Warm by nature. Clear by design.**
+**Warm, ruled, precise.** A dark roastery palette, drawn like a drafting sheet, with one human voice.
 
-The portfolio is a personal lab: writing, learning, and finished work presented with the same care. Its visual references are warm paper, espresso, and caramel. Figtree, generous spacing, and clear editorial hierarchy carry the identity.
+- **One accent.** Amber carries emphasis, primary fills, and key labels. Do not add a second accent.
+- **Weight contrast.** Pair light (300) with black (900) type. Large display text is the main expressive device.
+- **Hairlines, not cards.** Structure comes from 1px rules and a fixed margin column. Avoid boxed cards and shadows.
+- **Square corners.** There are no rounded corners. The only circle in the system is reserved for an avatar, and the current designs do not use it.
+- **Restrained decoration.** The corner marks (section 8), the handwritten annotation, and tonal bands are the whole decorative vocabulary.
+- **Real content only.** Use verbatim titles and copy. Never invent metrics, tags, dates, or media to fill a layout.
+- **Dark first.** Light mode is not designed yet (section 11).
 
-- Lead with the person’s thinking and work. Use readable introductions and specific descriptions.
-- Let content sit directly on the page. Use dividers and spacing before adding cards.
-- Use large type for a small number of expressive moments, with quiet supporting labels.
-- Reserve filled surfaces for meaningful emphasis, actions, and highlighted rows.
-- Keep decorative coffee drops local to the portrait. They must not obscure labels or appear as button-hover decoration.
-- Preserve the warmth in both themes. Light mode is a complete composition, not an inverted screenshot.
-- Reuse established patterns across articles, courses, lessons, series, and projects.
+## 3. Tokens and colour
 
-## 3. Color foundation
+Tokens are named by **role**, so a future theme is a remap of the same names. All values below are the dark theme and are the only theme drawn.
 
-Choose colors by their role on a particular surface. A heading color is not automatically suitable for a small navigation label or a filled background.
+| Token                       | Value     | Role                                                    |
+| --------------------------- | --------- | ------------------------------------------------------- |
+| `--color-margin`            | `#1B100A` | Margin column, title-cell backgrounds, footer.          |
+| `--color-surface`           | `#231710` | Main page ground.                                       |
+| `--color-raised`            | `#2B1D14` | One step up: About band, hover rows, pull quotes.       |
+| `--color-rule`              | `#5A4030` | All hairlines.                                          |
+| `--color-ink`               | `#EADBC0` | Primary text and headings.                              |
+| `--color-ink-muted`         | `#C9B496` | Body copy and secondary text.                           |
+| `--color-ink-subtle`        | `#A58769` | Mono labels and metadata (12px and up only).            |
+| `--color-accent`            | `#E0A24F` | The single accent.                                      |
+| `--color-accent-hover`      | `#EDB563` | Hover state of accent fills.                            |
+| `--color-accent-deep`       | `#D4923F` | Margin column on an accent band.                        |
+| `--color-on-accent`         | `#231710` | Text and fills placed on the accent.                    |
+| `--color-paper`             | `#EADBC0` | Kraft band ground (writing, “keep reading”).            |
+| `--color-paper-margin`      | `#DDCBA8` | Margin column on a kraft band.                          |
+| `--color-paper-rule`        | `#B89A80` | Hairlines on a kraft band.                              |
+| `--color-paper-ink`         | `#231710` | Headings on kraft.                                      |
+| `--color-paper-ink-muted`   | `#4A3426` | Body copy on kraft.                                     |
+| `--color-paper-ink-subtle`  | `#6B4E38` | Mono labels on kraft.                                   |
 
-### Established theme roles
+Use the surface that matches the role: text on the kraft band uses the `paper-*` inks, never the dark-theme inks.
 
-| Role              | Light     | Dark      | Purpose                                                                 |
-| ----------------- | --------- | --------- | ----------------------------------------------------------------------- |
-| Page background   | `#FAF7F2` | `#302017` | Warm paper / espresso canvas.                                           |
-| Raised surface    | `#FFFFFF` | `#5C3E30` | Navigation and deliberate inset surfaces.                               |
-| Foreground        | `#8C5D43` | `#D9C5A9` | Body text and readable supporting content.                              |
-| Headings          | `#5C3E30` | `#BB8F5E` | Titles and editorial emphasis on the page background.                   |
-| Muted text        | `#8C5D43` | `#B89A80` | Metadata, dates, and supporting labels.                                 |
-| Structural border | `#E8DCCC` | `#795D4B` | Quiet separators; not a universal control or focus boundary.            |
-| Accent            | `#BB8F5E` | `#BB8F5E` | Caramel emphasis and selected fills where the foreground pairing works. |
+### Contrast
 
-Paper names these roles `--color-background`, `--color-surface`, `--color-foreground`, `--color-headings`, `--color-muted`, `--color-border`, and `--color-accent`. Dark counterparts use the `-dark` suffix, except the shared accent. `--color-white` is also present.
+Ratios are approximate, calculated by hand from WCAG relative luminance, and must be re-measured with a tool before being treated as final. Body text needs 4.5:1.
 
-### Established dark row-highlight roles
+| Pair                                  |   Ratio |
+| ------------------------------------- | ------: |
+| ink / surface                         | ≈ 12.8:1 |
+| ink-muted / surface                   |  ≈ 8.7:1 |
+| ink-subtle / surface                  |  ≈ 5.2:1 |
+| ink-subtle / margin                   |  ≈ 5.6:1 |
+| accent / surface                      |  ≈ 7.9:1 |
+| on-accent / accent                    |  ≈ 7.9:1 |
+| paper-ink-muted / paper               |  ≈ 8.5:1 |
+| paper-ink-subtle / paper              |  ≈ 5.5:1 |
 
-| Paper token                             | Value                                     | Purpose                                      |
-| --------------------------------------- | ----------------------------------------- | -------------------------------------------- |
-| `--color-row-highlight-dark`            | `#4A3428`                                 | Full-row highlighted background.             |
-| `--color-row-highlight-foreground-dark` | `#D9C5A9`, aliased to the dark foreground | Highlighted title and arrow.                 |
-| `--color-row-highlight-secondary-dark`  | `#C5AD94`                                 | Highlighted description, date, and metadata. |
-
-These three roles form one combination. Do not retain the old dark title or description colors when applying the new background.
-
-**Open:** an equivalent dedicated light-theme row-highlight combination is not yet established in Paper. Simply using the light border color as the highlight would give the existing body color only 4.13:1 contrast. It is not an approved counterpart.
-
-### Measured contrast
-
-Ratios below were calculated from the solid source colors using WCAG relative luminance. Rounded values are shown for reading; thresholds must be evaluated before rounding.
-
-| Foreground / background                    |  Ratio | Interpretation                                         |
-| ------------------------------------------ | -----: | ------------------------------------------------------ |
-| Light body / light page                    | 5.22:1 | Passes normal-text AA contrast.                        |
-| Light headings / light page                | 8.99:1 | Passes normal-text AA contrast.                        |
-| Dark body / dark page                      | 9.30:1 | Passes normal-text AA contrast.                        |
-| Dark muted / dark page                     | 5.93:1 | Passes normal-text AA contrast.                        |
-| Dark headings / dark page                  | 5.36:1 | Passes normal-text AA contrast.                        |
-| Highlight title and arrow / dark highlight | 6.90:1 | Suitable for readable text and meaningful icon detail. |
-| Highlight secondary text / dark highlight  | 5.39:1 | Passes normal-text AA contrast.                        |
-| Dark headings / raised dark surface        | 3.29:1 | Fails for the current 16px navigation labels.          |
-
-The current dark navigation still demonstrates the last pairing. This is a documented exception to fix, not a pattern to reproduce. The existing dark foreground on that surface reaches 5.72:1 and is a candidate replacement, not a recorded owner-approved menu change.
-
-Normal text must reach 4.5:1. Large text may use 3:1; meaningful icons and required state indicators need 3:1 against adjacent colors. Subtle decorative separators do not all need to become high-contrast borders. See [text contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) and [non-text contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html).
+Hairlines (`--color-rule`) are structural and do not need to meet 3:1. Anything that conveys state (focus, hover, current) must not rely on a hairline alone.
 
 ## 4. Typography
 
-Figtree is the primary family. Use regular 400 for body text, medium 500 for quieter headings, semibold 600 for emphasis, and bold 700 selectively. Use a monospace family for actual code; it is not an alternate editorial identity.
+Three families, each with one job. Paper loads them by name.
 
-### Foundation scale
+| Family        | Token         | Use                                                              |
+| ------------- | ------------- | ---------------------------------------------------------------- |
+| Figtree       | `--font-sans` | Display, headings, body.                                         |
+| IBM Plex Mono | `--font-mono` | Labels, dates, indices, metadata, code.                          |
+| Caveat        | `--font-hand` | Annotations only (section 8). Never for headings, body, or nav.  |
 
-| Paper token      | Size | Typical purpose                             |
-| ---------------- | ---: | ------------------------------------------- |
-| `--text-xs`      | 14px | Dates, labels, and metadata.                |
-| `--text-sm`      | 16px | Navigation and compact descriptions.        |
-| `--text-base`    | 18px | Reading copy and standard descriptions.     |
-| `--text-lg`      | 22px | Archive row titles and lead text.           |
-| `--text-xl`      | 30px | Subheadings and project introduction lines. |
-| `--text-2xl`     | 48px | Archive and detail titles.                  |
-| `--text-display` | 60px | Foundation display style.                   |
+Weights in use: 300 (light), 400, 600, 700, 800, 900 (black).
 
-The compositions extend this scale deliberately. The desktop home poster uses 120px semibold type, with approximately 124–138px line heights. The expanded project title uses 64/70px. Do not reduce either to 60px merely because the original token list stops there.
+### Scale
 
-The mobile home uses 68/67px for “A little curiosity.” and 42/60px for the portrait-integrated second line. These are composition-specific styles, not general mobile heading sizes.
+| Token            |   Size | Typical use                                         |
+| ---------------- | -----: | --------------------------------------------------- |
+| `--text-label`   |   12px | Mono labels, tags (uppercase).                      |
+| `--text-xs`      |   14px | Mono values, dates, indices.                        |
+| `--text-sm`      |   16px | Navigation, buttons, compact text.                  |
+| `--text-base`    |   18px | Body, descriptions.                                 |
+| `--text-lg`      |   22px | Lead text, small titles, company names.             |
+| `--text-xl`      |   28px | Entry titles, annotation size.                      |
+| `--text-2xl`     |   34px | Row titles; mobile section titles.                  |
+| `--text-3xl`     |   44px | Section titles in the margin; large row titles.     |
+| `--text-4xl`     |   56px | Section titles, About statement.                    |
+| `--text-5xl`     |   64px | Principle numerals; mobile hero emphasis.           |
+| `--text-6xl`     |   96px | Hero light line; CTA headline.                      |
+| `--text-display` |  156px | Hero emphasis line only.                            |
 
-- Body leading: approximately 150–165%; the foundation body value is 160%.
-- Heading leading: the foundation value is 120%; large display styles use tighter leading.
-- Small uppercase labels: 14px with `0.08em` tracking; never apply display-style negative tracking to labels.
-- Large titles: typically `-0.02em` to `-0.03em` tracking.
-- Keep prose comfortable around the 720px copy measure. Wide media and titles can exceed it.
-- Preserve hierarchy through size, weight, and spacing before reducing text opacity.
+Page titles on archive and detail pages use 112px (a one-off step above the scale) with black weight; treat it as a page-title style, not a general size.
 
-`--opacity-muted` exists at 72%. It is not a blanket instruction to dim metadata: use the actual muted color and check the resulting contrast before introducing transparency.
+### Rules
 
-## 5. Layout, rhythm, and shape
+- **Display tracking** `--tracking-display` (−0.05em) at 92px and above; `--tracking-tight` (−0.04em) for 44–64px; about −0.025em for 22–34px.
+- **Labels** are mono, uppercase, 12px, `--tracking-label` (+0.14em). Never apply negative tracking to a label.
+- **Body leading** is about 160% (28–34px on 18–20px text). Reading text is 20/34px on desktop and 18/30px on mobile.
+- **Reading measure** is 720px (`--container-copy`).
+- **Hierarchy comes from size, weight, and spacing**, not from reducing opacity.
+- **Standfirsts** (the line under a page title) are light 28px in the accent on desktop, 22px on mobile.
 
-| Foundation           | Value                                     |
-| -------------------- | ----------------------------------------- |
-| Spacing scale        | 0, 4, 8, 12, 16, 24, 32, 48, 64, 80, 96px |
-| Copy container       | 720px                                     |
-| Page container token | 1200px                                    |
-| Small breakpoint     | 640px                                     |
-| Large breakpoint     | 1024px                                    |
-| Small radius         | 8px                                       |
-| Media/card radius    | 16px                                      |
-| Pill radius          | 999px                                     |
+## 5. Layout, rhythm, and surfaces
 
-Spacing tokens are named `--spacing-*`; container, breakpoint, and radius tokens use `--container-*`, `--breakpoint-*`, and `--radius-*` respectively.
+### The sheet
 
-Desktop references are 1440px wide. Home and header commonly use 96px side insets, while archives and project detail use a centered 1120px content area with 160px side insets. These measured compositions are not identical to the 1200px container token; preserve the intended content measure instead of forcing every section into one width.
+Every desktop page is a stack of **rows**. Each row has two cells separated by a vertical rule:
 
-Use 8–12px within compact groups, 16–24px within rows and controls, 32px between related blocks, and 48–80px between larger sections. Let headings and media establish rhythm rather than giving every section identical padding.
+- a **margin cell**, 420px wide (`--container-label`), on `--color-margin`;
+- a **content cell**, flexible, on `--color-surface` unless a band says otherwise.
 
-Mobile references are 390px wide with 24px side insets, leaving 342px for content. Stack wide sections, facts, and project media/copy arrangements. Put dates or sequence numbers above the text when horizontal lanes no longer fit. Keep action groups readable and allow them to wrap or stack.
+Cells use 48px padding (`--spacing-48`). Rows are separated by 1px `--color-rule` hairlines. Pages are drawn at 1440px.
 
-Reserve media space to prevent layout jumps. Preserve screenshot aspect ratios and the meaningful parts of the interface. Crop portraits intentionally; do not use a portrait crop rule for product screenshots.
+**Established:**
 
-## 6. Header and navigation
+- **Titled sections** (projects, writing, experience, archive years): the title sits in the margin cell.
+- **Untitled sections** (About, contact): the margin cell stays empty. The content carries its own title.
+- **Labels:** a small mono label appears only where it clarifies a section (“You can find me”, “Method”, “On this page”). There is no section numbering.
+- **Tonal play is deliberate and small:** margin one step darker than surface; one raised band (About); one kraft band (writing, “keep reading”, “more projects”, “next up”); one accent band (contact).
 
-**Established:** the current desktop direction has the cupofcraft wordmark on the left, a centered pill containing Home, Writing with a chevron, and Changelog, plus a separate circular theme control on the right. There is no avatar in the navigation.
+### Spacing and shape
 
-The dark reference uses 24px vertical header padding, a 6px pill inset, 8px item gaps, 16/20px labels, and a 40px filled Writing item. The theme control is 44px square; its icon is 16px. The wordmark is approximately 22/28px bold.
+| Foundation   | Value                                                      |
+| ------------ | ---------------------------------------------------------- |
+| Spacing      | 0, 4, 8, 12, 16, 24, 32, 48, 64, 96px (`--spacing-*`)      |
+| Margin cell  | 420px (`--container-label`)                                |
+| Reading copy | 720px (`--container-copy`)                                 |
+| Page         | 1440px (`--container-page`)                                |
+| Breakpoints  | 640 (`--breakpoint-sm`), 1024 (`--breakpoint-lg`), 1440    |
+| Radius       | none (`--radius-none`); `--radius-round` reserved          |
 
-- Keep the wordmark, navigation, and theme control in stable positions between states.
-- Keep readable label/icon contrast on the navigation surface; see the known exception in section 3.
-- Distinguish current page, open submenu, hover, and keyboard focus. A filled item alone does not specify which state the drawing represents.
-- The Writing chevron indicates a submenu. Its expanded state and keyboard behavior must be clear in the finished experience.
-- Give the icon-only theme control an accessible name and expose its action or state.
-- Keep touch and keyboard navigation usable without requiring pointer hover.
+Use 8–16px inside compact groups, 24–32px inside rows, and 48–96px between larger blocks.
 
-**Open:** older notes disagree on revealing navigation after 24px or 500px of scrolling. Keeping it visible immediately was suggested but not explicitly approved. The timing, top-of-page state, and mobile navigation contents still need one consistent decision. The light and mobile references also retain older Light/Dark controls. Do not infer a new default from these contradictions.
+### Responsive behaviour
 
-The original foundation board describes dark as the default. Initial theme selection and persistence are behavior requirements still to be finalized; both visual themes are supported.
+**Established at 390px; tablet is Open.** At narrow widths the margin cell stops being a column. Its title or label becomes a darker band above its section, and an empty margin cell is dropped. Side padding is 24px. Sections stack. Rows keep their internal structure (date above title, arrow at the right edge).
 
-## 7. Buttons, links, icons, and focus
+Below 1024px the desktop margin column must not be shown. The widths between 390px and 1024px have not been designed.
 
-### Actions
+## 6. Header, footer, and navigation
 
-| Pattern      | Appearance                           | Use                                            |
-| ------------ | ------------------------------------ | ---------------------------------------------- |
-| Primary      | Filled pill, semibold readable label | Main next step in a section.                   |
-| Secondary    | Outline pill, readable text          | Supporting action beside the primary.          |
-| Text link    | Text aligned with its content        | Reading links, captions, back navigation.      |
-| Icon control | Fixed circular or compact hit area   | Theme control and genuinely icon-only actions. |
+### Title block (header)
 
-The expanded project design uses 18/24px action labels, approximately 16px vertical and 24px horizontal padding. Its primary pair is cream on espresso in light mode, and espresso on cream in dark mode. The home uses closely related pill proportions; avoid forcing every context to the exact same height.
+**Established.** The header is a four-cell title block: the wordmark in the margin cell, a `SHEET` cell, a `DRAWN BY` cell, and the navigation (Home, Writing, Changelog) in the last cell. The current page is accent and bold.
 
-Hover changes the surface tone without moving the label or changing the control’s dimensions. Keyboard focus must be visible independently of hover. Existing interaction notes specify a 2px outline with a 4px offset, but the final per-theme focus colors are still open and must contrast with adjacent surfaces.
+The `SHEET` cell carries the page code. The numbering in the designs is: 01 Home, 02 Article, 03 Writing, 04 Notes, 05 Series, 06 Series entry, 07 Changelog, 08 Course notes, 09 Lesson, 10 Project. Whether this numbering is kept in the build is **Open**; if kept, it must be derived from the route and not hand-maintained.
 
-### Arrow convention
+On mobile the header is two rows: wordmark and sheet code, then a three-cell navigation strip (48px tall).
 
-**Established owner preference:** keep the diagonal `↗` arrow on highlighted content rows, including internal article, course, and series destinations. The straight-arrow experiment was reverted. Older “internal links have no arrows” notes do not override this choice.
+### Header behaviour
 
-Use `↗` on external project, demo, social, and course-site actions too. Because this glyph also appears on internal rows, do not use its shape alone to communicate that a link is external or opens a new tab. Make that behavior clear through context or an accessible label where needed.
+**Requirement.** The header is in flow at the top of the page, not fixed. On scroll-down it hides; on scroll-up it returns in about 180ms with an accent rule underneath. It stays visible while it holds keyboard focus. With reduced motion it appears without a slide. In-page anchors need scroll padding equal to the revealed header height so targets are not hidden. On mobile only the navigation strip returns, not the wordmark row.
 
-The highlighted row uses a 24px arrow in a fixed trailing slot. The Writing chevron is 16px. Keep icon strokes visually consistent and hide decorative arrows from assistive technology when the adjacent text already names the link.
+### Footer
 
-## 8. Shared editorial rows
+**Established.** A margin cell with the wordmark and copyright, a link cell (Writing, Notes, Changelog), and a right cell. The right cell differs by page type:
 
-Use one row family across writing archives, course-note archives, lesson lists, and series entries. Each context supplies its own metadata, not a different interaction vocabulary.
+| Page type                                                          | Right cell                                 |
+| ------------------------------------------------------------------ | ------------------------------------------ |
+| Home and archives                                                  | Handwritten “back to top ↑”.               |
+| Detail pages (article, lesson, course, series entry, project)      | “← Back to {archive}” (plain Figtree 16px). |
 
-| Variant        | Content                                                          |
-| -------------- | ---------------------------------------------------------------- |
-| Article        | Date, title, short description; optional “Latest” badge.         |
-| Course         | Course title and short description.                              |
-| Lesson         | Lesson title and optional description, grouped under its module. |
-| Series entry   | Sequence number, article title, optional supporting information. |
-| Series summary | Series title, description, and a short invitation to begin.      |
+On short pages the footer sits at the bottom of the viewport, and the margin column runs the full page height. Draw the column once at layout level, not per row, so short pages do not show a gap.
 
-Use 24px vertical padding and 16px horizontal padding as the archive-row reference. Article rows use a 128px date slot with a 32px gap on desktop. Course rows use 24px gaps. Keep the trailing arrow in a fixed-width slot, so its appearance cannot shift the title or reflow the description.
+### Reading bar
 
-### Row states
+**Requirement.** Detail pages only. A slim bar fixed to the bottom of the viewport, 56px on desktop and 48px on mobile, with a 2px progress line above it. It shows the current section, reading progress, and the handwritten “back to top ↑”. It does not repeat the “← Back to …” link, which appears once in the page head and once at the end of the footer. The bar hides when the footer enters the viewport. Archives have no bar.
 
-| State          | Treatment                                                                                                                             |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Rest           | Page background, normal heading/body/metadata roles, quiet divider. The whole destination remains understandable without an arrow.    |
-| Highlight      | Full-row highlight surface, paired title/arrow and secondary foregrounds. No text inversion using unrelated border or surface tokens. |
-| Keyboard focus | Same readable highlight plus a separate visible focus indicator.                                                                      |
-| Touch          | Title remains an obvious link; no essential information depends on hover.                                                             |
+“Back to top” keeps its real text for assistive technology even though it is set in the annotation font.
 
-A highlighted row is an interaction example, not a permanently selected item by default. Avoid nesting separate controls inside a row-wide destination unless the interaction is designed explicitly.
+## 7. Back links and navigation scheme
 
-The series summary can retain its rounded outer shape. Shared colors and state behavior do not require every list to become a rounded card.
+Each link appears once per place:
 
-**Current coverage:** the revised dark highlight is demonstrated in 02 Writing archive, 04 Learning notes, and 07 Series archive. The owner accepted these as a starting point. 05 Course detail and 08 Series detail still contain earlier treatments. Light-theme equivalents are not yet normalized. This document defines the common direction without claiming those Paper frames were updated.
+- The page head carries “← Back to {archive}” (detail pages only).
+- The reading bar carries “back to top”.
+- The detail-page footer ends with “← Back to {archive}”.
+- Archive and home footers carry “back to top”.
 
-## 9. Home composition
+## 8. Parts
 
-The home is a typographic introduction followed by evidence of work:
+All parts below are specified, with states, on the **States & parts** and **Parts** areas of the Design system page.
 
-1. Avatar-free header.
-2. “A little curiosity. A lot of craft.” poster with a portrait embedded in the second line.
-3. Short personal introduction and work/writing actions.
-4. Social links.
-5. Three working principles.
-6. Selected projects, with room for a featured project description.
-7. Writing feature with one prominent article and smaller supporting entries.
-8. About section and work history.
-9. Closing conversation invitation and footer.
+### Buttons
 
-The header’s missing avatar does not mean removing the portrait from the hero or About section. Preserve its reserved slot and upright crop. Decorative drops stay inside that local composition.
+| Pattern | Rest                          | Hover                                    | Focus                                          |
+| ------- | ----------------------------- | ---------------------------------------- | ---------------------------------------------- |
+| Solid   | Accent fill, on-accent label  | `--color-accent-hover` fill              | 2px ink ring, 3px offset. No corner marks.     |
+| Outline | 1px `ink-subtle`, ink label   | Accent border plus corner marks          | Same as hover.                                 |
+| Text    | Accent, semibold              | Underline in accent                      | Visible focus indicator independent of hover.  |
 
-The dark home intentionally contains a contrasting light writing section and a caramel closing section. Theme consistency does not require every section to have the same background. Evaluate text against each local surface.
+**Corner marks** are two small L-shaped accent brackets at opposite corners (top-left and bottom-right), 11–13px, offset just outside the box. They belong to outline buttons on hover and focus, and to figures (below). Solid buttons never get them. Buttons never move or resize between states. Mobile buttons are 56px tall and full width.
 
-## 10. Reading, courses, series, and changelog
+### Figure
 
-- **Article detail:** clear title and metadata, a comfortable reading column, and an obvious return path. Images, code, and captions support the reading flow.
-- **Course archive:** course title and summary per row; avoid treating the course provider’s branding as the portfolio identity.
-- **Course detail:** return link, course title, instructor/context, optional external course link, introduction, then named modules containing lessons.
-- **Lesson detail:** preserve course context and orientation. Reading is primary; lesson navigation supports it.
-- **Series archive:** series summary and an invitation to begin.
-- **Series detail:** introductory context followed by ordered entries. Keep numbering and trailing icons aligned.
-- **Changelog:** chronological content with readable dates and clear hierarchy. Do not introduce dashboard-style status colors without a content need.
+A framed media slot with corner marks always on, and a mono caption (`FIG. 01 — …`) below or in the margin. The hero portrait is “Fig. 01”.
 
-Use badges sparingly for meaningful metadata. They must not outrank the title or rely on color alone.
+### Tags
 
-## 11. Project presentation
+Two kinds, never filled:
 
-The expanded desktop project pages are the current reference for presenting a project with enough substance. careercraft.ing is the worked example; its copy is draft project content, not mandatory text for every project.
+- **Status** (`NEW`, `LATEST`): accent outline, accent mono text. One per row. `NEW` is an experiment the owner may drop.
+- **Topic** (`AI`, `AGENTS`): neutral outline, one chip per value. Never render several topics as one string.
 
-### Content order
+Tags must not carry meaning by colour alone.
 
-1. **Introduction:** project identity, concise positioning line, and a short explanation of who it serves and what it does.
-2. **Actions:** primary project destination and an optional demo or walkthrough action.
-3. **Lead media:** a meaningful product image or video poster, with a caption and an explicit walkthrough action when available.
-4. **At a glance:** a few useful facts, such as audience, product type, and experience. Change the fields to suit the project.
-5. **Project story:** the problem, context, and approach in readable prose.
-6. **Product detail:** supporting media with adjacent explanatory text, or a gallery when there are several useful screenshots.
-7. **Contribution:** Andrea’s role, decisions, constraints, and specific work. Use verified outcomes when available; never invent metrics to fill a layout.
-8. **Closing action:** a clear invitation to explore the project, followed by return navigation.
+### Annotation
 
-### Optional assets and sections
+A short human aside in Caveat, 28px, accent, tilted −2°. Rules:
 
-| Content                  | Design rule                                                                                                               |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| Logo                     | Optional. Place near the identity at a restrained scale. Preserve its proportions and do not fabricate one.               |
-| Cover or lead screenshot | Optional. Prefer a real, informative product view over decoration.                                                        |
-| Screenshot gallery       | Optional. Use meaningful views with individual captions. Keep UI text legible; avoid tiny mosaics.                        |
-| Video introduction       | Optional. Use a real poster, clear action, and captions/transcript in the finished experience. Avoid autoplay with sound. |
-| Demo                     | Optional. Name whether it is a live demo or a video walkthrough; do not imply that a poster is interactive.               |
-| Website/source links     | Include only when a real, appropriate destination exists. A private project need not expose source code.                  |
-| Outcomes                 | Optional. Include only supported results; qualitative learning is valid when metrics are unavailable.                     |
+- One per page, a few words, in a margin or beside a figure, never over content.
+- The documented uses are: the home portrait (“↑ that’s me, mid-refill”), the show-more row (“more cool stuff →”, “keep going →”, “all the receipts →”, “the good part’s in here”), and the article pull quote.
+- **Exception:** “back to top” is a permanent resident in the footer and the reading bar. It is untilted.
 
-Omit absent media and actions cleanly. The introduction, story, and contribution must still form a complete page. Do not show empty frames, disabled “Coming soon” links, missing-logo boxes, or authoring instructions to visitors.
+### Rows
 
-The present desktop example uses a 1120×630px lead-media slot, a caption/action line, three compact facts, and asymmetric story sections with a roughly 304px heading column and 64px gap. The supporting media row uses a 640×440px slot beside text. These are composition references: preserve the actual asset’s aspect ratio rather than forcing unrelated images into those dimensions.
+Archive, series, course, lesson, and changelog entries use one row family. A row is a date or index (mono), a title, an optional description, and a trailing arrow in a fixed-width slot so the arrow never shifts the text.
 
-The example’s media comes from the public careercraft.ing site: a demo poster and an existing product illustration. The illustration is not evidence of a newly captured app screenshot. Paper displays a static video poster; playback and destinations still require implementation and validation later.
+| State | Treatment                                                                                           |
+| ----- | --------------------------------------------------------------------------------------------------- |
+| Rest  | Surface ground, ink title, muted description, hairline below.                                       |
+| Hover | Row on `--color-raised`; title, date, and index turn accent. Dimensions never change.               |
+| Focus | The hover treatment plus a separate visible focus indicator.                                        |
+| Touch | The whole row is the tap target (at least 48px). Nothing essential depends on hover.                |
 
-**Open:** the older mobile project-detail drawings have not been expanded to match this desktop structure. Stack the new sections and retain their content order when developing the mobile design; do not treat the old short page as equivalent coverage.
+The designs show one row in hover state per page as an example. A row is not “selected” by default.
 
-## 12. Motion and accessible behavior
+### Show more
 
-Motion should clarify a state change or add a small personal accent. It should not compete with reading.
+**Established.** Collections show a few items, then a button reveals the rest of that page in **one click**, with a count (for example “13 more on this page”).
 
-- Existing header notes use a 180ms reveal, but the reveal trigger remains open.
-- Existing portrait notes use a local drop reveal over approximately 420ms. Keep the text, portrait, and buttons still; animate decorative elements inside the reserved slot.
-- With reduced motion, show the final static decorative state and remove unnecessary transforms and transitions.
-- Buttons and rows retain their dimensions across hover, focus, and activation.
-- Keep keyboard focus visible and unobscured by sticky elements.
-- Do not require hover to reveal a title, description, destination, or action needed to use the page.
-- A submenu must support keyboard entry, exit, and dismissal. A static chevron is not proof of this behavior.
-- Meaningful images need suitable alternative text; purely decorative drops do not need narration.
-- Video needs appropriate text alternatives. Playback is never inferred from a still image.
-- Check text reflow, zoom, touch targets, theme changes, and screen-reader names in the finished experience.
+| Collection           | Visible before the button |
+| -------------------- | ------------------------: |
+| Posts                |                         3 |
+| Notes                |                         3 |
+| Series entries       |                         3 |
+| Changelog            |                         6 |
+| Lessons, per module  |                         3 |
 
-## 13. Outstanding alignment and handoff checks
+**Requirements:** nothing is fetched; all items are present in the HTML and, without JavaScript, all are shown. After activation, focus moves to the first newly shown item and a polite announcement states the count.
 
-The design direction is established. The following items remain explicit follow-through work rather than reasons to redesign it:
+### Pagination
 
-| Item                             | Current evidence / next decision                                                         |
-| -------------------------------- | ---------------------------------------------------------------------------------------- |
-| Row coverage                     | Carry the common treatment into 05 and 08 when those frames are next refined.            |
-| Light row highlight              | Establish and measure a dedicated foreground/background combination.                     |
-| Dark navigation contrast         | Replace the failing small-label pairing while preserving the owner’s menu layout.        |
-| Hover versus selected/open state | Define each state separately, including the Writing submenu.                             |
-| Header reveal                    | Resolve 24px, 500px, or immediate availability; reconcile mobile contents.               |
-| Focus and motion roles           | Finalize per-theme focus colors and a consistent interaction timing set.                 |
-| Mobile consistency               | Update older controls and expand project detail to follow the desktop content structure. |
-| Project copy and assets          | Review the contribution draft and use project-specific, verified media and outcomes.     |
+Archives are grouped by year, at most three years per page, regardless of post count. The control shows the current range (“Page 1 · 2026 — 2024”), the next range, and Newer / Older links. A single-page collection has no pagination row.
 
-Before extending this system, check the relevant current Paper composition, preserve the owner’s manual edits, and use an existing pattern when it fits. Add a new visual role only when its purpose and foreground/background pairing are clear.
+### Other recurring parts
 
-Before calling a finished experience verified, inspect both themes and narrow/wide layouts, confirm row and navigation states with pointer and keyboard, check reduced motion, measure contrast on the actual local surfaces, and verify the optional-media/no-media project cases. The calculations and static Paper reviews recorded here do not establish full accessibility compliance.
+- **Code block:** margin-tone ground, hairline border, mono header (filename or language), mono body. Horizontal scrolling on mobile is signalled by a “scrolls →” label.
+- **Pull quote:** a full-width raised band, light 56px (34px on mobile) with the key phrase in black accent.
+- **Kraft band:** a section on `--color-paper` with its own margin tone, used for writing and for “keep reading”, “next up”, and “more projects”.
+- **Facts:** small mono label/value pairs in the margin cell (published, reading time, instructor, source, entries).
+
+## 9. Page patterns
+
+Real content must come from the content collections or the live site. Titles are verbatim, including any typos the source still contains, until fixed at the source.
+
+### Home
+
+In order: title block; hero (portrait in the margin cell, light line over the black emphasis line, lead text, solid and outline buttons); “You can find me” links; “Method” principles; projects (one featured row, then compact rows); the writing band on kraft; About on the raised ground with an empty margin cell; experience; the accent contact band with an empty margin cell; footer.
+
+### Archives (posts, notes, series, changelog)
+
+Title block; head with a Posts / Series / Notes sub-nav in the margin and the page title in the content cell; entries grouped by year with the year and count in the margin cell; the show-more row; pagination where it applies; footer. The sub-nav shows counts. Notes and series entries that have no dates are not grouped by year.
+
+### Detail pages
+
+Title block; head (back link and facts in the margin, title and standfirst in the content cell); body in a 720px reading column; a closing “keep reading” kraft band; footer. The margin carries the table of contents where one applies (“On this page”), or the module’s lesson list on a lesson.
+
+| Type          | Specifics                                                                                              |
+| ------------- | ------------------------------------------------------------------------------------------------------ |
+| Article       | Table of contents, figure, pull quote, code, previous and next articles.                               |
+| Course        | Instructor, course site, intro blurbs on a raised band, modules each showing three lessons.            |
+| Lesson        | Module lesson list in the margin, code, a reference link, previous and next lesson.                    |
+| Series entry  | Large sequence numerals in the margin, all entries listed in order, with show-more.                    |
+| Project       | Summary, links (Website, Source code only when they exist), optional cover, story, other projects.     |
+
+### Project presentation
+
+Show only what exists. The logo, cover, media list, Website link, and Source link are all optional; when absent, omit them cleanly. Do not show empty frames, disabled “Coming soon” links, missing-logo boxes, or authoring instructions. The introduction and story must form a complete page on their own. Never invent outcomes or metrics; qualitative learning is valid when numbers are unavailable.
+
+## 10. Accessibility and behaviour requirements
+
+These are requirements for the finished build, not facts established by the drawings.
+
+- Text meets 4.5:1. Verify the contrast table in section 3 with a tool.
+- Keyboard focus is always visible and not obscured by the revealed header or the reading bar.
+- Hover is never required to reveal a title, description, destination, or action.
+- Tap targets are at least 48px on mobile.
+- Respect reduced motion: no slide for the header reveal; no decorative transforms beyond the static annotation tilt.
+- The show-more control follows the requirements in section 8, and the “back to top” control keeps real text.
+- Arrow glyphs that duplicate adjacent link text are hidden from assistive technology.
+- External links are identifiable by more than glyph shape alone (context or accessible name).
+- Images need suitable alternative text. Video needs captions or a transcript, no autoplay with sound, and playback is never inferred from a poster.
+- Check text reflow, zoom, and screen-reader names in the finished build, on narrow and wide viewports.
+
+## 11. Open decisions
+
+Do not silently resolve these.
+
+| Item                       | Question                                                                                                                                      |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Arrow convention           | The designs use `→` for internal links and `↗` for external ones. The 1.0 document recorded an owner preference for `↗` on internal rows too. Confirm which applies. |
+| Light mode                 | Not designed. Tokens are role-named so it can be a remap. The theme toggle is absent from the current header; decide where it returns.         |
+| Tablet widths              | Only 390px and 1440px are drawn.                                                                                                              |
+| Writing submenu            | The live site has Writing with Posts, Series, and Notes. The designs show Writing as one link plus an in-page sub-nav on archives.            |
+| Topic tags                 | Tags exist on the two newest posts in the designs. The tag values for older posts, notes, and series are not known and are not drawn.         |
+| Author block               | The live lesson page has an avatar and bio block. It is not designed.                                                                         |
+| Experience “Tools used”    | The live home lists tools per job. The designed home does not.                                                                                |
+| Lesson previous / next     | Added in the design; the live lesson page has none.                                                                                           |
+| Reading-bar progress       | The percentage and progress line are design additions awaiting confirmation. The mobile label truncation rule is undecided.                   |
+| Sheet numbering            | Whether the page codes ship, and how they are derived.                                                                                        |
+| NEW tag                    | An experiment; keep or remove.                                                                                                                |
+| Notes count                | The live site shows four notes; the repository has a fifth note folder. Confirm what is published.                                           |
+| Paper limits               | Paper does not render `font-family` tokens, so the designs use literal font names. The code export resolves `--font-*`.                       |
+
+## 12. Handoff checks
+
+Before calling a finished page verified: compare it to the matching Paper page and to the Mobile page; confirm tokens, not raw values, drive colour, type size, spacing, and tracking; check the row, button, and focus states with pointer and keyboard; check the header reveal, reading bar, and show-more behaviour; check reduced motion; confirm that no tags, dates, metrics, or media were invented; and re-measure contrast on the real surfaces. The calculations here do not establish accessibility compliance.

@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "off"
+  },
+  "rules": {
+    "eslint/no-async-promise-executor": "error",
+    "eslint/no-constant-binary-expression": "error",
+    "eslint/no-dupe-keys": "error",
+    "eslint/no-unreachable": "error",
+    "eslint/no-useless-escape": "error",
+    "eslint/no-unused-vars": "error"
+  },
+  "ignorePatterns": [
+    ".agent-workflows/**",
+    ".agents/**",
+    ".codex/**",
+    ".git/**",
+    ".astro/**",
+    ".vercel/**",
+    "dist/**",
+    "node_modules/**",
+    "*.md",
+    "*.mdx",
+    "*.yaml",
+    "*.yml"
+  ]
+}

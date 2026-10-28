@@ -13,9 +13,12 @@ Run commands from the repository root using the package manager declared in
 - Production build: `pnpm build`.
 - Read-only formatting validation: `pnpm format:check`, using the project-local
   Oxfmt configuration and ignore rules.
+- Read-only lint validation: `pnpm lint`, using the project-local Oxlint
+  configuration and ignore rules. `pnpm lint:fix` applies safe Oxlint fixes
+  explicitly; review its diff before keeping the result.
 - Format assigned changes with the configured Oxfmt tool before validation.
   `pnpm format` rewrites the whole project; keep formatting edits scoped to the task.
-- No dedicated lint or test command is currently declared in `package.json`.
+- No dedicated test command is currently declared in `package.json`.
 
 Run the production build for application changes. For workflow-only setup,
 verify the selected library installation with its helper's `--check` command.

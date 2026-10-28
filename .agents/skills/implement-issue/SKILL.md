@@ -37,6 +37,13 @@ other candidate access, tracker writes, pushes, PRs, merges or deployments. Loca
 commits are allowed to identify the submission; use neutral messages and do not
 include provider/model labels in code, commits or the handoff. Report actual
 model/run metadata separately to the coordinator when observable; do not guess it.
+Report observable input, cached input, output and reasoning token counters with
+source, provider field names and measured run/phase boundaries separately from
+the neutral handoff. Mark missing counters unavailable with a reason; do not
+estimate or treat missing as zero. The coordinator collects harness/provider
+usage; do not run extra model calls or delay the freeze to obtain counters.
+Keep initial-submission usage separate from any selected continuation usage;
+identify cumulative or overlapping counters rather than summing them.
 
 The equal first-pass limit is 45 minutes of elapsed implementation time after
 readiness, with infrastructure/owner waits reported separately. Check current

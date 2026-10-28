@@ -271,6 +271,16 @@ The designs show one row in hover state per page as an example. A row is not “
 
 Archives are grouped by year, at most three years per page, regardless of post count. The control shows the current range (“Page 1 · 2026 — 2024”), the next range, and Newer / Older links. A single-page collection has no pagination row.
 
+### Arrow convention
+
+**Established.** The arrow glyph says where a link goes:
+
+- `→` marks an **internal** link: a row, “Read the article”, “View project”, “Older”.
+- `↗` marks an **external** link, including a button that points outside the site: GitHub, LinkedIn, Bluesky, a course site, a reference link, a pull request, a project’s Website or Source link. “External” means leaving the site, including other subdomains and `mailto:` links.
+- `←` is a back link. `↑` and `↓` are directional controls (back to top, the table-of-contents toggle). Directional arrows do not signal internal or external.
+
+The glyph is never the only signal. An external link also needs an accessible name or context (for example “opens in a new tab”) and `rel="noopener noreferrer"`. Decorative arrows whose adjacent text already names the link are hidden from assistive technology.
+
 ### Other recurring parts
 
 - **Code block:** margin-tone ground, hairline border, mono header (filename or language), mono body. Horizontal scrolling on mobile is signalled by a “scrolls →” label.
@@ -317,7 +327,7 @@ These are requirements for the finished build, not facts established by the draw
 - Respect reduced motion: no slide for the header reveal; no decorative transforms beyond the static annotation tilt.
 - The show-more control follows the requirements in section 8, and the “back to top” control keeps real text.
 - Arrow glyphs that duplicate adjacent link text are hidden from assistive technology.
-- External links are identifiable by more than glyph shape alone (context or accessible name).
+- External links follow the arrow convention in section 8 and are identifiable by more than glyph shape alone.
 - Images need suitable alternative text. Video needs captions or a transcript, no autoplay with sound, and playback is never inferred from a poster.
 - Check text reflow, zoom, and screen-reader names in the finished build, on narrow and wide viewports.
 
@@ -327,7 +337,6 @@ Do not silently resolve these.
 
 | Item                       | Question                                                                                                                                      |
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| Arrow convention           | The designs use `→` for internal links and `↗` for external ones. The 1.0 document recorded an owner preference for `↗` on internal rows too. Confirm which applies. |
 | Light mode                 | Not designed. Tokens are role-named so it can be a remap. The theme toggle is absent from the current header; decide where it returns.         |
 | Tablet widths              | Only 390px and 1440px are drawn.                                                                                                              |
 | Writing submenu            | The live site has Writing with Posts, Series, and Notes. The designs show Writing as one link plus an in-page sub-nav on archives.            |

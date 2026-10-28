@@ -43,11 +43,11 @@ Status labels used here:
 - **Square corners.** There are no rounded corners. The only circle in the system is reserved for an avatar, and the current designs do not use it.
 - **Restrained decoration.** The corner marks (section 8), the handwritten annotation, and tonal bands are the whole decorative vocabulary.
 - **Real content only.** Use verbatim titles and copy. Never invent metrics, tags, dates, or media to fill a layout.
-- **Dark first.** Light mode is not designed yet (section 11).
+- **Dark only.** The site ships dark-only (owner decision, 28 October 2026). Light mode is not designed and the theme toggle is removed.
 
 ## 3. Tokens and colour
 
-Tokens are named by **role**, so a future theme is a remap of the same names. All values below are the dark theme and are the only theme drawn.
+Tokens are named by **role**, so a future theme is a remap of the same names. All values below are the dark theme, the only theme drawn and shipped. Role naming keeps a future theme possible, but none is planned.
 
 | Token                       | Value     | Role                                                    |
 | --------------------------- | --------- | ------------------------------------------------------- |
@@ -169,11 +169,19 @@ Below 1024px the desktop margin column must not be shown. The widths between 390
 
 ### Title block (header)
 
-**Established.** The header is a four-cell title block: the wordmark in the margin cell, a `SHEET` cell, a `DRAWN BY` cell, and the navigation (Home, Writing, Changelog) in the last cell. The current page is accent and bold.
+**Established.** The header is a four-cell title block: the wordmark in the margin cell, a `SHEET` cell, a `DRAWN BY` cell, and the navigation (Home, Writing, Changelog) in the last cell. The current page is accent and bold. Writing opens a submenu (see below).
 
 The `SHEET` cell carries the page code. The numbering in the designs is: 01 Home, 02 Article, 03 Writing, 04 Notes, 05 Series, 06 Series entry, 07 Changelog, 08 Course notes, 09 Lesson, 10 Project. Whether this numbering is kept in the build is **Open**; if kept, it must be derived from the route and not hand-maintained.
 
 On mobile the header is two rows: wordmark and sheet code, then a three-cell navigation strip (48px tall).
+
+### Writing submenu
+
+**Established (owner decision, 28 October 2026).** Writing opens a submenu with Posts, Series, and Notes: on hover on desktop, and after a tap on mobile.
+
+**Requirement.** Hover alone is not enough (section 10): the submenu must also open from keyboard focus or Enter, close with Escape and when focus leaves, and expose its expanded state. The current Writing section stays marked while the submenu is closed. The archive heads keep their in-page Posts / Series / Notes sub-nav unless the owner decides otherwise.
+
+**Open.** The submenu is not drawn yet: the desktop dropdown and the mobile expanded state still need a design.
 
 ### Header behaviour
 
@@ -229,6 +237,8 @@ Two kinds, never filled:
 
 - **Status** (`NEW`, `LATEST`): accent outline, accent mono text. One per row. `NEW` is an experiment the owner may drop.
 - **Topic** (`AI`, `AGENTS`): neutral outline, one chip per value. Never render several topics as one string.
+
+Topic chips render only where the content already has tags. They are plain text for now: they do not link anywhere, and tag archive pages are deferred. Never invent tags.
 
 Tags must not carry meaning by colour alone.
 
@@ -337,15 +347,15 @@ Do not silently resolve these.
 
 | Item                       | Question                                                                                                                                      |
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| Light mode                 | Not designed. Tokens are role-named so it can be a remap. The theme toggle is absent from the current header; decide where it returns.         |
+| Light mode                 | Out of scope: the site ships dark-only and the theme toggle is removed. Tokens stay role-named so a theme remains possible later, but nothing is planned. |
 | Tablet widths              | Only 390px and 1440px are drawn.                                                                                                              |
-| Writing submenu            | The live site has Writing with Posts, Series, and Notes. The designs show Writing as one link plus an in-page sub-nav on archives.            |
-| Topic tags                 | Tags exist on the two newest posts in the designs. The tag values for older posts, notes, and series are not known and are not drawn.         |
+| Writing submenu design     | The behaviour is decided (section 6) but the dropdown and its mobile state are not drawn. Does the archive sub-nav stay alongside it?               |
+| Topic tag values           | Decided: show tags when the content has them, as plain text. Values are never invented; older posts, notes, and series may simply have none.   |
 | Author block               | The live lesson page has an avatar and bio block. It is not designed.                                                                         |
 | Experience “Tools used”    | The live home lists tools per job. The designed home does not.                                                                                |
 | Lesson previous / next     | Added in the design; the live lesson page has none.                                                                                           |
 | Reading-bar progress       | The percentage and progress line are design additions awaiting confirmation. The mobile label truncation rule is undecided.                   |
-| Sheet numbering            | Whether the page codes ship, and how they are derived.                                                                                        |
+| Sheet numbering            | Whether the page codes ship and how they are derived. The owner will decide this during implementation: ask when building the title block.      |
 | NEW tag                    | An experiment; keep or remove.                                                                                                                |
 | Notes count                | The live site shows four notes; the repository has a fifth note folder. Confirm what is published.                                           |
 | Paper limits               | Paper does not render `font-family` tokens, so the designs use literal font names. The code export resolves `--font-*`.                       |

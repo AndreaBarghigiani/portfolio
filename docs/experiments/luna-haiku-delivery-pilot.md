@@ -354,3 +354,12 @@ evidence. Do not claim superiority or successful rollback without observations.
 - Random A/B via system randomness; neutral fixture root `/tmp/p01-blind-vc3ww24h`. Removed .git, agent metadata, identity/results record and experiment docs. Patches retain repository-relative source paths only, no authors/commit messages. Handoff condensed to neutral substantive claims, excluding source/run/timing/usage metadata. Raw submissions remain in original completion messages/commits.
 - A: `89133752b0c56c980d895fb1a9581abc1bf27699`, patch SHA256 `19960ad1af4c6d10a1f6839d060ccff6399246f06133a4d9c5c30892c22342cf`
 - B: `934a2a40b92d30477f614a5fc057f0c52f0f3a2a`, patch SHA256 `0e9c6c38dffe8af24bcb24ba446a680b6871053199f0a0fe4017089c16157db5`
+
+#### P01 blind verdict — pending owner selection
+
+- Fresh codex/gpt-6.1-sol reasoningEffort medium judge: `thread:delegated-task:command%3Amcp%3Ad92a0b6c-e945-4429-b56c-88ae926d5420%3Adelegate-task%3A45d2d1d2-3fa3-4089-a5cf-8f84d745b04e`, completed 2026-10-28T20:20:22.487Z.
+- Verdict B; A scores acceptance/correctness/scope/evidence 3/3/3/3 (12), B 3/3/4/4 (14). Neither verified approval. Independent format:check, lint and build exit 0 for both fixtures.
+- Both P2: px sm/lg/xl overrides coexist with rem md/2xl defaults; generated CSS ordering lets md override lg/xl and .container falls back to 48rem. Normalize units while preserving thresholds before final approval.
+- A root-resolved backing-color bridges limit descendant public-color remaps; B direct backing roles simpler. A token reference omits Caveat bytes (present in handoff); B records cost/limitations. B narrower source edits. Both deliver17 roles/fonts/scales/containers/spacing and dark-only toggle removal; 64 HTML pages, Caveat224476 bytes (Latin74932). Browser/full baseline route parity unverified.
+- Process deviation: judge read generic review skill in bound checkout despite fixture-only instruction; reports no application/history/memory/identity access or detected identity leak. Retain verdict with disclosed limitation, pending owner acceptance; no automatic replacement judge.
+- Owner selection/reason pending; identities not unblinded in selection presentation. Both initial submissions remain unchanged; no repairs, PR, deployment or tracker comment.

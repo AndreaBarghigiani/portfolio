@@ -1,7 +1,7 @@
 ---
-status: armed
-started_at: null
-ends_at: null
+status: active
+started_at: 2026-10-28T20:09:15Z
+ends_at: 2026-11-25T20:09:15Z
 workflow_pin: 768824d037a53a42cb583694db848084fe582c29
 ---
 
@@ -297,7 +297,7 @@ requires modification. Test restoration in temporary fixtures before handoff.
 
 ## Trials
 
-No trials enrolled. Add one block per started pair, including excluded pairs.
+P01 enrolled below. Add one block per started pair, including excluded pairs.
 Persist the start/end dates and trial block in this record before dispatch and
 retain updates through normal project commits/PRs so other sessions and the
 closeout automation can recover them; a thread-only date does not start the clock.
@@ -328,3 +328,13 @@ Pending expiry. Include totals and missing evidence, rubric/cohort deviations,
 owner disagreements, bias/limits, recommendation and rationale, the unpublished
 `shape-issue` draft, restoration commit/PR/check evidence, and automation disable
 evidence. Do not claim superiority or successful rollback without observations.
+
+### P01 — #44 token/font and dark-only foundation
+
+- Enrolled first bounded application trial; no issue prerequisites. Scope is #44 body plus latest owner direction in this delivery session: remove toggle and light theme now. Permit narrowly necessary component/layout theme wiring edits, superseding the body prohibition for that purpose only. No composition migration. Keep legacy coffee tokens; remove theme switching and make existing dark utilities unconditional without maintaining a class strategy.
+- Common source baseline before enrollment: `4b7c1ea5ce256aa213226b15f9630425b650ea34`; candidate base is this enrollment commit. Workflow pin unchanged at `768824d037a53a42cb583694db848084fe582c29`.
+- Catalog confirmed codex/gpt-6-luna reasoningEffort medium and claudeAgent/claude-haiku-5-5 effort medium; cross-provider worktree delegation supported. Actual dispatch metadata pending.
+- Coordinator readiness in repository root: frozen pnpm install, format:check, lint, build and reduced 13-skill/profile installer --check all exit 0. Node v24.22.1, pnpm 10.24.0. Build warns about existing Shiki JSON language fallback. Clean owner tree at baseline. Workers repeat readiness before 45-minute implementation budget.
+- GitHub explicit-repository gh reads succeeded for #44 and #43. No project integration index discovered. Memory search found pilot setup and formatter history: configured Astro compressHTML alignment resolves prior whitespace regression; retain project formatter configuration and documented lint limitations. Same excerpts supplied to both workers.
+- Closeout task verified enabled, daily, next run 2026-10-29T17:46:55.616Z.
+- Candidate snapshots, identities, timing, usage, blind judge and owner selection pending. No selection or shipping authorized by ranking. Initial provider token counters will be retained where observable; unavailable counters will be marked unavailable, never estimated.

@@ -338,3 +338,12 @@ evidence. Do not claim superiority or successful rollback without observations.
 - GitHub explicit-repository gh reads succeeded for #44 and #43. No project integration index discovered. Memory search found pilot setup and formatter history: configured Astro compressHTML alignment resolves prior whitespace regression; retain project formatter configuration and documented lint limitations. Same excerpts supplied to both workers.
 - Closeout task verified enabled, daily, next run 2026-10-29T17:46:55.616Z.
 - Candidate snapshots, identities, timing, usage, blind judge and owner selection pending. No selection or shipping authorized by ranking. Initial provider token counters will be retained where observable; unavailable counters will be marked unavailable, never estimated.
+
+#### P01 first frozen arm (identity: Haiku; judge must not receive this section)
+
+- Actual dispatch target claudeAgent / claude-haiku-5-5, effort medium; run ordinal 1. Child reference: `thread:delegated-task:command%3Amcp%3Ad92a0b6c-e945-4429-b56c-88ae926d5420%3Adelegate-task%3A13ccfb1a-0bc7-460c-9bf7-f97290fc5f8b`.
+- Frozen local SHA `934a2a40b92d30477f614a5fc057f0c52f0f3a2a`, common parent `cb09ddb4d1addf2b791e6ceb1d821dd16d08009b`. Worker-reported diff SHA256 `0e9c6c38dffe8af24bcb24ba446a680b6871053199f0a0fe4017089c16157db5`. Checkout `/home/cupofcraft/.t3/worktrees/portfolio/t3-dbdaff4a`. No coordinator edits.
+- Worker timing: setup 20:09:51Z, ready 20:10:26Z, work 20:10:34Z, deadline 20:55:34Z, freeze 20:15:27Z on 2026-10-28. No reported overrun.
+- Reports final format/lint/build exit 0; browser walkthrough and server changelog execution unperformed. Shared readiness check deviated: checked 13 skill symlinks rather than full prescribed installer/profile check. Preserve for judge evidence assessment.
+- Initial input/cached-input/output/reasoning counters unavailable in worker session; no estimates. Dispatch response exposes no counters. Further harness evidence collection pending; setup included in run, phase split unavailable.
+- Other arm remains pending. No blind labels assigned or judge dispatched yet.

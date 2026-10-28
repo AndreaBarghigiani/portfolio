@@ -97,6 +97,32 @@ hidden or represented as an enforced hard timeout. No quality coaching or repair
 before freeze. Broadcast consequential clarification equally; if a prior
 submission cannot receive it fairly, exclude/restart that pair with a new brief.
 
+## Implementor token usage
+
+For each arm, the coordinator retains observable harness/provider usage and its
+source artifact or run reference. Record input, cached input, output and reasoning
+tokens separately wherever reported. Preserve provider field names and accounting
+semantics, including whether cached input is a subset of input and reasoning is
+included in output. Do not sum overlapping counters or infer missing counters.
+Mark missing values `unavailable` with a reason; zero requires an observed zero.
+
+Record usage through the frozen first submission separately from selected-arm
+repair/continuation usage. State the measured run/phase boundaries and whether
+setup, readiness, retries or failed runs are included. Include failed/no-diff
+submissions. If only cumulative usage is exposed, retain the observed snapshots
+and derive a phase delta only when their scope and accounting match; otherwise
+mark the phase split unavailable. Worker self-reports are supporting evidence,
+not substitutes for unavailable provider counters. Do not estimate tokens from
+text length or run extra model calls to obtain usage.
+
+Keep usage, cost and source/run metadata outside blind judge inputs, including
+sanitizing worker handoffs. Collection must not delay freezing or alter the common
+implementation budget. Missing usage does not invalidate an otherwise valid pair.
+At closeout report coverage and compare observed initial usage alongside quality
+and selected-arm repair effort. Explain provider accounting differences; raw token
+totals alone do not establish cost or efficiency. Record any observable cost with
+currency, source and scope separately; do not infer it from incomparable counters.
+
 ## Freeze, anonymize and judge
 
 Freeze at first explicit handoff, blocker or deadline. Retain both raw initial
@@ -289,7 +315,10 @@ closeout automation can recover them; a thread-only date does not start the cloc
 - Fresh blind Sol run/target, scores/findings, independent checks and verdict:
 - Andrea's blind selection/reason, later unblinding and disagreement:
 - Selected candidate fixes/rounds, owner/coordinator minutes and final review evidence:
-- PR/outcome reference, delivery time, cost/usage or unavailable:
+- Per-arm initial token usage: input/cached input/output/reasoning or unavailable (reason):
+- Usage source/run reference, provider field semantics/overlap and measured boundaries (setup/retries included?):
+- Selected-arm continuation token usage and phase separation evidence or unavailable:
+- PR/outcome reference, delivery time, observed cost/currency/source/scope or unavailable:
 - Escaped defects through closeout; valid/excluded with reason:
 ```
 

@@ -38,6 +38,13 @@ Require workers to verify expected bases/pins before editing and report readines
 and timing; retain actual dispatch metadata. Follow the harness's
 continuation instructions; do not poll or create shell worktrees for delegates.
 
+Collect each arm's observable harness/provider token usage under the experiment
+record's accounting and phase-boundary rules, including failed/no-diff runs.
+Retain source evidence, mark missing counters unavailable, and separate frozen
+initial usage from selected continuation usage. Remove usage/cost and source/run
+metadata from all blind judge materials. Missing usage must not delay freezing
+or invalidate a pair; report coverage and accounting limitations at closeout.
+
 Freeze each first handoff, blocker or budget-cutoff state before coaching, fixes
 or coordinator edits. Preserve no-diff and failed submissions. Randomize A/B per
 trial and prepare clean review materials without identity metadata or this

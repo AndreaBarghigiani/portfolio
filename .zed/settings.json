@@ -1,6 +1,19 @@
 {
+  "lsp": {
+    "oxlint": {
+      "initialization_options": {
+        "settings": {
+          "configPath": null,
+          "run": "onType",
+          "disableNestedConfig": false,
+          "fixKind": "safe_fix"
+        }
+      }
+    }
+  },
   "languages": {
     "Astro": {
+      "language_servers": ["...", "!biome"],
       "formatter": {
         "external": {
           "command": "pnpm",
@@ -31,6 +44,7 @@
       }
     },
     "JavaScript": {
+      "language_servers": ["...", "!biome"],
       "formatter": {
         "external": {
           "command": "pnpm",
@@ -100,6 +114,7 @@
       "ensure_final_newline_on_save": false
     },
     "TypeScript": {
+      "language_servers": ["...", "!biome"],
       "formatter": {
         "external": {
           "command": "pnpm",
@@ -115,6 +130,7 @@
       }
     },
     "TSX": {
+      "language_servers": ["...", "!biome"],
       "formatter": {
         "external": {
           "command": "pnpm",

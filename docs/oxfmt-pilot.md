@@ -56,8 +56,11 @@ also disable trailing-whitespace removal and final-newline cleanup so ignored
 content (including Markdown hard breaks) is preserved on save; `.yml` retains
 its configured Oxfmt formatter. Astro, TypeScript, CSS, and Tailwind diagnostic
 providers remain enabled. The Oxc Zed extension is not required for formatting;
-it also provides Oxlint, which this pilot does not adopt. Do not add personal
-machine paths to the shared settings.
+it also provides Oxlint, which is adopted separately below. Project settings
+exclude Biome from Astro, JavaScript, TypeScript, and TSX language-server
+selection while retaining other default servers. Oxlint's safe fixes are
+available as manual code actions only. No lint fixes or import organization run
+on save. Do not add personal machine paths to shared settings.
 
 Owner checks still required before treating the pilot as verified:
 
@@ -127,20 +130,63 @@ passes, while the original Prettier check fails only on
 reverse-order sequence was exercised in a disposable detached checkout; see the
 task evidence directory's revision/hash manifest and command record.
 
-## Oxlint evaluation (separate from formatter adoption)
+## Oxlint adoption
 
-Oxlint is not adopted by this pilot: no dependency, config, script, save action,
-or CI check was added. A one-off Oxlint 1.89.0 run on the project tree analyzed
-41 files with 96 default rules and reported zero diagnostics. Current Oxlint
-documentation says Astro support analyzes `<script>` blocks; it does not
-establish full Astro-template or MDX coverage. This project has no configured
-lint tool, so there is no existing lint diagnostic overlap to compare. The
-one-off default run does not establish type-aware coverage or baseline noise
-for additional categories.
+Oxlint 1.89.0 is pinned exactly as a development dependency. The package
+requires Node.js `^20.19.0 || >=22.12.0`; this project already requires Node.js
+22.12 or later for Oxfmt. pnpm installs the platform package from the frozen
+lockfile. CLI scripts resolve this local dependency. The current
+[Oxc extension source](https://github.com/oxc-project/oxc-zed/blob/main/src/lsp.rs)
+selects `node_modules/oxlint/bin/oxlint` when the root package declares Oxlint,
+but also supports a latest-package download fallback. The installed extension
+version and executed binary path/version have not been verified in Zed. Install
+project dependencies first and confirm those details in the language-server logs;
+do not treat download avoidance or editor/CLI parity as established yet. See `.oxlintrc.json` for the six explicitly enabled error-severity
+correctness checks. The read-only `pnpm lint` command traverses the project;
+`pnpm lint:fix` invokes Oxlint's safe fixes explicitly. Suggestions and
+dangerous fixes have no project command and remain opt-in. Import sorting and
+unused-import removal remain disabled because current `.astro` template usage
+has not been demonstrated to be analyzed by the pinned release.
 
-If linting is considered separately, start with Oxlint's default correctness
-rules and review suspicious rules individually. Keep style and restriction
-categories opt-in until the project defines a lint policy. Type-aware rules
-require the separate `oxlint-tsgolint` dependency; decide that independently
-after reviewing type-check coverage and TypeScript 7 compatibility. Do not
-enable automatic fixes or save actions without a separate reviewed decision.
+The ignore list excludes generated output (`.astro/`, `.vercel/`, `dist/`),
+dependencies (`node_modules/`), Git metadata, the managed `.agent-workflows/`
+submodule, agent-managed directories, and authored content (`*.md`, `*.mdx`,
+`*.yaml`, `*.yml`). The CLI's supported-source discovery also leaves styles,
+JSON/YAML, MDX and Markdown outside lint coverage. The formatter's separate
+ignore policy remains unchanged.
+
+At baseline the default 1.89.0 CLI produced no diagnostics across the files it
+discovered. An isolated probe using unused declarations confirmed that `.js`
+and `.ts` diagnostics are emitted. `.astro` paths were discovered by recursive
+file enumeration, but probes in frontmatter, `<script>` blocks, template
+expressions, and imports used only in markup emitted no diagnostics. Those Astro
+regions have unverified coverage with pinned 1.89.0 and are not counted as
+covered by the lint gate. The
+[official guide](https://oxc.rs/docs/guide/usage/linter.html) claims Astro
+`<script>` support; the absence of diagnostics in these probes is an unresolved
+discrepancy, not proof that the region is unsupported. Excluding Biome for Astro
+is intended to remove its Footer.astro false positive, but actual disappearance
+requires Zed verification and would not prove Oxlint recognizes `Container`
+usage. MDX is excluded by policy.
+The rule set is intentionally small and syntax-level: no type-aware dependency,
+Astro language parser, CSS/Tailwind linting, or replacement of Astro/TypeScript
+diagnostics is implied.
+
+The Oxc Zed extension provides Oxlint diagnostics for its supported JavaScript
+and TypeScript languages. It reads the root config and uses only `safe_fix`
+code actions when manually requested. `.zed/settings.json` excludes Biome from
+relevant language-server lists but preserves other default servers and the
+existing Oxfmt formatter and Astro/TypeScript/CSS/Tailwind services. The Oxc
+Zed extension registers the Oxlint server for Astro, but the CLI probes do not
+establish diagnostics in `.astro` regions, so those regions are not counted as
+covered. Shared settings and CLI configuration indicate local resolution and
+intended parity; actual Zed extension activation, diagnostic parity, Astro
+coverage, save/restart behavior, ignored-file preservation, and responsiveness
+require the owner's editor checks and are not claimed from CLI evidence.
+
+Rollback: remove the Oxlint dependency and its lockfile entries, `lint` and
+`lint:fix` scripts, `.oxlintrc.json`, and the Oxlint-specific Zed settings and
+Biome exclusions. Restore the previous `AGENTS.md` lint statement and this
+section's prior Oxfmt-only editor description. Do not revert the Oxfmt pilot or
+alter personal Zed settings. Then run `pnpm install --frozen-lockfile`,
+`pnpm format:check`, and `pnpm build`.

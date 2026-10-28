@@ -347,3 +347,10 @@ evidence. Do not claim superiority or successful rollback without observations.
 - Reports final format/lint/build exit 0; browser walkthrough and server changelog execution unperformed. Shared readiness check deviated: checked 13 skill symlinks rather than full prescribed installer/profile check. Preserve for judge evidence assessment.
 - Initial input/cached-input/output/reasoning counters unavailable in worker session; no estimates. Dispatch response exposes no counters. Further harness evidence collection pending; setup included in run, phase split unavailable.
 - Other arm remains pending. No blind labels assigned or judge dispatched yet.
+
+#### P01 paired freeze and blind fixtures
+
+- Second arm Luna frozen `89133752b0c56c980d895fb1a9581abc1bf27699`, base matches. Worker ready 20:10:39Z, work 20:10:42Z, deadline 20:55:42Z, freeze 20:16:20Z. Reports format/lint/build pass, browser unperformed. Initial token counters unavailable in worker and dispatch response; no estimates.
+- Random A/B via system randomness; neutral fixture root `/tmp/p01-blind-vc3ww24h`. Removed .git, agent metadata, identity/results record and experiment docs. Patches retain repository-relative source paths only, no authors/commit messages. Handoff condensed to neutral substantive claims, excluding source/run/timing/usage metadata. Raw submissions remain in original completion messages/commits.
+- A: `89133752b0c56c980d895fb1a9581abc1bf27699`, patch SHA256 `19960ad1af4c6d10a1f6839d060ccff6399246f06133a4d9c5c30892c22342cf`
+- B: `934a2a40b92d30477f614a5fc057f0c52f0f3a2a`, patch SHA256 `0e9c6c38dffe8af24bcb24ba446a680b6871053199f0a0fe4017089c16157db5`

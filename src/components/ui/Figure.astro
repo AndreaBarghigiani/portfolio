@@ -1,0 +1,32 @@
+---
+/**
+ * Framed media with a mono caption (docs/design-system.md section 8).
+ * The frame always shows two corner marks (top-left, bottom-right, outside the
+ * box), so do not clip it with `overflow-hidden`. `alt` is required: use an
+ * empty string only for purely decorative imagery.
+ * `number` prints `FIG. 01 — caption`; the home portrait is Fig. 01. Caption
+ * text must come from real content.
+ */
+import { Image } from 'astro:assets';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+  number?: number;
+  class?: string;
+}
+
+const { src, alt, caption, number, class: className } = Astro.props;
+const label = number !== undefined ? `FIG. ${String(number).padStart(2, '0')}` : undefined;
+const captionText = [label, caption].filter(Boolean).join(' — ');
+---
+
+<figure class:list={['flex flex-col gap-3', className]}>
+  <div class="corner-marks relative border border-rule">
+    <Image {src} {alt} class="block h-auto w-full" />
+  </div>
+  {captionText && <figcaption class="font-mono text-label tracking-label text-ink-subtle uppercase">
+    {captionText}
+  </figcaption>}
+</figure>

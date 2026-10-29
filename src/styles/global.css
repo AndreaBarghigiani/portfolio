@@ -227,3 +227,48 @@
   --tw-prose-invert-th-borders: var(--color-coffee-700);
   --tw-prose-invert-td-borders: var(--color-coffee-700);
 }
+
+/*
+ * Corner marks (docs/design-system.md section 8): two 12px L-shaped accent
+ * brackets, top-left and bottom-right, drawn just outside the box so the host
+ * never moves or resizes. `corner-marks` is always on (figures);
+ * `corner-marks-interactive` shows them on hover and keyboard focus (outline
+ * buttons). Solid buttons never use either.
+ */
+@layer components {
+  .corner-marks::before,
+  .corner-marks::after,
+  .corner-marks-interactive::before,
+  .corner-marks-interactive::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+    border: 0 solid var(--ds-accent);
+  }
+  .corner-marks::before,
+  .corner-marks-interactive::before {
+    top: -6px;
+    left: -6px;
+    border-top-width: 2px;
+    border-left-width: 2px;
+  }
+  .corner-marks::after,
+  .corner-marks-interactive::after {
+    right: -6px;
+    bottom: -6px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+  }
+  .corner-marks-interactive::before,
+  .corner-marks-interactive::after {
+    opacity: 0;
+  }
+  .corner-marks-interactive:hover::before,
+  .corner-marks-interactive:hover::after,
+  .corner-marks-interactive:focus-visible::before,
+  .corner-marks-interactive:focus-visible::after {
+    opacity: 1;
+  }
+}

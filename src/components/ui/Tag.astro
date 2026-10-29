@@ -1,0 +1,32 @@
+---
+/**
+ * One tag chip, never filled (docs/design-system.md section 8).
+ *
+ * - `status` (`NEW` | `LATEST`): accent outline and accent mono text. Use at
+ *   most one per row. `NEW` is an owner experiment; it stays representable.
+ * - `topic`: neutral outline. One chip per value; see `TopicTags` for a list.
+ *
+ * The label is always real text, so meaning never depends on colour alone.
+ * Chips are plain text: no links and no tag archive pages (owner decision).
+ */
+export type StatusTag = 'NEW' | 'LATEST';
+
+type Props =
+  | { kind: 'status'; status: StatusTag; class?: string }
+  | { kind: 'topic'; class?: string };
+
+const props = Astro.props;
+const className = props.class;
+const status = props.kind === 'status' ? props.status : undefined;
+---
+
+<span
+  data-tag={props.kind}
+  class:list={[
+    'inline-flex h-6 items-center border px-2 font-mono text-label tracking-label uppercase',
+    props.kind === 'status' ? 'border-accent text-accent' : 'border-ink-subtle text-ink-muted',
+    className,
+  ]}
+>
+  {status ?? <slot />}
+</span>

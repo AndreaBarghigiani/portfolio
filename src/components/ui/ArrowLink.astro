@@ -1,0 +1,49 @@
+---
+/**
+ * Link with the arrow convention (docs/design-system.md section 8).
+ *
+ * - Destination type is derived from `href`: external links get `↗`, open in a
+ *   new tab with `rel="noopener noreferrer"` and an "opens in a new tab" name
+ *   suffix for assistive technology; internal links get `→`.
+ * - `direction` ("back" | "up" | "down") renders a directional arrow instead
+ *   and does not signal internal/external. A back arrow comes before the text.
+ * - Arrows are decorative (`aria-hidden`) because the link text names the link.
+ * - `inline` drops the 48px minimum height, for links inside running text.
+ *   Standalone links keep a 48px tap target.
+ *
+ * Usage: `<ArrowLink href="/posts">Read the article</ArrowLink>`
+ */
+import { ARROWS, isExternalHref, type ArrowDirection } from '@/lib/links';
+
+interface Props {
+  href: string;
+  direction?: ArrowDirection;
+  /** Set false to omit the arrow (the new-tab context is still announced). */
+  arrow?: boolean;
+  inline?: boolean;
+  class?: string;
+}
+
+const { href, direction, arrow = true, inline = false, class: className } = Astro.props;
+
+const external = isExternalHref(href);
+const glyph = direction ? ARROWS[direction] : external ? ARROWS.external : ARROWS.internal;
+const showArrow = arrow || direction !== undefined;
+const leading = direction === 'back';
+---
+
+<a
+  {href}
+  target={external && !href.startsWith('mailto:') ? '_blank' : undefined}
+  rel={external && !href.startsWith('mailto:') ? 'noopener noreferrer' : undefined}
+  class:list={[
+    'items-center gap-1 text-accent underline-offset-4 hover:text-accent-hover hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent',
+    inline ? 'inline-flex' : 'inline-flex min-h-12',
+    className,
+  ]}
+>
+  {showArrow && leading && <span aria-hidden="true">{glyph}</span>}
+  <slot />
+  {showArrow && !leading && <span aria-hidden="true">{glyph}</span>}
+  {external && !href.startsWith('mailto:') && <span class="sr-only"> (opens in a new tab)</span>}
+</a>

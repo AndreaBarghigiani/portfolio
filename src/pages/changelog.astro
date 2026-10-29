@@ -3,7 +3,7 @@ export const prerender = false;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Row from '@/components/layout/Row.astro';
-import ExternalLink from '@/components/ui/ExternalLink.astro';
+import ArrowLink from '@/components/ui/ArrowLink.astro';
 import GradientDivider from '@/components/ui/GradientDivider.astro';
 import { formatDate } from '@/lib/utils';
 import type { Seo } from '@/lib/constants';
@@ -119,7 +119,7 @@ const seo: Seo = {
             <section class="flex flex-col gap-1">
               <heading class="flex gap-2">
                 <h4 class="font-medium text-headings">{pr.title}</h4>
-                <ExternalLink href={pr.html_url}>#{pr.number}</ExternalLink>
+                <ArrowLink href={pr.html_url} inline>#{pr.number}</ArrowLink>
               </heading>
 
               {/* {pr?.body ? <p class="text-foreground text-xs font-light">{pr.body}</p> : null} */}

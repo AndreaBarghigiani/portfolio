@@ -1,5 +1,10 @@
 ---
-import { SquareArrowOutUpRightIcon } from '@lucide/astro';
+/**
+ * Inline external link for MDX content (imported as `EL` in existing posts
+ * and notes). A thin wrapper over `ArrowLink` that keeps the `isGFE` contract
+ * so content files need no changes. Prefer `ArrowLink` in Astro code.
+ */
+import ArrowLink from './ArrowLink.astro';
 
 type Props =
   | {
@@ -16,7 +21,4 @@ const { href = '', isGFE } = Astro.props;
 const path = isGFE ? `https://www.greatfrontend.com${href}?fpr=cupofcraft` : href;
 ---
 
-<a class="inline-flex items-center gap-0.5" href={path} target="_blank" rel="noopener noreferrer">
-  <slot />
-  <SquareArrowOutUpRightIcon class="size-2.5" />
-</a>
+<ArrowLink href={path} inline><slot /></ArrowLink>

@@ -1,0 +1,106 @@
+---
+/**
+ * Reviewable states for the core parts (#47). Development only: in production
+ * this route answers 404. Hover and Tab through the live parts; the checklist
+ * under each heading says what to confirm.
+ */
+export const prerender = false;
+
+import ArrowLink from '@/components/ui/ArrowLink.astro';
+import Annotation from '@/components/ui/Annotation.astro';
+import BackToTop from '@/components/ui/BackToTop.astro';
+import Button from '@/components/ui/Button.astro';
+import Figure from '@/components/ui/Figure.astro';
+import Tag from '@/components/ui/Tag.astro';
+import TopicTags from '@/components/ui/TopicTags.astro';
+import Row from '@/components/layout/Row.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getTopics } from '@/lib/tags';
+import { DEFAULT_CONFIGURATION } from '@/lib/constants';
+
+if (!import.meta.env.DEV) {
+  return new Response(null, { status: 404 });
+}
+
+const portrait = DEFAULT_CONFIGURATION.author.avatar;
+const topics = getTopics('AI, agents, ai');
+---
+
+<BaseLayout seo={{ title: 'Parts (dev)', description: 'Core parts states', robots: 'noindex' }}>
+  <Row title="Buttons">
+    <p slot="margin">Rest, hover, focus</p>
+    <ul class="flex max-w-copy flex-col gap-6">
+      <li>
+        <Button>Solid, internal</Button>
+        <p class="mt-2 text-xs text-ink-muted">
+          Hover: accent-hover fill. Tab: 2px ink ring, 3px offset. No corner marks, no size change.
+        </p>
+      </li>
+      <li>
+        <Button variant="outline" href="https://github.com/AndreaBarghigiani"
+          >Outline, external</Button
+        >
+        <p class="mt-2 text-xs text-ink-muted">
+          Hover and Tab: accent border plus two corner marks, size unchanged.
+        </p>
+      </li>
+      <li>
+        <Button variant="text" href="/posts">Text, internal</Button>
+        <p class="mt-2 text-xs text-ink-muted">
+          Hover: accent underline. Tab: visible focus outline without hover.
+        </p>
+      </li>
+      <li>
+        <Button variant="solid" href="mailto:a.barghigiani@gmail.com"
+          >Solid, mailto (external)</Button
+        >
+      </li>
+    </ul>
+  </Row>
+
+  <Row title="Tags">
+    <p slot="margin">Status and topic</p>
+    <div class="flex flex-col gap-4">
+      <div class="flex gap-2">
+        <Tag kind="status" status="NEW" /><Tag kind="status" status="LATEST" />
+      </div>
+      <TopicTags {topics} />
+      <p class="text-xs text-ink-muted">
+        Status: accent outline, one per row. Topic: neutral outline, one chip per value. Text
+        carries the meaning.
+      </p>
+    </div>
+  </Row>
+
+  <Row title="Annotation">
+    <p slot="margin">Handwritten aside</p>
+    <div class="flex flex-col gap-4">
+      <Annotation>↑ that’s me, mid-refill</Annotation>
+      <BackToTop />
+      <p class="text-xs text-ink-muted">
+        Annotation tilts -2deg; back to top is untilted real text.
+      </p>
+    </div>
+  </Row>
+
+  <Row title="Arrow links">
+    <p slot="margin">Internal, external, directional</p>
+    <ul class="flex flex-col gap-2">
+      <li><ArrowLink href="/posts">Read the article</ArrowLink></li>
+      <li><ArrowLink href="https://github.com/AndreaBarghigiani/portfolio">GitHub</ArrowLink></li>
+      <li><ArrowLink href="/posts" direction="back">Back to Posts</ArrowLink></li>
+      <li><ArrowLink href="#top" direction="up">Back to top</ArrowLink></li>
+    </ul>
+  </Row>
+
+  <Row title="Figure">
+    <p slot="margin">Frame, marks, caption</p>
+    <Figure
+      src={portrait}
+      alt="Portrait of Andrea Barghigiani"
+      number={1}
+      caption="Real portrait"
+      class="max-w-xs"
+    />
+  </Row>
+</BaseLayout>

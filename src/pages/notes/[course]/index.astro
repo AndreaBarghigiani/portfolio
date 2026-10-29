@@ -1,6 +1,6 @@
 ---
 import Row from '@/components/layout/Row.astro';
-import ExternalLink from '@/components/ui/ExternalLink.astro';
+import ArrowLink from '@/components/ui/ArrowLink.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { ArrowLeftIcon } from '@lucide/astro';
 import type { Seo } from '@/lib/constants';
@@ -121,11 +121,11 @@ const groupedLessons = lessons
       <div class="text-sm text-muted-foreground">
         <span>Led by {entry.data.author}</span>
         {' · '}
-        <ExternalLink href={entry.data.url}>Course website</ExternalLink>
+        <ArrowLink href={entry.data.url}>Course website</ArrowLink>
       </div>
 
-      {entry.data.certificateUrl && <ExternalLink href={entry.data.certificateUrl}
-        >View completion certificate</ExternalLink
+      {entry.data.certificateUrl && <ArrowLink href={entry.data.certificateUrl}
+        >View completion certificate</ArrowLink
       >}
     </header>
 
@@ -149,9 +149,7 @@ const groupedLessons = lessons
               >
                 {group.moduleDescription && <p>{group.moduleDescription}</p>}
 
-                {group.moduleUrl && <ExternalLink href={group.moduleUrl}
-                  >Visit module page</ExternalLink
-                >}
+                {group.moduleUrl && <ArrowLink href={group.moduleUrl}>Visit module page</ArrowLink>}
               </div>}
 
               <ul class="flex flex-col gap-3">

@@ -1,6 +1,23 @@
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
+/* Figtree Variable (--font-sans) is loaded by BaseLayout.astro. */
+@import '@fontsource/ibm-plex-mono/latin-400.css';
+@import '@fontsource/ibm-plex-mono/latin-500.css';
+
+/* Caveat Variable (--font-hand): latin subset only, annotations only. */
+@font-face {
+  font-family: 'Caveat Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url('@fontsource-variable/caveat/files/caveat-latin-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /*
  * Tailwind CSS v4 configuration
  * Using the 'class' strategy for dark mode
@@ -53,9 +70,107 @@
   --color-border: var(--color-coffee-200);
 }
 
-/* Theme configuration for Tailwind CSS v4 */
+/*
+ * Design tokens (docs/design-system.md, sections 3-5).
+ * Dark theme only: there is no light or .dark variant of these roles.
+ * Role vars are prefixed `--ds-` so the @theme inline mappings below do not
+ * reference a variable of the same name.
+ */
+:root {
+  /* Colour roles (section 3) */
+  --ds-margin: #1b100a;
+  --ds-surface: #231710;
+  --ds-raised: #2b1d14;
+  --ds-rule: #5a4030;
+  --ds-ink: #eadbc0;
+  --ds-ink-muted: #c9b496;
+  --ds-ink-subtle: #a58769;
+  --ds-accent: #e0a24f;
+  --ds-accent-hover: #edb563;
+  --ds-accent-deep: #d4923f;
+  --ds-on-accent: #231710;
+  --ds-paper: #eadbc0;
+  --ds-paper-margin: #ddcba8;
+  --ds-paper-rule: #b89a80;
+  --ds-paper-ink: #231710;
+  --ds-paper-ink-muted: #4a3426;
+  --ds-paper-ink-subtle: #6b4e38;
+
+  /* Page-title style (section 4): a one-off step above the type scale */
+  --page-title-size: 112px;
+}
+
+/* Tailwind CSS v4 theme.
+ * Text and tracking namespaces are reset first so only the scale below exists.
+ * Legacy tokens (coffee palette, --color-background/foreground/headings/muted/
+ * muted-foreground/border, shadow-coffee-*, prose-coffee, :root.dark block) are
+ * kept only because components still consume them. Retire them in #51. */
+@theme inline {
+  --text-*: initial;
+  --tracking-*: initial;
+
+  --font-sans: 'Figtree Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-hand: 'Caveat Variable', cursive;
+
+  --text-label: 0.75rem;
+  --text-label--line-height: 1rem;
+  --text-xs: 0.875rem;
+  --text-xs--line-height: 1.25rem;
+  --text-sm: 1rem;
+  --text-sm--line-height: 1.5rem;
+  --text-base: 1.125rem;
+  --text-base--line-height: 1.8rem;
+  --text-lg: 1.375rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.75rem;
+  --text-xl--line-height: 2.125rem;
+  --text-2xl: 2.125rem;
+  --text-2xl--line-height: 2.5rem;
+  --text-3xl: 2.75rem;
+  --text-3xl--line-height: 3rem;
+  --text-4xl: 3.5rem;
+  --text-4xl--line-height: 3.75rem;
+  --text-5xl: 4rem;
+  --text-5xl--line-height: 4.25rem;
+  --text-6xl: 6rem;
+  --text-6xl--line-height: 6.25rem;
+  --text-display: 9.75rem;
+  --text-display--line-height: 9.75rem;
+
+  --tracking-display: -0.05em;
+  --tracking-tight: -0.04em;
+  --tracking-label: 0.14em;
+
+  --container-copy: 720px;
+  --container-label: 420px;
+  --container-page: 1440px;
+
+  --breakpoint-sm: 640px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1440px;
+
+  --color-margin: var(--ds-margin);
+  --color-surface: var(--ds-surface);
+  --color-raised: var(--ds-raised);
+  --color-rule: var(--ds-rule);
+  --color-ink: var(--ds-ink);
+  --color-ink-muted: var(--ds-ink-muted);
+  --color-ink-subtle: var(--ds-ink-subtle);
+  --color-accent: var(--ds-accent);
+  --color-accent-hover: var(--ds-accent-hover);
+  --color-accent-deep: var(--ds-accent-deep);
+  --color-on-accent: var(--ds-on-accent);
+  --color-paper: var(--ds-paper);
+  --color-paper-margin: var(--ds-paper-margin);
+  --color-paper-rule: var(--ds-paper-rule);
+  --color-paper-ink: var(--ds-paper-ink);
+  --color-paper-ink-muted: var(--ds-paper-ink-muted);
+  --color-paper-ink-subtle: var(--ds-paper-ink-subtle);
+}
+
+/* Legacy theme tokens (retire in #51) */
 @theme {
-  --font-sans: 'Figtree Variable', sans-serif;
   --color-background: var(--color-background);
   --color-foreground: var(--color-foreground);
   --color-headings: var(--color-headings);

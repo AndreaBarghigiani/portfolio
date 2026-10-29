@@ -1,0 +1,80 @@
+---
+/**
+ * One archive row (docs/design-system.md section 8): mono date or index, title,
+ * optional description, and a trailing arrow in a fixed 48px slot so the arrow
+ * never shifts the text. The whole row is the link and the tap target.
+ *
+ * - States change colour and ground only, never dimensions. Hover raises the
+ *   ground and accents the title and meta; keyboard focus adds the same plus a
+ *   separate inset outline. Nothing depends on hover.
+ * - `external` rows use `↗`, open in a new tab with `rel`, and announce it.
+ * - `status` adds at most one status tag; `detail` is a small mono suffix
+ *   (for example a PR number).
+ * - `more` and `group` mark rows that the show-more control reveals.
+ */
+import Tag, { type StatusTag } from './Tag.astro';
+import { ARROWS } from '@/lib/links';
+
+interface Props {
+  href: string;
+  title: string;
+  meta: string;
+  description?: string;
+  detail?: string;
+  status?: StatusTag;
+  external?: boolean;
+  more?: boolean;
+  group?: string;
+}
+
+const {
+  href,
+  title,
+  meta,
+  description,
+  detail,
+  status,
+  external = false,
+  more,
+  group,
+} = Astro.props;
+---
+
+<li
+  data-entry
+  data-more={more ? '' : undefined}
+  data-more-group={more ? group : undefined}
+  class="border-b border-rule last:border-b-0"
+>
+  <a
+    {href}
+    target={external ? '_blank' : undefined}
+    rel={external ? 'noopener noreferrer' : undefined}
+    class="group grid min-h-12 grid-cols-[1fr_3rem] items-baseline gap-x-4 py-6 outline-offset-[-2px] outline-accent hover:bg-raised focus-visible:bg-raised focus-visible:outline-2 lg:grid-cols-[8rem_1fr_3rem] lg:gap-x-6"
+  >
+    <span
+      class="font-mono text-xs text-ink-subtle group-hover:text-accent group-focus-visible:text-accent"
+    >
+      {meta}
+    </span>
+    <span class="col-start-1 flex flex-col gap-2 lg:col-start-2">
+      <span class="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <span
+          class="text-xl font-semibold text-ink group-hover:text-accent group-focus-visible:text-accent lg:text-2xl"
+        >
+          {title}
+        </span>
+        {status && <Tag kind="status" {status} />}
+        {detail && <span class="font-mono text-xs text-ink-subtle">{detail}</span>}
+      </span>
+      {description && <span class="text-sm text-ink-muted">{description}</span>}
+    </span>
+    <span
+      aria-hidden="true"
+      class="col-start-2 row-span-2 row-start-1 self-center text-center text-lg text-accent lg:col-start-3 lg:row-span-1"
+    >
+      {external ? ARROWS.external : ARROWS.internal}
+    </span>
+    {external && <span class="sr-only"> (opens in a new tab)</span>}
+  </a>
+</li>

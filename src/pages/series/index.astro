@@ -1,38 +1,41 @@
 ---
 import Row from '@/components/layout/Row.astro';
-import SeriesPreview from '@/components/ui/SeriesPreview.astro';
+import ArchiveHead from '@/components/partials/ArchiveHead.astro';
+import EntryRow from '@/components/ui/EntryRow.astro';
+import ShowMore from '@/components/ui/ShowMore.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
-import AuthorSeparator from '@/components/partials/AuthorSeparator.astro';
-import GradientDivider from '@/components/ui/GradientDivider.astro';
 
 const series = await getCollection('series');
+const VISIBLE = 3;
+const remaining = Math.max(series.length - VISIBLE, 0);
 ---
 
 <BaseLayout>
-  <Row measure="copy" class="flex flex-col gap-6">
-    {series.length === 0 ? (
+  <ArchiveHead title="Series" current="series">
+    When an article is not enough, or I am documenting my journey with something specific, I like to
+    create a series about it!
+  </ArchiveHead>
+
+  {series.length === 0 ? (
+    <Row>
       <p>No posts found</p>
-    ) : (
-      <>
-        <header class="flex flex-col gap-3">
-          <h1 class="text-3xl font-semibold text-headings">Series</h1>
-          <p class="text-foreground">
-            When an article is not enough, or I am documenting my journey with something specific, I
-            like to create a series about it!
-          </p>
-        </header>
-
-        <GradientDivider />
-
-        <ul class="flex flex-col gap-3 divide-y">
-          {series.map((single) => (
-            <SeriesPreview entry={single} />
-          ))}
-        </ul>
-      </>
-    )}
-
-    <AuthorSeparator />
-  </Row>
+    </Row>
+  ) : (
+    <Row>
+      <ul>
+        {series.map((single, index) => (
+          <EntryRow
+            href={`/series/${single.id}/`}
+            title={single.data.title}
+            meta={String(index + 1).padStart(2, '0')}
+            description={single.data.seo.description}
+            more={index >= VISIBLE}
+            group="series"
+          />
+        ))}
+      </ul>
+      {remaining > 0 && <ShowMore group="series" count={remaining} noun="series" />}
+    </Row>
+  )}
 </BaseLayout>

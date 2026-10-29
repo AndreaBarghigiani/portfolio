@@ -1,10 +1,10 @@
 ---
 import Row from '@/components/layout/Row.astro';
-import GradientDivider from '@/components/ui/GradientDivider.astro';
+import ArchiveHead from '@/components/partials/ArchiveHead.astro';
+import EntryRow from '@/components/ui/EntryRow.astro';
+import ShowMore from '@/components/ui/ShowMore.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import CoursePreview from '@/components/ui/CoursePreview.astro';
 import { getCollection, getEntry } from 'astro:content';
-import AuthorSeparator from '@/components/partials/AuthorSeparator.astro';
 
 const entry = await getEntry('pages', 'notes');
 
@@ -13,29 +13,34 @@ if (!entry) {
 }
 
 const courses = await getCollection('notes');
+const VISIBLE = 3;
+const remaining = Math.max(courses.length - VISIBLE, 0);
 ---
 
 <BaseLayout seo={entry.data.seo}>
-  <Row measure="copy" class="flex flex-col gap-6">
-    <header class="flex flex-col gap-3">
-      <h1 class="text-3xl font-semibold text-headings">{entry.data.title}</h1>
-      <p class="text-foreground">
-        Explore detailed notes captured while studying courses, workshops, and live trainings.
-      </p>
-    </header>
+  <ArchiveHead title={entry.data.title} current="notes">
+    Explore detailed notes captured while studying courses, workshops, and live trainings.
+  </ArchiveHead>
 
-    <GradientDivider />
-
+  <Row>
     {courses.length === 0 ? (
       <p>No notes published yet.</p>
     ) : (
-      <ul class="flex flex-col gap-8">
-        {courses.map((course) => (
-          <CoursePreview {course} />
-        ))}
-      </ul>
+      <>
+        <ul>
+          {courses.map((course, index) => (
+            <EntryRow
+              href={`/notes/${course.id}/`}
+              title={course.data.title}
+              meta={String(index + 1).padStart(2, '0')}
+              description={course.data.description}
+              more={index >= VISIBLE}
+              group="notes"
+            />
+          ))}
+        </ul>
+        {remaining > 0 && <ShowMore group="notes" count={remaining} noun="notes" />}
+      </>
     )}
-
-    <AuthorSeparator />
   </Row>
 </BaseLayout>

@@ -1,0 +1,45 @@
+---
+import PostsArchive from '@/components/partials/PostsArchive.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { buildPostArchivePages } from '@/lib/archive';
+import { sortPostsByDate } from '@/lib/utils';
+import { getCollection, getEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  const pages = buildPostArchivePages(posts);
+  const latestId = sortPostsByDate(posts)[0]?.id ?? '';
+
+  // Page 1 is /posts/; only later pages live under /posts/page/N/.
+  return pages.slice(1).map((page) => ({
+    params: { page: String(page.number) },
+    props: { pages, latestId },
+  }));
+}
+
+const { page } = Astro.params;
+const { pages, latestId } = Astro.props;
+const entry = await getEntry('pages', 'posts');
+
+if (!entry) {
+  throw new Error('Posts page not found');
+}
+
+const current = Number(page);
+const range = pages[current - 1]?.range ?? '';
+const seo = {
+  ...entry.data.seo,
+  title: `${entry.data.seo.title} (${range})`,
+  canonicalUrl: new URL(`/posts/page/${current}/`, Astro.site).href,
+};
+---
+
+<BaseLayout {seo}>
+  <PostsArchive
+    {pages}
+    {current}
+    {latestId}
+    title="Latest posts"
+    description="Writing about my experiences and thoughts. This is the part of my portfolio where you find more structured content, crafted to share my experiences with the focus of helping you learning something new."
+  />
+</BaseLayout>

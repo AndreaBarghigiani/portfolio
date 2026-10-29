@@ -1,14 +1,14 @@
 ---
 export const prerender = false;
 
-import BaseLayout from '@/layouts/BaseLayout.astro';
 import Row from '@/components/layout/Row.astro';
-import ArrowLink from '@/components/ui/ArrowLink.astro';
-import GradientDivider from '@/components/ui/GradientDivider.astro';
+import ArchiveHead from '@/components/partials/ArchiveHead.astro';
+import EntryRow from '@/components/ui/EntryRow.astro';
+import ShowMore from '@/components/ui/ShowMore.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { groupByYear } from '@/lib/archive';
 import { formatDate } from '@/lib/utils';
 import type { Seo } from '@/lib/constants';
-import AuthorSeparator from '@/components/partials/AuthorSeparator.astro';
-import MarkdownContent from '@/components/partials/MarkdownContent.astro';
 
 const owner = 'AndreaBarghigiani';
 const repository = 'portfolio';
@@ -69,67 +69,77 @@ const seo: Seo = {
   description: 'Latest merged pull requests from GitHub',
   type: 'website',
 };
+
+const VISIBLE = 6;
+const groups = groupByYear(mergedPullRequests, (pr) => new Date(pr.merged_at!));
+let seen = 0;
+const sections = groups.map((group) => ({
+  ...group,
+  entries: group.items.map((pr) => ({ pr, more: seen++ >= VISIBLE })),
+}));
+const remaining = Math.max(seen - VISIBLE, 0);
 ---
 
 <BaseLayout {seo}>
-  <Row measure="copy" class="flex flex-col gap-6">
-    <header class="flex flex-col gap-3">
-      <h1 class="text-3xl font-semibold text-headings">Changelog</h1>
-      <p class="text-foreground">
-        Latest merged pull requests from
-        <a
-          class="font-medium text-headings underline-offset-4 hover:underline"
-          href={`https://github.com/${owner}/${repository}`}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          {owner}/{repository}
-        </a>
-        .
-      </p>
-    </header>
-
-    {!token && <div
-      class="rounded-lg border border-border bg-muted-foreground/20 px-4 py-3 text-xs text-muted-foreground"
+  <ArchiveHead title="Changelog">
+    Latest merged pull requests from
+    <a
+      class="underline underline-offset-4 hover:text-accent-hover"
+      href={`https://github.com/${owner}/${repository}`}
+      rel="noopener noreferrer"
+      target="_blank"
     >
+      {owner}/{repository}
+    </a>
+    .
+  </ArchiveHead>
+
+  {!token && <Row>
+    <p class="border border-rule bg-raised px-4 py-3 text-xs text-ink-muted">
       Unauthenticated GitHub requests are limited to 60 per hour. Add a{' '}
       <code>GITHUB_TOKEN</code> environment variable for higher limits.
-    </div>}
+    </p>
+  </Row>}
 
-    {fetchError && <div
-      class="bg-destructive/10 border-destructive text-destructive rounded-lg border px-4 py-3 text-xs"
-    >
-      {fetchError}
-    </div>}
+  {fetchError && <Row>
+    <p class="border border-accent px-4 py-3 text-xs text-ink">{fetchError}</p>
+  </Row>}
 
-    <GradientDivider />
-
-    {mergedPullRequests.length === 0 ? (
-      <p class="text-sm text-muted-foreground">No merged pull requests found.</p>
-    ) : (
-      <ul class="my-3 flex flex-col gap-3">
-        {mergedPullRequests.map((pr) => <li>
-          <div class="flex gap-5">
-            <div class="relative min-w-22 shrink-0">
-              <span class="text-sm text-muted-foreground">
-                {formatDate(new Date(pr.merged_at!))}
-              </span>
-            </div>
-
-            <section class="flex flex-col gap-1">
-              <heading class="flex gap-2">
-                <h4 class="font-medium text-headings">{pr.title}</h4>
-                <ArrowLink href={pr.html_url} inline>#{pr.number}</ArrowLink>
-              </heading>
-
-              {/* {pr?.body ? <p class="text-foreground text-xs font-light">{pr.body}</p> : null} */}
-              <MarkdownContent class="text-xs font-light text-foreground" content={pr.body || ''} />
-            </section>
-          </div>
-        </li>)}
-      </ul>
-    )}
-
-    <AuthorSeparator />
-  </Row>
+  {mergedPullRequests.length === 0 ? (
+    <Row>
+      <p class="text-sm text-ink-muted">No merged pull requests found.</p>
+    </Row>
+  ) : (
+    <>
+      {sections.map((section) => {
+        const allExtra = section.entries.every((entry) => entry.more);
+        return <Row
+          title={String(section.year)}
+          id={`year-${section.year}`}
+          data-more={allExtra ? '' : undefined}
+          data-more-group={allExtra ? 'changelog' : undefined}
+        >
+          <span slot="margin">
+            {section.items.length} {section.items.length === 1 ? 'pull request' : 'pull requests'}
+          </span>
+          <ul>
+            {section.entries.map(({ pr, more }) => (
+              <EntryRow
+                href={pr.html_url}
+                title={pr.title}
+                meta={formatDate(new Date(pr.merged_at!))}
+                detail={`#${pr.number}`}
+                external
+                {more}
+                group="changelog"
+              />
+            ))}
+          </ul>
+        </Row>;
+      })}
+      {remaining > 0 && <Row>
+        <ShowMore group="changelog" count={remaining} noun="pull requests" />
+      </Row>}
+    </>
+  )}
 </BaseLayout>

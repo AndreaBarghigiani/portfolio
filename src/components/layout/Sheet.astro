@@ -1,0 +1,30 @@
+---
+/**
+ * Page-level spec-sheet layout (docs/design-system.md section 5).
+ *
+ * Renders the page's single `<main>` landmark and draws the 420px margin
+ * column once, as a decorative layer behind every `Row`, so short pages have
+ * no gap. The layer is hidden below `lg`: narrow widths use the margin band
+ * that each `Row` renders itself.
+ *
+ * Usage: `<Sheet><Row title="Writing">…</Row></Sheet>`
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<main
+  id="main"
+  class:list={['relative mx-auto w-full max-w-page flex-1 bg-surface text-ink', className]}
+>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-y-0 left-0 hidden w-label border-r border-rule bg-margin lg:block"
+  ></div>
+  <div class="relative flex min-h-full flex-col">
+    <slot />
+  </div>
+</main>

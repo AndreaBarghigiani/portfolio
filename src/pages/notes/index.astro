@@ -1,5 +1,5 @@
 ---
-import Container from '@/components/Container.astro';
+import Row from '@/components/layout/Row.astro';
 import GradientDivider from '@/components/ui/GradientDivider.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import CoursePreview from '@/components/ui/CoursePreview.astro';
@@ -16,7 +16,7 @@ const courses = await getCollection('notes');
 ---
 
 <BaseLayout seo={entry.data.seo}>
-  <Container as="section" class="flex flex-col gap-6">
+  <Row measure="copy" class="flex flex-col gap-6">
     <header class="flex flex-col gap-3">
       <h1 class="text-3xl font-semibold text-headings">{entry.data.title}</h1>
       <p class="text-foreground">
@@ -37,5 +37,5 @@ const courses = await getCollection('notes');
     )}
 
     <AuthorSeparator />
-  </Container>
+  </Row>
 </BaseLayout>

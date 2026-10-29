@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import Container from '@/components/Container.astro';
+import Row from '@/components/layout/Row.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getPublishedProjects } from '@/lib/projects';
 import { ArrowLeftIcon, ArrowUpRightIcon } from '@lucide/astro';
@@ -22,7 +22,7 @@ const seo = {
 ---
 
 <BaseLayout {seo}>
-  <Container as="section" class="flex flex-col gap-8">
+  <Row measure="copy" class="flex flex-col gap-8">
     <article class="flex flex-col gap-8">
       <header class="flex flex-col gap-4">
         <a
@@ -136,5 +136,5 @@ const seo = {
         <ArrowLeftIcon class="size-3" /> Back to projects
       </a>
     </article>
-  </Container>
+  </Row>
 </BaseLayout>

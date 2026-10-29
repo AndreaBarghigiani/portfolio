@@ -1,22 +1,24 @@
 ---
+import { isCurrent } from '@/lib/utils';
+
 interface Props {
   href: string;
 }
 
 const { href } = Astro.props;
 const { pathname } = Astro.url;
-import { isCurrent } from '@/lib/utils';
 
-const isCurrentLink = isCurrent(pathname, href);
+const current = isCurrent(pathname, href);
 ---
 
-<li>
+<li class="flex">
   <a
     {href}
+    aria-current={current ? 'page' : undefined}
     class:list={[
-      'block px-5 py-2 font-medium transition-colors',
-      'hover:text-headings',
-      isCurrentLink && 'rounded-full bg-muted-foreground/40 text-coffee-100',
+      'flex min-h-12 flex-1 items-center justify-center px-6 text-sm text-ink-muted transition-colors hover:text-accent-hover',
+      'max-lg:border-l max-lg:border-rule max-lg:first:border-l-0',
+      current && 'font-bold text-accent',
     ]}
   >
     <slot />

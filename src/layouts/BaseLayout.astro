@@ -14,20 +14,10 @@ interface Props {
 const { seo } = Astro.props;
 ---
 
-<html lang="en" class="bg-background text-foreground">
+<html lang="en" class="dark bg-background text-foreground">
   <Head {seo} />
 
-  <!-- Prevent flash of incorrect theme -->
-  <script is:inline>
-    // Apply theme immediately
-    document.documentElement.classList.toggle(
-      'dark',
-      localStorage.theme === 'dark' ||
-        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    );
-  </script>
-
-  <body class="relative flex min-h-dvh flex-col bg-background pb-12 text-foreground">
+  <body id="top" class="relative flex min-h-dvh flex-col bg-background text-foreground">
     <Header />
 
     <Sheet>

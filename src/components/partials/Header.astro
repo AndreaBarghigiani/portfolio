@@ -1,83 +1,195 @@
 ---
-import Container from '@/components/Container.astro';
-import ThemeToggle from '@/components/ThemeToggle.astro';
-import Avatar from '@/components/ui/Avatar.astro';
 import NavLink from '@/components/ui/NavLink.astro';
+import { DEFAULT_CONFIGURATION } from '@/lib/constants';
+import { getSheetMeta } from '@/lib/sheet';
+import { isCurrent } from '@/lib/utils';
 import { ChevronDown } from '@lucide/astro';
 
 const { pathname } = Astro.url;
-const isActivePath =
-  pathname.startsWith('/posts') || pathname.startsWith('/series') || pathname.startsWith('/notes');
+const { code } = getSheetMeta(pathname);
+const writing = [
+  { href: '/posts', label: 'Posts' },
+  { href: '/series', label: 'Series' },
+  { href: '/notes', label: 'Notes' },
+];
+const inWriting = writing.some(
+  (item) => isCurrent(pathname, item.href) || pathname.startsWith(`${item.href}/`)
+);
+const wordmark = DEFAULT_CONFIGURATION.author.username ?? 'cupofcraft';
+const drawnBy = DEFAULT_CONFIGURATION.author.name;
 ---
 
-<Container
-  as="header"
-  class="relative z-50 flex w-full max-w-full items-center justify-center gap-8 bg-background py-5 shadow-coffee-2xl transition-all duration-200"
->
-  <Avatar class="border border-border" />
+<noscript>
+  <style>
+    [data-submenu-panel][hidden] {
+      display: block;
+    }
+  </style>
+</noscript>
 
-  <div class="w-max rounded-full border border-border bg-muted-foreground/50 p-1 backdrop-blur-md">
-    <nav class="flex items-center">
-      <ul class="flex items-center gap-1">
+<header
+  data-header
+  class="sticky top-[-56px] z-50 border-b border-rule bg-surface text-ink transition-transform duration-[180ms] ease-out motion-reduce:transition-none lg:top-0"
+>
+  <div class="mx-auto flex w-full max-w-page flex-col lg:min-h-20 lg:flex-row">
+    <div
+      class="flex h-14 items-stretch max-lg:border-b max-lg:border-rule lg:h-auto lg:w-label lg:shrink-0 lg:border-r lg:border-rule lg:bg-margin"
+    >
+      <a
+        href="/"
+        class="flex flex-1 items-center px-6 text-lg font-semibold tracking-tight text-ink lg:px-12"
+      >
+        {wordmark}
+      </a>
+      <div
+        class="flex flex-col justify-center border-l border-rule px-6 font-mono text-label tracking-label text-ink-subtle uppercase lg:hidden"
+      >
+        <span>Sheet</span>
+        <span class="text-ink">{code}</span>
+      </div>
+    </div>
+
+    <div
+      class="hidden flex-col justify-center border-r border-rule px-8 font-mono text-label tracking-label text-ink-subtle uppercase lg:flex"
+    >
+      <span>Sheet</span>
+      <span class="text-xs text-ink">{code}</span>
+    </div>
+
+    <div
+      class="hidden flex-col justify-center border-r border-rule px-8 font-mono text-label tracking-label text-ink-subtle uppercase lg:flex"
+    >
+      <span>Drawn by</span>
+      <span class="text-xs text-ink">{drawnBy}</span>
+    </div>
+
+    <nav aria-label="Main" class="relative flex-1">
+      <ul class="flex h-12 lg:h-full lg:justify-end">
         <NavLink href="/">Home</NavLink>
 
-        <li class="group relative">
+        <li class="flex" data-submenu>
           <button
             type="button"
-            class:list={[
-              'flex items-center gap-2 py-2 pr-2 pl-5 font-medium transition-colors hover:text-headings',
-              isActivePath ? 'rounded-full bg-muted-foreground/40 text-coffee-100' : '',
-            ]}
-            aria-haspopup="true"
+            data-submenu-trigger
             aria-expanded="false"
+            aria-controls="writing-menu"
+            class:list={[
+              'flex min-h-12 flex-1 items-center justify-center gap-2 px-6 text-sm text-ink-muted transition-colors hover:text-accent-hover max-lg:border-l max-lg:border-rule',
+              inWriting && 'font-bold text-accent',
+            ]}
           >
             Writing
-            <ChevronDown class="h-4 w-4 transition-transform group-hover:rotate-180" />
+            <ChevronDown class="size-4" aria-hidden="true" />
           </button>
-          <div
-            class="invisible absolute top-full left-1/2 z-50 mt-1 -translate-x-1/2 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100"
+          <ul
+            id="writing-menu"
+            data-submenu-panel
+            hidden
+            class="absolute inset-x-0 top-full z-50 border border-x-0 border-rule bg-surface lg:inset-x-auto lg:right-0 lg:min-w-40 lg:border-x"
           >
-            <div
-              class="min-w-[120px] rounded-lg border border-border bg-background p-1 backdrop-blur-md"
-            >
-              <a
-                href="/posts"
-                class:list={[
-                  'block rounded-md px-4 py-2 text-sm transition-colors',
-                  'hover:text-headings',
-                  pathname === '/posts' && 'bg-muted-foreground/40 text-headings',
-                ]}
-              >
-                Posts
-              </a>
-              <a
-                href="/series"
-                class:list={[
-                  'block rounded-md px-4 py-2 text-sm transition-colors',
-                  'hover:text-headings',
-                  pathname === '/series' && 'bg-muted-foreground/40 text-headings',
-                ]}
-              >
-                Series
-              </a>
-              <a
-                href="/notes"
-                class:list={[
-                  'block rounded-md px-4 py-2 text-sm transition-colors',
-                  'hover:text-headings',
-                  pathname === '/notes' && 'bg-muted-foreground/40 text-headings',
-                ]}
-              >
-                Notes
-              </a>
-            </div>
-          </div>
+            {writing.map((item) => {
+              const current =
+                isCurrent(pathname, item.href) || pathname.startsWith(`${item.href}/`);
+              return <li>
+                <a
+                  href={item.href}
+                  aria-current={isCurrent(pathname, item.href) ? 'page' : undefined}
+                  class:list={[
+                    'flex min-h-12 items-center border-b border-rule px-6 text-sm text-ink-muted last:border-b-0 hover:bg-raised hover:text-accent-hover',
+                    current && 'font-bold text-accent',
+                  ]}
+                >
+                  {item.label}
+                </a>
+              </li>;
+            })}
+          </ul>
         </li>
 
         <NavLink href="/changelog">Changelog</NavLink>
       </ul>
     </nav>
   </div>
+</header>
 
-  <ThemeToggle />
-</Container>
+<style is:global>
+  :root {
+    scroll-padding-top: 3rem;
+  }
+  @media (min-width: 1024px) {
+    :root {
+      scroll-padding-top: 5rem;
+    }
+  }
+  [data-header][data-state='hidden'] {
+    transform: translateY(-100%);
+  }
+  [data-header][data-state='revealed'] {
+    box-shadow: 0 2px 0 var(--color-accent);
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const submenu = header?.querySelector<HTMLElement>('[data-submenu]');
+  const trigger = submenu?.querySelector<HTMLButtonElement>('[data-submenu-trigger]');
+  const panel = submenu?.querySelector<HTMLElement>('[data-submenu-panel]');
+  const hoverable = window.matchMedia('(hover: hover) and (min-width: 1024px)');
+
+  const setOpen = (open: boolean) => {
+    if (!trigger || !panel) return;
+    trigger.setAttribute('aria-expanded', String(open));
+    panel.hidden = !open;
+  };
+  const isOpen = () => trigger?.getAttribute('aria-expanded') === 'true';
+
+  trigger?.addEventListener('click', () => setOpen(!isOpen()));
+  submenu?.addEventListener('mouseenter', () => hoverable.matches && setOpen(true));
+  submenu?.addEventListener('mouseleave', () => hoverable.matches && setOpen(false));
+  submenu?.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && isOpen()) {
+      setOpen(false);
+      trigger?.focus();
+    }
+  });
+  submenu?.addEventListener('focusout', (event) => {
+    if (!submenu.contains(event.relatedTarget as Node | null)) setOpen(false);
+  });
+  document.addEventListener('click', (event) => {
+    if (isOpen() && !submenu?.contains(event.target as Node)) setOpen(false);
+  });
+
+  if (header) {
+    let lastY = window.scrollY;
+    let ticking = false;
+    const threshold = 6;
+
+    const update = () => {
+      ticking = false;
+      const y = Math.max(window.scrollY, 0);
+      const delta = y - lastY;
+      const keepVisible = header.contains(document.activeElement) || isOpen();
+
+      if (y <= 0) {
+        header.dataset.state = 'top';
+      } else if (Math.abs(delta) > threshold) {
+        header.dataset.state = delta > 0 && !keepVisible ? 'hidden' : 'revealed';
+      }
+      lastY = y;
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+    header.addEventListener('focusin', () => {
+      if (header.dataset.state === 'hidden') header.dataset.state = 'revealed';
+    });
+  }
+</script>

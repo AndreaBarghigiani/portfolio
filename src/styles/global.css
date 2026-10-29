@@ -179,7 +179,7 @@
 /*
  * Prose for detail pages (docs/design-system.md sections 4 and 9), dark role
  * tokens only. 20/34px on desktop and 18/30px on mobile; the 720px measure is
- * set by the container (`max-w-copy`). Replaces `prose-coffee` on detail pages.
+ * set by the container (`max-w-copy`).
  */
 @utility prose-sheet {
   --tw-prose-body: var(--ds-ink);

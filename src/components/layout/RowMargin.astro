@@ -22,7 +22,10 @@ const { Title, title, headingId, html, visible, after, marginClass, titleClass }
     marginClass,
   ]}
 >
-  {title && <Title id={headingId} class:list={['text-xl font-semibold', titleClass]}>
+  {title && <Title
+    id={headingId}
+    class:list={[titleClass.includes('text-4xl') ? '' : 'text-xl font-semibold', titleClass]}
+  >
     {title}
   </Title>}
   {html && <div class:list={['font-mono text-label tracking-label uppercase', title && 'mt-3']}>

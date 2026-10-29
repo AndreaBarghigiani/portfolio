@@ -30,6 +30,8 @@ interface Props extends Omit<HTMLAttributes<'div'>, 'title' | 'class'> {
   noMargin?: boolean;
   /** Place the margin cell after the content in the DOM (visually first on desktop), e.g. a hero figure that should follow the text on mobile. */
   marginAfter?: boolean;
+  /** Slogan-sized margin title (56px black) instead of the default section title. */
+  display?: boolean;
   measure?: 'full' | 'copy';
   id?: string;
   class?: string;
@@ -41,6 +43,7 @@ const {
   tone = 'surface',
   noMargin = false,
   marginAfter = false,
+  display = false,
   measure = 'full',
   id,
   class: className,
@@ -103,7 +106,9 @@ import RowMargin from './RowMargin.astro';
       visible={hasMargin}
       after={false}
       marginClass={t.margin}
-      titleClass={t.title}
+      titleClass={[t.title, display && 'text-4xl font-black tracking-tight']
+        .filter(Boolean)
+        .join(' ')}
     />
   )}
   <div class:list={['min-w-0 flex-1 px-6 py-8 lg:p-12', t.content]}>
@@ -120,7 +125,9 @@ import RowMargin from './RowMargin.astro';
       visible={hasMargin}
       after={true}
       marginClass={t.margin}
-      titleClass={t.title}
+      titleClass={[t.title, display && 'text-4xl font-black tracking-tight']
+        .filter(Boolean)
+        .join(' ')}
     />
   )}
 </Wrapper>

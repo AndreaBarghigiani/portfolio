@@ -1,0 +1,56 @@
+---
+/**
+ * Archive head (docs/design-system.md section 9): the Posts / Series / Notes
+ * sub-nav with counts in the margin cell, page title and standfirst in the
+ * content cell. Pass `current` for the active sub-nav item; omit it for
+ * archives outside the writing group (changelog), which render no sub-nav.
+ * Whether this sub-nav stays alongside the header submenu is an open owner
+ * decision (#43).
+ */
+import Row from '@/components/layout/Row.astro';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  title: string;
+  current?: 'posts' | 'series' | 'notes';
+}
+
+const { title, current } = Astro.props;
+
+const [posts, series, notes] = current
+  ? await Promise.all([getCollection('posts'), getCollection('series'), getCollection('notes')])
+  : [[], [], []];
+const items = [
+  { key: 'posts', label: 'Posts', href: '/posts/', count: posts.length },
+  { key: 'series', label: 'Series', href: '/series/', count: series.length },
+  { key: 'notes', label: 'Notes', href: '/notes/', count: notes.length },
+] as const;
+---
+
+<Row>
+  {current && <nav slot="margin" aria-label="Archives">
+    <ul class="flex flex-col gap-1">
+      {items.map((item) => <li>
+        <a
+          href={item.href}
+          aria-current={item.key === current ? 'page' : undefined}
+          class:list={[
+            'flex min-h-12 items-center gap-3 hover:text-accent-hover',
+            item.key === current ? 'font-bold text-accent' : 'text-ink-muted',
+          ]}
+        >
+          {item.label}
+          <span class="text-ink-subtle">{String(item.count).padStart(2, '0')}</span>
+        </a>
+      </li>)}
+    </ul>
+  </nav>}
+  <h1
+    class="text-5xl font-black tracking-display text-ink lg:text-(length:--page-title-size) lg:leading-none"
+  >
+    {title}
+  </h1>
+  <div class="mt-6 max-w-copy text-lg font-light text-accent lg:text-xl">
+    <slot />
+  </div>
+</Row>

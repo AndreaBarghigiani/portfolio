@@ -42,5 +42,9 @@ const { seo } = Astro.props;
   <meta property="twitter:title" content={seo?.title || defaultSeo.title} />
   <meta property="twitter:description" content={seo?.description || defaultSeo.description} />
 
+  <script is:inline>
+    // Enables JS-only enhancements (show-more hides extras only when this class is present)
+    document.documentElement.classList.add('js');
+  </script>
   <slot />
 </head>

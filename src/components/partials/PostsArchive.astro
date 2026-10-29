@@ -1,0 +1,69 @@
+---
+/**
+ * One page of the posts archive: years grouped in margin cells (year and
+ * count), the first three posts visible with a show-more control for the rest
+ * of the page, and range pagination. `latestId` marks the newest post overall.
+ */
+import Row from '@/components/layout/Row.astro';
+import ArchiveHead from '@/components/partials/ArchiveHead.astro';
+import EntryRow from '@/components/ui/EntryRow.astro';
+import Pagination from '@/components/ui/Pagination.astro';
+import ShowMore from '@/components/ui/ShowMore.astro';
+import type { PostArchivePage } from '@/lib/archive';
+import { formatDate, getPostSlugFromId } from '@/lib/utils';
+
+interface Props {
+  pages: PostArchivePage[];
+  current: number;
+  latestId: string;
+  title: string;
+  description: string;
+}
+
+const { pages, current, latestId, title, description } = Astro.props;
+const page = pages[current - 1]!;
+const VISIBLE = 3;
+const group = `posts-${page.number}`;
+
+let seen = 0;
+const sections = page.groups.map((yearGroup) => ({
+  ...yearGroup,
+  entries: yearGroup.items.map((post) => ({ post, more: seen++ >= VISIBLE })),
+}));
+const total = seen;
+const remaining = Math.max(total - VISIBLE, 0);
+---
+
+<ArchiveHead {title} current="posts">{description}</ArchiveHead>
+
+{sections.map((section) => {
+  const allExtra = section.entries.every((entry) => entry.more);
+  return <Row
+    title={String(section.year)}
+    id={`year-${section.year}`}
+    data-more={allExtra ? '' : undefined}
+    data-more-group={allExtra ? group : undefined}
+  >
+    <span slot="margin">
+      {section.items.length} {section.items.length === 1 ? 'post' : 'posts'}
+    </span>
+    <ul>
+      {section.entries.map(({ post, more }) => (
+        <EntryRow
+          href={`/posts/${getPostSlugFromId(post.id)}/`}
+          title={post.data.title}
+          meta={formatDate(post.data.date)}
+          description={post.data.seo.description}
+          status={post.id === latestId ? 'LATEST' : undefined}
+          {more}
+          {group}
+        />
+      ))}
+    </ul>
+  </Row>;
+})}
+
+{(remaining > 0 || pages.length > 1) && <Row>
+  {remaining > 0 && <ShowMore {group} count={remaining} noun="posts" />}
+  <Pagination {pages} {current} />
+</Row>}

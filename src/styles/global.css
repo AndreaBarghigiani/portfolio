@@ -272,3 +272,18 @@
     opacity: 1;
   }
 }
+
+/*
+ * Show-more (docs/design-system.md section 8). Extras are hidden only once the
+ * `js` class is on <html>; without JavaScript every entry stays visible and
+ * the control stays hidden.
+ */
+.js [data-more]:not([data-shown]) {
+  display: none;
+}
+[data-show-more-wrap] {
+  display: none;
+}
+.js [data-show-more-wrap] {
+  display: block;
+}

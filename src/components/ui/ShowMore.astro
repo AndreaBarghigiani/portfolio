@@ -1,0 +1,46 @@
+---
+/**
+ * Show-more control (docs/design-system.md section 8). Everything is already
+ * in the HTML. Rows marked `more` + `group` are hidden only once `<html>` has
+ * the `js` class, so without JavaScript every entry is visible and this control
+ * stays hidden. One activation reveals all remaining entries of the group
+ * (nothing is fetched), moves focus to the first newly shown entry and
+ * announces the count politely. Omit the component when nothing remains.
+ */
+interface Props {
+  group: string;
+  count: number;
+  noun?: string;
+}
+
+const { group, count, noun = 'entries' } = Astro.props;
+---
+
+<div data-show-more-wrap={group} class="py-6">
+  <button
+    type="button"
+    data-show-more={group}
+    data-count={count}
+    data-noun={noun}
+    class="inline-flex h-14 w-full items-center justify-center border border-ink-subtle px-8 text-sm font-semibold text-ink hover:border-accent focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-accent lg:w-auto"
+  >
+    {count} more on this page
+  </button>
+</div>
+<div role="status" aria-live="polite" data-show-more-status={group} class="sr-only"></div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-show-more]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const group = button.dataset.showMore ?? '';
+      const items = document.querySelectorAll<HTMLElement>(`[data-more-group="${group}"]`);
+      items.forEach((item) => (item.dataset.shown = ''));
+
+      const entries = [...items].filter((item) => item.hasAttribute('data-entry'));
+      const status = document.querySelector(`[data-show-more-status="${group}"]`);
+      button.closest('[data-show-more-wrap]')?.remove();
+      entries[0]?.querySelector<HTMLElement>('a')?.focus();
+      if (status) status.textContent = `${entries.length} more ${button.dataset.noun} shown`;
+    });
+  });
+</script>

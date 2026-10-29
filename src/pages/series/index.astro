@@ -1,5 +1,5 @@
 ---
-import Container from '@/components/Container.astro';
+import Row from '@/components/layout/Row.astro';
 import SeriesPreview from '@/components/ui/SeriesPreview.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
@@ -10,7 +10,7 @@ const series = await getCollection('series');
 ---
 
 <BaseLayout>
-  <Container as="section" class="flex flex-col gap-6">
+  <Row measure="copy" class="flex flex-col gap-6">
     {series.length === 0 ? (
       <p>No posts found</p>
     ) : (
@@ -34,5 +34,5 @@ const series = await getCollection('series');
     )}
 
     <AuthorSeparator />
-  </Container>
+  </Row>
 </BaseLayout>

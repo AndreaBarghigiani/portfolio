@@ -1,5 +1,5 @@
 ---
-import Container from '@/components/Container.astro';
+import Row from '@/components/layout/Row.astro';
 import PostPreview from '@/components/ui/PostPreview.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import AuthorSeparator from '@/components/partials/AuthorSeparator.astro';
@@ -18,7 +18,7 @@ const sortedPosts = sortPostsByDate(posts);
 ---
 
 <BaseLayout seo={entry.data.seo}>
-  <Container as="section" class="flex flex-col gap-6">
+  <Row measure="copy" class="flex flex-col gap-6">
     {sortedPosts.length === 0 ? (
       <p>No posts found</p>
     ) : (
@@ -43,5 +43,5 @@ const sortedPosts = sortPostsByDate(posts);
     )}
 
     <AuthorSeparator />
-  </Container>
+  </Row>
 </BaseLayout>

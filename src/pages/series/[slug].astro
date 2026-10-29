@@ -1,5 +1,5 @@
 ---
-import Container from '@/components/Container.astro';
+import Row from '@/components/layout/Row.astro';
 import SeriesItemPreview from '@/components/ui/SeriesItemPreview.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { ArrowLeftIcon } from '@lucide/astro';
@@ -26,7 +26,7 @@ const seriesPosts = allPosts.sort(
 ---
 
 <BaseLayout seo={entry.data.seo}>
-  <Container as="section">
+  <Row measure="copy">
     <article class="flex flex-col gap-6">
       <div class="flex flex-col gap-2">
         <a
@@ -58,5 +58,5 @@ const seriesPosts = allPosts.sort(
     </article>
 
     <AuthorSeparator />
-  </Container>
+  </Row>
 </BaseLayout>

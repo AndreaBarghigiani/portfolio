@@ -1,0 +1,105 @@
+---
+/**
+ * One ruled row of a `Sheet`: a margin cell and a content cell
+ * (docs/design-system.md section 5).
+ *
+ * - Titled: pass `title`. It renders as a real heading (`titleAs`, default h2)
+ *   in the margin cell, and the row becomes a labelled `<section>`.
+ * - Untitled: omit `title`. The margin cell stays empty on desktop and is
+ *   dropped below `lg`. Use the named `margin` slot for a small label or
+ *   other margin content instead of a title.
+ * - Omitted margin: set `noMargin` for a row whose content spans the full
+ *   sheet width and hides the layout-level margin column behind it.
+ * - `tone` picks the band: `surface` (default), `raised`, `paper` (kraft) or
+ *   `accent`. Each tone also picks the matching margin, rule and ink roles.
+ *
+ * DOM order is margin cell first, content second; it is never reordered with
+ * CSS, so landmark and heading order do not depend on visual placement.
+ * Content fills the cell; set `measure="copy"` to cap it at the 720px reading
+ * width. `class` is applied to the wrapper inside the content cell.
+ */
+type Tone = 'surface' | 'raised' | 'paper' | 'accent';
+type TitleLevel = 'h1' | 'h2' | 'h3';
+
+interface Props {
+  title?: string;
+  titleAs?: TitleLevel;
+  tone?: Tone;
+  noMargin?: boolean;
+  measure?: 'full' | 'copy';
+  id?: string;
+  class?: string;
+}
+
+const {
+  title,
+  titleAs: Title = 'h2',
+  tone = 'surface',
+  noMargin = false,
+  measure = 'full',
+  id,
+  class: className,
+} = Astro.props;
+
+const hasMarginSlot = Astro.slots.has('margin');
+const hasMargin = !noMargin && (Boolean(title) || hasMarginSlot);
+const slug = title
+  ?.toLowerCase()
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/^-|-$/g, '');
+const headingId = title ? `${id ?? slug}-title` : undefined;
+
+const tones: Record<Tone, { row: string; margin: string; content: string; title: string }> = {
+  surface: {
+    row: 'border-rule',
+    margin: 'bg-margin text-ink-subtle lg:bg-transparent',
+    content: noMargin ? 'bg-surface' : '',
+    title: 'text-ink',
+  },
+  raised: {
+    row: 'border-rule',
+    margin: 'bg-margin text-ink-subtle lg:bg-transparent',
+    content: 'bg-raised',
+    title: 'text-ink',
+  },
+  paper: {
+    row: 'border-paper-rule',
+    margin: 'bg-paper-margin text-paper-ink-subtle lg:border-r lg:border-paper-rule',
+    content: 'bg-paper text-paper-ink',
+    title: 'text-paper-ink',
+  },
+  accent: {
+    row: 'border-accent-deep',
+    margin: 'bg-accent-deep text-on-accent lg:border-r lg:border-accent-deep',
+    content: 'bg-accent text-on-accent',
+    title: 'text-on-accent',
+  },
+};
+
+const t = tones[tone];
+const Wrapper = title ? 'section' : 'div';
+---
+
+<Wrapper {id} aria-labelledby={headingId} class:list={['border-b lg:flex', t.row]}>
+  {!noMargin && <div
+    class:list={[
+      'px-6 py-4 lg:block lg:w-label lg:shrink-0 lg:p-12',
+      hasMargin ? 'block' : 'hidden',
+      t.margin,
+    ]}
+  >
+    {title && <Title id={headingId} class:list={['text-xl font-semibold', t.title]}>
+      {title}
+    </Title>}
+    {hasMarginSlot && <div
+      class:list={['font-mono text-label tracking-label uppercase', title && 'mt-3']}
+    >
+      <slot name="margin" />
+    </div>}
+  </div>}
+  <div class:list={['min-w-0 flex-1 px-6 py-8 lg:p-12', t.content]}>
+    <div class:list={[measure === 'copy' && 'max-w-copy', className]}>
+      <slot />
+    </div>
+  </div>
+</Wrapper>

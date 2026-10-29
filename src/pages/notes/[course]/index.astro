@@ -1,5 +1,5 @@
 ---
-import Container from '@/components/Container.astro';
+import Row from '@/components/layout/Row.astro';
 import ExternalLink from '@/components/ui/ExternalLink.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { ArrowLeftIcon } from '@lucide/astro';
@@ -108,7 +108,7 @@ const groupedLessons = lessons
 ---
 
 <BaseLayout seo={courseSeo}>
-  <Container as="section" class="flex flex-col gap-6">
+  <Row measure="copy" class="flex flex-col gap-6">
     <a
       href="/notes"
       class="flex w-max items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
@@ -173,5 +173,5 @@ const groupedLessons = lessons
     )}
 
     <AuthorSeparator />
-  </Container>
+  </Row>
 </BaseLayout>

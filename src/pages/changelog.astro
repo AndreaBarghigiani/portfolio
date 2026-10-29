@@ -2,7 +2,7 @@
 export const prerender = false;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import Container from '@/components/Container.astro';
+import Row from '@/components/layout/Row.astro';
 import ExternalLink from '@/components/ui/ExternalLink.astro';
 import GradientDivider from '@/components/ui/GradientDivider.astro';
 import { formatDate } from '@/lib/utils';
@@ -72,7 +72,7 @@ const seo: Seo = {
 ---
 
 <BaseLayout {seo}>
-  <Container as="section" class="flex flex-col gap-6">
+  <Row measure="copy" class="flex flex-col gap-6">
     <header class="flex flex-col gap-3">
       <h1 class="text-3xl font-semibold text-headings">Changelog</h1>
       <p class="text-foreground">
@@ -131,5 +131,5 @@ const seo: Seo = {
     )}
 
     <AuthorSeparator />
-  </Container>
+  </Row>
 </BaseLayout>

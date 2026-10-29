@@ -39,7 +39,7 @@ interface Props extends Omit<HTMLAttributes<'div'>, 'title' | 'class'> {
 
 const {
   title,
-  titleAs: Title = 'h2',
+  titleAs = 'h2',
   tone = 'surface',
   noMargin = false,
   marginAfter = false,
@@ -87,6 +87,9 @@ const tones: Record<Tone, { row: string; margin: string; content: string; title:
 };
 
 const t = tones[tone];
+const titleClass = display
+  ? `${t.title} text-4xl font-black tracking-tight`
+  : `${t.title} text-xl font-semibold`;
 const Wrapper = title ? 'section' : 'div';
 import RowMargin from './RowMargin.astro';
 ---
@@ -99,16 +102,14 @@ import RowMargin from './RowMargin.astro';
 >
   {!noMargin && !marginAfter && (
     <RowMargin
-      {Title}
+      as={titleAs}
       {title}
       {headingId}
       html={marginHtml}
       visible={hasMargin}
       after={false}
       marginClass={t.margin}
-      titleClass={[t.title, display && 'text-4xl font-black tracking-tight']
-        .filter(Boolean)
-        .join(' ')}
+      {titleClass}
     />
   )}
   <div class:list={['min-w-0 flex-1 px-6 py-8 lg:p-12', t.content]}>
@@ -118,16 +119,14 @@ import RowMargin from './RowMargin.astro';
   </div>
   {!noMargin && marginAfter && (
     <RowMargin
-      {Title}
+      as={titleAs}
       {title}
       {headingId}
       html={marginHtml}
       visible={hasMargin}
       after={true}
       marginClass={t.margin}
-      titleClass={[t.title, display && 'text-4xl font-black tracking-tight']
-        .filter(Boolean)
-        .join(' ')}
+      {titleClass}
     />
   )}
 </Wrapper>

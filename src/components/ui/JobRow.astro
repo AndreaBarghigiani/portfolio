@@ -1,0 +1,47 @@
+---
+/**
+ * One experience row: period (mono), company with external link, role,
+ * company summary, and the job's highlights in a disclosure that works by
+ * keyboard and touch. Everything comes from the `jobs` entry; nothing is added.
+ */
+import ArrowLink from './ArrowLink.astro';
+import CodeBlock from './CodeBlock.astro';
+import { render, type CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'jobs'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { company, title, location, from, to, url, companyIntro } = entry.data;
+---
+
+<li class="border-b border-rule py-8 first:pt-0 last:border-b-0 last:pb-0">
+  <div class="grid gap-x-6 gap-y-2 lg:grid-cols-[8rem_1fr]">
+    <p class="font-mono text-xs text-ink-subtle">{from} — {to}</p>
+    <div class="flex flex-col gap-2">
+      <h3 class="text-lg font-semibold text-ink">
+        {url ? (
+          <ArrowLink href={url} class="text-ink hover:text-accent-hover">
+            {company}
+          </ArrowLink>
+        ) : (
+          company
+        )}
+      </h3>
+      <p class="text-sm text-ink">{title} · <span class="text-ink-muted">{location}</span></p>
+      {companyIntro && <p class="max-w-copy text-sm text-ink-muted">{companyIntro}</p>}
+      <details class="mt-2 max-w-copy">
+        <summary
+          class="flex min-h-12 cursor-pointer items-center text-sm font-semibold text-accent"
+        >
+          Highlights
+        </summary>
+        <div class="prose prose-sheet pb-2 text-sm">
+          <Content components={{ pre: CodeBlock }} />
+        </div>
+      </details>
+    </div>
+  </div>
+</li>

@@ -1,11 +1,16 @@
 ---
 import Row from '@/components/layout/Row.astro';
-import SeriesNavigation from '@/components/ui/SeriesNavigation.astro';
+import DetailHead from '@/components/partials/DetailHead.astro';
+import Author from '@/components/ui/Author.astro';
+import CodeBlock from '@/components/ui/CodeBlock.astro';
+import Facts from '@/components/ui/Facts.astro';
+import KeepReading from '@/components/ui/KeepReading.astro';
+import ReadingBar from '@/components/ui/ReadingBar.astro';
+import Toc from '@/components/ui/Toc.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getPostSlugFromId } from '@/lib/utils';
-import { ArrowLeftIcon } from '@lucide/astro';
+import { DEFAULT_CONFIGURATION } from '@/lib/constants';
+import { formatDate, getPostSlugFromId, sortPostsByDate } from '@/lib/utils';
 import { getCollection, render } from 'astro:content';
-import AuthorSeparator from '@/components/partials/AuthorSeparator.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('posts');
@@ -27,39 +32,74 @@ export async function getStaticPaths() {
 }
 
 const { entry, seriesData } = Astro.props;
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
+
+const posts = await getCollection('posts');
+const seriesPosts = seriesData
+  ? posts
+      .filter((post) => post.data.series?.ref.id === seriesData.id)
+      .sort((a, b) => (a.data.series?.number ?? 0) - (b.data.series?.number ?? 0))
+  : [];
+const ordered = seriesData ? seriesPosts : sortPostsByDate(posts);
+const position = ordered.findIndex((post) => post.id === entry.id);
+// Series follow reading order (previous, next); otherwise newer then older.
+const neighbours = (
+  seriesData
+    ? [ordered[position - 1], ordered[position + 1]]
+    : [ordered[position - 1], ordered[position + 1]]
+).filter((post): post is NonNullable<typeof post> => Boolean(post));
+
+const tocItems = headings.map((heading) => ({
+  href: `#${heading.slug}`,
+  text: heading.text,
+  depth: heading.depth,
+}));
 ---
 
 <BaseLayout seo={entry.data.seo}>
-  <Row measure="copy" class="flex flex-col gap-6">
-    <article class="flex flex-col gap-6">
-      <div class="flex flex-col gap-2">
-        {!seriesData ? (
-          <a
-            href="/posts"
-            class="flex w-max items-center gap-2 pb-4 text-sm text-muted-foreground transition-all hover:text-foreground"
-          >
-            <ArrowLeftIcon class="size-3" /> Back to archive
-          </a>
-        ) : (
-          <SeriesNavigation {entry} {seriesData} />
-        )}
-        <h1 class="text-4xl font-semibold text-headings">{entry.data.title}</h1>
+  <article data-detail class="flex flex-1 flex-col">
+    <DetailHead
+      title={entry.data.title}
+      standfirst={entry.data.seo.description}
+      back={{ label: 'Posts', href: '/posts/' }}
+    >
+      <Facts
+        slot="facts"
+        items={[
+          { label: 'Published', value: formatDate(entry.data.date) },
+          {
+            label: 'Series',
+            value: seriesData?.data.title,
+            href: seriesData ? `/series/${seriesData.id}/` : undefined,
+          },
+          {
+            label: 'Part',
+            value: entry.data.series
+              ? `${entry.data.series.number} of ${seriesPosts.length}`
+              : undefined,
+          },
+        ]}
+      />
+    </DetailHead>
+
+    <Row measure="copy">
+      <Toc slot="margin" items={tocItems} />
+      <div class="prose prose-sheet">
+        <Content components={{ pre: CodeBlock }} />
       </div>
-
-      <!-- {
-        entry.data.image && (
-          <div class="relative aspect-video overflow-hidden rounded-lg">
-            <Image src={entry.data.image} alt={entry.data.title} class="object-cover" />
-          </div>
-        )
-      } -->
-
-      <div class="prose prose-lg prose-coffee dark:prose-invert">
-        <Content />
+      <div class="mt-16 border-t border-rule pt-8">
+        <Author {...DEFAULT_CONFIGURATION.author} />
       </div>
-    </article>
+    </Row>
 
-    <AuthorSeparator />
-  </Row>
+    <ReadingBar label={entry.data.title} />
+  </article>
+
+  <KeepReading
+    items={neighbours.map((post) => ({
+      href: `/posts/${getPostSlugFromId(post.id)}/`,
+      title: post.data.title,
+      meta: formatDate(post.data.date),
+    }))}
+  />
 </BaseLayout>

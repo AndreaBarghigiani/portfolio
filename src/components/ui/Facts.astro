@@ -1,0 +1,36 @@
+---
+/**
+ * Small mono label/value pairs for the margin cell (published, instructor,
+ * entries). Pass `href` to make the value a link; external links follow the
+ * arrow convention. Items without a value are omitted, never shown empty.
+ */
+import ArrowLink from './ArrowLink.astro';
+
+interface Fact {
+  label: string;
+  value?: string;
+  href?: string;
+}
+
+interface Props {
+  items: Fact[];
+}
+
+const { items } = Astro.props;
+const facts = items.filter((item) => item.value);
+---
+
+{facts.length > 0 && <dl class="flex flex-col gap-4 normal-case">
+  {facts.map((fact) => <div>
+    <dt class="font-mono text-label tracking-label text-ink-subtle uppercase">{fact.label}</dt>
+    <dd class="tracking-normal text-sm text-ink">
+      {fact.href ? (
+        <ArrowLink href={fact.href} class="font-sans">
+          {fact.value}
+        </ArrowLink>
+      ) : (
+        fact.value
+      )}
+    </dd>
+  </div>)}
+</dl>}

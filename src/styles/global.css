@@ -287,3 +287,76 @@
 .js [data-show-more-wrap] {
   display: block;
 }
+
+/*
+ * Prose for detail pages (docs/design-system.md sections 4 and 9), dark role
+ * tokens only. 20/34px on desktop and 18/30px on mobile; the 720px measure is
+ * set by the container (`max-w-copy`). Replaces `prose-coffee` on detail pages.
+ */
+@utility prose-sheet {
+  --tw-prose-body: var(--ds-ink);
+  --tw-prose-headings: var(--ds-ink);
+  --tw-prose-lead: var(--ds-ink-muted);
+  --tw-prose-links: var(--ds-accent);
+  --tw-prose-bold: var(--ds-ink);
+  --tw-prose-counters: var(--ds-ink-subtle);
+  --tw-prose-bullets: var(--ds-ink-subtle);
+  --tw-prose-hr: var(--ds-rule);
+  --tw-prose-quotes: var(--ds-ink);
+  --tw-prose-quote-borders: var(--ds-accent);
+  --tw-prose-captions: var(--ds-ink-subtle);
+  --tw-prose-code: var(--ds-ink);
+  --tw-prose-pre-code: var(--ds-ink);
+  --tw-prose-pre-bg: var(--ds-margin);
+  --tw-prose-th-borders: var(--ds-rule);
+  --tw-prose-td-borders: var(--ds-rule);
+
+  &.prose {
+    max-width: none;
+    font-size: 1.125rem;
+    line-height: 1.667;
+  }
+  @media (min-width: 1024px) {
+    &.prose {
+      font-size: 1.25rem;
+      line-height: 1.7;
+    }
+  }
+
+  & a {
+    text-underline-offset: 4px;
+  }
+  & a:hover {
+    color: var(--ds-accent-hover);
+  }
+  & h2,
+  & h3,
+  & h4 {
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  & :not(pre) > code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    font-weight: 500;
+    padding: 0.1em 0.35em;
+    background: var(--ds-raised);
+    border: 1px solid var(--ds-rule);
+  }
+  & :not(pre) > code::before,
+  & :not(pre) > code::after {
+    content: none;
+  }
+  & blockquote {
+    font-style: normal;
+    border-inline-start-width: 2px;
+  }
+  & img {
+    border: 1px solid var(--ds-rule);
+  }
+}
+
+/* Detail pages keep focused elements clear of the sticky reading bar. */
+.has-reading-bar {
+  scroll-padding-bottom: 4rem;
+}

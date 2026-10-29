@@ -1,0 +1,43 @@
+---
+/**
+ * Closing kraft band ("Keep reading", "Next up", "More projects") from real
+ * neighbouring content. Uses the paper tone and paper inks, never the dark
+ * theme inks. Renders nothing when there are no items.
+ */
+import Row from '@/components/layout/Row.astro';
+import { ARROWS } from '@/lib/links';
+
+interface Item {
+  href: string;
+  title: string;
+  meta?: string;
+}
+
+interface Props {
+  title?: string;
+  items: Item[];
+}
+
+const { title = 'Keep reading', items } = Astro.props;
+---
+
+{items.length > 0 && <Row tone="paper" {title} id="keep-reading">
+  <ul>
+    {items.map((item) => <li class="border-b border-paper-rule last:border-b-0">
+      <a
+        href={item.href}
+        class="group flex min-h-12 items-center justify-between gap-6 py-6 outline-offset-[-2px] focus-visible:outline-2 focus-visible:outline-paper-ink"
+      >
+        <span class="flex flex-col gap-1">
+          {item.meta && <span class="font-mono text-xs text-paper-ink-subtle">{item.meta}</span>}
+          <span class="text-xl font-semibold text-paper-ink group-hover:underline lg:text-2xl">
+            {item.title}
+          </span>
+        </span>
+        <span aria-hidden="true" class="w-12 text-center text-lg text-paper-ink">
+          {ARROWS.internal}
+        </span>
+      </a>
+    </li>)}
+  </ul>
+</Row>}

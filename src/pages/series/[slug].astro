@@ -1,10 +1,14 @@
 ---
 import Row from '@/components/layout/Row.astro';
-import SeriesItemPreview from '@/components/ui/SeriesItemPreview.astro';
+import DetailHead from '@/components/partials/DetailHead.astro';
+import EntryRow from '@/components/ui/EntryRow.astro';
+import Facts from '@/components/ui/Facts.astro';
+import KeepReading from '@/components/ui/KeepReading.astro';
+import ReadingBar from '@/components/ui/ReadingBar.astro';
+import ShowMore from '@/components/ui/ShowMore.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { ArrowLeftIcon } from '@lucide/astro';
+import { formatDate, getPostSlugFromId } from '@/lib/utils';
 import { getCollection } from 'astro:content';
-import AuthorSeparator from '@/components/partials/AuthorSeparator.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('series');
@@ -17,46 +21,74 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 
-// Get all posts that belong to this series
+// Get all posts that belong to this series, in sequence order
 const allPosts = await getCollection('posts', (post) => post.data.series?.ref.id === entry.id);
-
 const seriesPosts = allPosts.sort(
   (a, b) => (a.data.series?.number || 0) - (b.data.series?.number || 0)
 );
+const otherSeries = (await getCollection('series')).filter((series) => series.id !== entry.id);
+
+const VISIBLE = 3;
+const group = 'series-entries';
+const remaining = Math.max(seriesPosts.length - VISIBLE, 0);
 ---
 
 <BaseLayout seo={entry.data.seo}>
-  <Row measure="copy">
-    <article class="flex flex-col gap-6">
-      <div class="flex flex-col gap-2">
-        <a
-          href="/series"
-          class="flex w-max items-center gap-2 pb-4 text-sm text-muted-foreground transition-all hover:text-foreground"
+  <article data-detail class="flex flex-1 flex-col">
+    <DetailHead
+      title={entry.data.title}
+      standfirst={entry.data.description}
+      back={{ label: 'Series', href: '/series/' }}
+    >
+      <Facts
+        slot="facts"
+        items={[
+          { label: 'Entries', value: seriesPosts.length ? String(seriesPosts.length) : undefined },
+        ]}
+      />
+    </DetailHead>
+
+    {seriesPosts.length === 0 ? (
+      <Row>
+        <p class="text-ink-muted">No articles in this series yet.</p>
+      </Row>
+    ) : (
+      <section aria-labelledby="series-entries-title">
+        <h2 id="series-entries-title" class="sr-only">Entries in this series</h2>
+        {seriesPosts.map((post, index) => <Row
+          data-more={index >= VISIBLE ? '' : undefined}
+          data-more-group={index >= VISIBLE ? group : undefined}
         >
-          <ArrowLeftIcon class="size-3" /> Back to series
-        </a>
-
-        <h1 class="text-3xl font-semibold text-headings">{entry.data.title}</h1>
-        {entry.data.description && <p class="text-lg text-coffee-700/85 dark:text-coffee-300/85">
-          {entry.data.description}
-        </p>}
-      </div>
-
-      <section class="flex flex-col gap-4">
-        <h2 class="text-xl font-semibold text-headings">In this series:</h2>
-
-        {seriesPosts.length === 0 ? (
-          <p class="text-muted-foreground">No articles in this series yet.</p>
-        ) : (
-          <ul class="flex flex-col gap-3">
-            {seriesPosts.map((post) => (
-              <SeriesItemPreview entry={post} />
-            ))}
+          <span
+            slot="margin"
+            aria-hidden="true"
+            class="block text-5xl font-black tracking-display text-accent normal-case lg:text-6xl"
+          >
+            {String(post.data.series?.number ?? index + 1).padStart(2, '0')}
+          </span>
+          <ul>
+            <EntryRow
+              href={`/posts/${getPostSlugFromId(post.id)}/`}
+              title={post.data.title}
+              meta={formatDate(post.data.date)}
+              description={post.data.seo.description}
+            />
           </ul>
-        )}
+        </Row>)}
+        {remaining > 0 && <Row>
+          <ShowMore {group} count={remaining} noun="entries" />
+        </Row>}
       </section>
-    </article>
+    )}
 
-    <AuthorSeparator />
-  </Row>
+    <ReadingBar label={entry.data.title} />
+  </article>
+
+  <KeepReading
+    title="More series"
+    items={otherSeries.map((series) => ({
+      href: `/series/${series.id}/`,
+      title: series.data.title,
+    }))}
+  />
 </BaseLayout>

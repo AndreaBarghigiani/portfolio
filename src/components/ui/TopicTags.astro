@@ -1,0 +1,22 @@
+---
+/**
+ * Renders one topic chip per supplied value, as a list. Empty input renders
+ * nothing, so pages only show tags that content already has. Values are never
+ * joined into one string. Use `getTopics()` from `@/lib/tags` to normalise
+ * content input.
+ */
+import Tag from './Tag.astro';
+
+interface Props {
+  topics: readonly string[];
+  class?: string;
+}
+
+const { topics, class: className } = Astro.props;
+---
+
+{topics.length > 0 && <ul aria-label="Topics" class:list={['flex flex-wrap gap-2', className]}>
+  {topics.map((topic) => <li>
+    <Tag kind="topic">{topic}</Tag>
+  </li>)}
+</ul>}

@@ -1,0 +1,70 @@
+---
+/**
+ * Button in three patterns (docs/design-system.md section 8).
+ *
+ * - `solid`: accent fill; hover swaps to accent-hover; focus is a 2px ink ring
+ *   with 3px offset. Never gets corner marks.
+ * - `outline`: 1px ink-subtle border; hover and focus switch to an accent
+ *   border and show two corner marks. Marks sit outside the box (absolute),
+ *   so the button never moves or resizes. Do not clip it with `overflow-hidden`.
+ * - `text`: accent, semibold; hover underlines; focus shows an accent outline.
+ *
+ * With `href` it renders a link (native semantics, arrow per the convention:
+ * `→` internal, `↗` external, new tab with `rel` and an sr-only hint); without
+ * it renders a `<button>`. Mobile: 56px tall and full width below `lg`.
+ *
+ * Usage: `<Button variant="outline" href="https://github.com/…">Source</Button>`
+ */
+import { ARROWS, isExternalHref } from '@/lib/links';
+
+type Variant = 'solid' | 'outline' | 'text';
+
+type Props = {
+  variant?: Variant;
+  class?: string;
+} & (
+  | { href: string; arrow?: boolean; type?: never; disabled?: never }
+  | { href?: undefined; arrow?: never; type?: 'button' | 'submit' | 'reset'; disabled?: boolean }
+);
+
+const {
+  variant = 'solid',
+  href,
+  arrow = true,
+  type = 'button',
+  disabled,
+  class: className,
+} = Astro.props;
+
+const external = href ? isExternalHref(href) : false;
+const newTab = external && !href?.startsWith('mailto:');
+const glyph = external ? ARROWS.external : ARROWS.internal;
+
+const base = 'relative inline-flex items-center justify-center gap-2 text-sm font-semibold';
+const box = 'h-14 w-full px-8 lg:w-auto';
+const variants: Record<Variant, string> = {
+  solid:
+    'bg-accent text-on-accent hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-ink',
+  outline:
+    'corner-marks-interactive border border-ink-subtle text-ink hover:border-accent focus-visible:border-accent focus-visible:outline-none',
+  text: 'min-h-12 text-accent underline-offset-4 hover:underline hover:decoration-accent focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent',
+};
+const classes = [base, variant !== 'text' && box, variants[variant], className];
+---
+
+{href ? (
+  <a
+    {href}
+    target={newTab ? '_blank' : undefined}
+    rel={newTab ? 'noopener noreferrer' : undefined}
+    class:list={classes}
+  >
+    <slot />
+    {arrow && <span aria-hidden="true">{glyph}</span>}
+    {newTab && <span class="sr-only"> (opens in a new tab)</span>}
+  </a>
+) : (
+  <button {type} {disabled} class:list={classes}>
+    <slot />
+  </button>
+)}

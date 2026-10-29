@@ -1,5 +1,6 @@
 ---
 import { DEFAULT_CONFIGURATION } from '@/lib/constants';
+import BackToTop from '@/components/ui/BackToTop.astro';
 import { getSheetMeta } from '@/lib/sheet';
 
 const { back } = getSheetMeta(Astro.url.pathname);
@@ -42,12 +43,7 @@ const links = [
           <span aria-hidden="true">←&nbsp;</span>Back to {back.label}
         </a>
       ) : (
-        <a
-          href="#top"
-          class="flex min-h-12 items-center font-hand text-xl text-accent hover:text-accent-hover"
-        >
-          back to top <span aria-hidden="true">&nbsp;↑</span>
-        </a>
+        <BackToTop />
       )}
     </div>
   </div>

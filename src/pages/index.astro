@@ -1,12 +1,16 @@
 ---
 import Row from '@/components/layout/Row.astro';
-import CoffeeHeading from '@/components/partials/CoffeeHeading.astro';
-import Drops from '@/components/partials/Drops.astro';
-import WorkExperience from '@/components/ui/WorkExperience.astro';
-import ProjectPreview from '@/components/ui/ProjectPreview.astro';
+import Annotation from '@/components/ui/Annotation.astro';
+import ArrowLink from '@/components/ui/ArrowLink.astro';
+import Button from '@/components/ui/Button.astro';
+import EntryRow from '@/components/ui/EntryRow.astro';
+import Figure from '@/components/ui/Figure.astro';
+import JobRow from '@/components/ui/JobRow.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { DEFAULT_CONFIGURATION } from '@/lib/constants';
+import { ARROWS } from '@/lib/links';
 import { getPublishedProjects } from '@/lib/projects';
-import { sortJobsByDate } from '@/lib/utils';
+import { formatDate, getPostSlugFromId, sortJobsByDate, sortPostsByDate } from '@/lib/utils';
 import { getCollection, getEntry, render } from 'astro:content';
 
 const home = await getEntry('pages', 'homepage');
@@ -16,67 +20,171 @@ if (!home) {
 }
 
 const { Content } = await render(home);
-
 const links = await getCollection('links');
+const jobs = sortJobsByDate(await getCollection('jobs'));
+const projects = await getPublishedProjects();
+const featured = projects.find((project) => project.data.featured);
+const compact = projects.filter((project) => project !== featured);
+const [newest, ...nextPosts] = sortPostsByDate(await getCollection('posts')).slice(0, 3);
 
-const jobs = await getCollection('jobs');
-const sortedJobs = sortJobsByDate(jobs);
-const featuredProjects = (await getPublishedProjects()).filter((project) => project.data.featured);
+const { author } = DEFAULT_CONFIGURATION;
+const postHref = (post: NonNullable<typeof newest>) => `/posts/${getPostSlugFromId(post.id)}/`;
+// Contact actions come from the links collection (the email link is intentionally not in it).
+const contactLinks = links.filter((link) => ['LinkedIn', 'Bluesky'].includes(link.data.label));
 ---
 
-<BaseLayout>
-  <Drops />
+<BaseLayout seo={home.data.seo}>
+  <!-- Hero: text first in the DOM; the portrait follows on mobile and sits in the margin cell on desktop. -->
+  <Row marginAfter>
+    <div slot="margin" class="tracking-normal flex flex-col gap-4 normal-case">
+      <Figure
+        src={author.avatar}
+        alt={`Portrait of ${author.name}`}
+        number={1}
+        priority
+        widths={[320, 480, 640]}
+        sizes="(min-width: 1024px) 324px, 240px"
+        class="max-w-60 lg:max-w-none"
+      />
+      <div aria-hidden="true"><Annotation>↑ that’s me, mid-refill</Annotation></div>
+    </div>
+    <h1 class="tracking-display">
+      <span class="block text-5xl font-light text-ink lg:text-6xl">A little curiosity.</span>
+      <span class="block text-5xl font-black text-accent lg:text-display lg:leading-none">
+        A lot of craft.
+      </span>
+    </h1>
+    <p class="mt-8 max-w-copy text-lg text-ink-muted lg:text-xl">{home.data.seo.description}</p>
+    <div class="mt-8 flex flex-col gap-4 lg:flex-row">
+      <Button href="#projects">Selected projects</Button>
+      <Button variant="outline" href="/posts/">Read the writing</Button>
+    </div>
+  </Row>
 
-  <Row measure="copy" class="flex flex-col gap-5">
-    <CoffeeHeading icon="drop-5">About</CoffeeHeading>
+  {links.length > 0 && <Row>
+    <h2 slot="margin" class="text-label font-normal">You can find me</h2>
+    <ul class="flex flex-col">
+      {links.map((link) => <li
+        class="flex flex-col gap-1 border-b border-rule py-2 last:border-b-0 lg:flex-row lg:items-center lg:gap-8"
+      >
+        <span class="font-mono text-xs text-ink-subtle lg:w-32">{link.data.label}</span>
+        <ArrowLink href={link.data.url}>
+          {link.data.name}
+          <span class="sr-only"> on {link.data.label}</span>
+        </ArrowLink>
+      </li>)}
+    </ul>
+  </Row>}
 
-    <div class="prose prose-coffee dark:prose-invert">
+  <!-- "Method" principles are omitted until the owner supplies the copy (#50). -->
+
+  {projects.length > 0 && <Row title="Selected projects" id="projects">
+    {featured && <div class="flex flex-col gap-4 border-b border-rule pb-10">
+      <h3 class="text-3xl font-black tracking-tight text-ink lg:text-4xl">
+        {featured.data.title}
+      </h3>
+      <p class="max-w-copy text-base text-ink-muted">{featured.data.summary}</p>
+      <div class="flex flex-col gap-4 lg:flex-row">
+        <Button href={`/projects/${featured.id}/`}>View project</Button>
+        {featured.data.website && <Button variant="outline" href={featured.data.website}>
+          Website
+        </Button>}
+      </div>
+    </div>}
+    {compact.length > 0 && <ul>
+      {compact.map((project, index) => (
+        <EntryRow
+          href={`/projects/${project.id}/`}
+          title={project.data.title}
+          meta={String(index + 1).padStart(2, '0')}
+          description={project.data.summary}
+        />
+      ))}
+    </ul>}
+  </Row>}
+
+  {newest && <Row tone="paper" title="Writing" id="writing">
+    <a
+      href={postHref(newest)}
+      class="group block border-b border-paper-rule pb-8 outline-offset-4 focus-visible:outline-2 focus-visible:outline-paper-ink"
+    >
+      <span class="font-mono text-xs text-paper-ink-subtle">{formatDate(newest.data.date)}</span>
+      <span class="mt-2 flex items-start justify-between gap-6">
+        <span
+          class="text-3xl font-black tracking-tight text-paper-ink group-hover:underline lg:text-4xl"
+        >
+          {newest.data.title}
+        </span>
+        <span aria-hidden="true" class="w-12 shrink-0 text-center text-lg text-paper-ink">
+          {ARROWS.internal}
+        </span>
+      </span>
+      <span class="mt-4 block max-w-copy text-base text-paper-ink-muted">
+        {newest.data.seo.description}
+      </span>
+    </a>
+    <ul>
+      {nextPosts.map((post) => <li class="border-b border-paper-rule last:border-b-0">
+        <a
+          href={postHref(post)}
+          class="group flex min-h-12 items-center justify-between gap-6 py-6 outline-offset-[-2px] focus-visible:outline-2 focus-visible:outline-paper-ink"
+        >
+          <span class="flex flex-col gap-1">
+            <span class="font-mono text-xs text-paper-ink-subtle">
+              {formatDate(post.data.date)}
+            </span>
+            <span class="text-xl font-semibold text-paper-ink group-hover:underline">
+              {post.data.title}
+            </span>
+          </span>
+          <span aria-hidden="true" class="w-12 shrink-0 text-center text-lg text-paper-ink">
+            {ARROWS.internal}
+          </span>
+        </a>
+      </li>)}
+    </ul>
+    <p class="pt-6">
+      <a
+        href="/posts/"
+        class="inline-flex min-h-12 items-center gap-2 font-semibold text-paper-ink underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper-ink"
+      >
+        All writing <span aria-hidden="true">{ARROWS.internal}</span>
+      </a>
+    </p>
+  </Row>}
+
+  <Row tone="raised">
+    <h2 class="text-4xl font-black tracking-tight text-ink">About</h2>
+    <div class="prose mt-8 prose-sheet">
       <Content />
     </div>
   </Row>
 
-  {links.length > 0 && <Row measure="copy" class="py-8">
-    <div class="flex flex-col gap-5">
-      <CoffeeHeading icon="drop-3">Where you can find me</CoffeeHeading>
-
-      <ul class="flex flex-col gap-3">
-        {links.map((link) => <li class="flex items-center gap-5 py-0.5 text-sm">
-          <span class="min-w-28 text-muted-foreground">{link.data.label}</span>
-          <a
-            class="font-medium text-headings"
-            rel="noopener noreferrer"
-            target="_blank"
-            href={link.data.url}
-          >
-            {link.data.name}
-          </a>
-        </li>)}
-      </ul>
-    </div>
-  </Row>}
-
-  {featuredProjects.length > 0 && <Row
-    measure="copy"
-    class="flex scroll-mt-32 flex-col gap-5 py-8"
-    id="projects"
-  >
-    <CoffeeHeading icon="drop-4">Selected projects</CoffeeHeading>
+  {jobs.length > 0 && <Row title="What I've done over the years" id="experience">
     <ul>
-      {featuredProjects.map((entry) => (
-        <ProjectPreview {entry} />
+      {jobs.map((job) => (
+        <JobRow entry={job} />
       ))}
     </ul>
   </Row>}
 
-  {sortedJobs.length > 0 ? (
-    <Row measure="copy" class="flex flex-col gap-5 py-6">
-      <CoffeeHeading icon="stain" iconClass="size-5"> What I've done over the years </CoffeeHeading>
-
-      <ul class="flex flex-col gap-8">
-        {sortedJobs.map((job) => (
-          <WorkExperience entry={job} />
-        ))}
-      </ul>
-    </Row>
-  ) : null}
+  <Row tone="accent">
+    <h2 class="max-w-copy text-4xl font-black tracking-tight text-on-accent lg:text-5xl">
+      Let's connect and push the boundaries of what's possible
+    </h2>
+    {contactLinks.length > 0 && <ul class="mt-8 flex flex-col gap-4 lg:flex-row">
+      {contactLinks.map((link) => <li>
+        <a
+          href={link.data.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex h-14 w-full items-center justify-center gap-2 border-2 border-on-accent px-8 text-sm font-semibold text-on-accent hover:bg-on-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-on-accent lg:w-auto"
+        >
+          {link.data.label}
+          <span aria-hidden="true">{ARROWS.external}</span>
+          <span class="sr-only"> (opens in a new tab)</span>
+        </a>
+      </li>)}
+    </ul>}
+  </Row>
 </BaseLayout>

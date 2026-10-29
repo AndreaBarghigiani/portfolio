@@ -28,6 +28,8 @@ interface Props extends Omit<HTMLAttributes<'div'>, 'title' | 'class'> {
   titleAs?: TitleLevel;
   tone?: Tone;
   noMargin?: boolean;
+  /** Place the margin cell after the content in the DOM (visually first on desktop), e.g. a hero figure that should follow the text on mobile. */
+  marginAfter?: boolean;
   measure?: 'full' | 'copy';
   id?: string;
   class?: string;
@@ -38,6 +40,7 @@ const {
   titleAs: Title = 'h2',
   tone = 'surface',
   noMargin = false,
+  marginAfter = false,
   measure = 'full',
   id,
   class: className,
@@ -82,28 +85,42 @@ const tones: Record<Tone, { row: string; margin: string; content: string; title:
 
 const t = tones[tone];
 const Wrapper = title ? 'section' : 'div';
+import RowMargin from './RowMargin.astro';
 ---
 
-<Wrapper {...rest} {id} aria-labelledby={headingId} class:list={['border-b lg:flex', t.row]}>
-  {!noMargin && <div
-    class:list={[
-      'px-6 py-4 lg:block lg:w-label lg:shrink-0 lg:p-12',
-      hasMargin ? 'block' : 'hidden',
-      t.margin,
-    ]}
-  >
-    {title && <Title id={headingId} class:list={['text-xl font-semibold', t.title]}>
+<Wrapper
+  {...rest}
+  {id}
+  aria-labelledby={headingId}
+  class:list={['border-b', marginAfter ? 'flex flex-col lg:flex-row' : 'lg:flex', t.row]}
+>
+  {!noMargin && !marginAfter && (
+    <RowMargin
+      {Title}
       {title}
-    </Title>}
-    {hasMarginSlot && <div
-      class:list={['font-mono text-label tracking-label uppercase', title && 'mt-3']}
-    >
-      <Fragment set:html={marginHtml} />
-    </div>}
-  </div>}
+      {headingId}
+      html={marginHtml}
+      visible={hasMargin}
+      after={false}
+      marginClass={t.margin}
+      titleClass={t.title}
+    />
+  )}
   <div class:list={['min-w-0 flex-1 px-6 py-8 lg:p-12', t.content]}>
     <div class:list={[measure === 'copy' && 'max-w-copy', className]}>
       <slot />
     </div>
   </div>
+  {!noMargin && marginAfter && (
+    <RowMargin
+      {Title}
+      {title}
+      {headingId}
+      html={marginHtml}
+      visible={hasMargin}
+      after={true}
+      marginClass={t.margin}
+      titleClass={t.title}
+    />
+  )}
 </Wrapper>

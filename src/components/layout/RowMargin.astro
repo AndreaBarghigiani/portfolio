@@ -1,0 +1,31 @@
+---
+/** Margin cell of a `Row` (internal). Kept separate so Row can place it before or after the content. */
+interface Props {
+  Title: 'h1' | 'h2' | 'h3';
+  title?: string;
+  headingId?: string;
+  html: string;
+  visible: boolean;
+  after: boolean;
+  marginClass: string;
+  titleClass: string;
+}
+
+const { Title, title, headingId, html, visible, after, marginClass, titleClass } = Astro.props;
+---
+
+<div
+  class:list={[
+    'px-6 py-4 lg:block lg:w-label lg:shrink-0 lg:p-12',
+    visible ? 'block' : 'hidden',
+    after && 'lg:order-first',
+    marginClass,
+  ]}
+>
+  {title && <Title id={headingId} class:list={['text-xl font-semibold', titleClass]}>
+    {title}
+  </Title>}
+  {html && <div class:list={['font-mono text-label tracking-label uppercase', title && 'mt-3']}>
+    <Fragment set:html={html} />
+  </div>}
+</div>

@@ -15,16 +15,37 @@ interface Props {
   caption?: string;
   number?: number;
   class?: string;
+  /** Above-the-fold media: load eagerly with high fetch priority. */
+  priority?: boolean;
+  widths?: number[];
+  sizes?: string;
 }
 
-const { src, alt, caption, number, class: className } = Astro.props;
+const {
+  src,
+  alt,
+  caption,
+  number,
+  class: className,
+  priority = false,
+  widths,
+  sizes,
+} = Astro.props;
 const label = number !== undefined ? `FIG. ${String(number).padStart(2, '0')}` : undefined;
 const captionText = [label, caption].filter(Boolean).join(' — ');
 ---
 
 <figure class:list={['flex flex-col gap-3', className]}>
   <div class="corner-marks relative border border-rule">
-    <Image {src} {alt} class="block h-auto w-full" />
+    <Image
+      {src}
+      {alt}
+      {widths}
+      {sizes}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : undefined}
+      class="block h-auto w-full"
+    />
   </div>
   {captionText && <figcaption class="font-mono text-label tracking-label text-ink-subtle uppercase">
     {captionText}

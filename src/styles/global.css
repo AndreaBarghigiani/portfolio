@@ -217,6 +217,19 @@
   & a:hover {
     color: var(--ds-accent-hover);
   }
+  /*
+   * Plain markdown links that leave the site get the external arrow (section
+   * 8). `ArrowLink` / `EL` links already render their own arrow and are skipped.
+   * The alternative text after the slash gives assistive technology context.
+   */
+  &
+    a:is([href^='http://'], [href^='https://']):not([href^='https://cupofcraft.dev']):not(
+      :has(> [aria-hidden='true'])
+    )::after {
+    content: '\00a0\2197' / ' (external link)';
+    text-decoration: none;
+    display: inline-block;
+  }
   & h2,
   & h3,
   & h4 {

@@ -34,8 +34,7 @@ and package-key sorting are explicitly disabled. Tailwind v4 sorting uses
 `src/styles/global.css`; observed literal class strings were sorted, including
 strings inside Astro `class:list` arrays and literal segments of template
 strings. For example, conditional literal strings in
-`src/components/partials/Header.astro` and the literal utility sequence in
-`src/components/ui/GradientDivider.astro` changed order. The sorter can only
+`src/components/partials/Header.astro` changed order. The sorter can only
 reason about class text it recognizes: runtime values such as `${from}` cannot
 be resolved or ordered, and mixed expressions may leave those values in place.
 This is observed coverage, not a guarantee for every expression shape.

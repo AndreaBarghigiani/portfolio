@@ -106,16 +106,3 @@ does not name them.
 - Spacing is untouched: `--spacing` stays at Tailwind's `0.25rem`, so `p-4`
   is `1rem`. The design system's spacing scale is not defined as tokens.
 - Radius, opacity, leading, and font-weight tokens are not defined here.
-
-## Legacy tokens (retire in #51)
-
-These remain because components still consume them. They are in
-`global.css` under a legacy comment:
-
-- Coffee palette `--color-coffee-*`.
-- Semantic tokens `--color-background`, `--color-foreground`,
-  `--color-headings`, `--color-muted`, `--color-muted-foreground`,
-  `--color-border`, and the `:root.dark` block that defines them.
-- `@custom-variant dark` (class strategy).
-- `prose-coffee` utility.
-- `--shadow-coffee-xl`, `--shadow-coffee-2xl`, `--shadow-coffee-3xl`.

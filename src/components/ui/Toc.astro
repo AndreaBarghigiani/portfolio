@@ -1,0 +1,62 @@
+---
+/**
+ * Margin navigation list: "On this page" or a module's lesson list. A sticky
+ * list on desktop and a closed disclosure with a 48px summary row on mobile.
+ * `current` marks the active item with `aria-current="page"` and bold accent.
+ * Renders nothing when empty.
+ */
+interface Item {
+  href: string;
+  text: string;
+  depth?: number;
+  current?: boolean;
+}
+
+interface Props {
+  items: Item[];
+  label?: string;
+}
+
+const { items, label = 'On this page' } = Astro.props;
+
+const linkClass = (item: Item) => (item.current ? 'font-bold text-accent' : 'text-ink-muted');
+---
+
+{items.length > 0 && (
+  <>
+    <nav aria-label={label} class="hidden normal-case lg:sticky lg:top-28 lg:block">
+      <p class="mb-3 font-mono text-label tracking-label text-ink-subtle uppercase">{label}</p>
+      <ul class="tracking-normal flex flex-col gap-2 text-sm">
+        {items.map((item) => <li class:list={[item.depth === 3 && 'ps-4']}>
+          <a
+            href={item.href}
+            aria-current={item.current ? 'page' : undefined}
+            class:list={['hover:text-accent-hover', linkClass(item)]}
+          >
+            {item.text}
+          </a>
+        </li>)}
+      </ul>
+    </nav>
+    <nav aria-label={`${label} (menu)`} class="normal-case lg:hidden">
+      <details>
+        <summary
+          class="flex min-h-12 cursor-pointer items-center font-mono text-label tracking-label text-ink uppercase"
+        >
+          {label}
+        </summary>
+        <ul class="tracking-normal flex flex-col pb-2 text-sm">
+          {items.map((item) => <li class:list={[item.depth === 3 && 'ps-4']}>
+            <a
+              href={item.href}
+              aria-current={item.current ? 'page' : undefined}
+              class:list={['flex min-h-12 items-center', linkClass(item)]}
+            >
+              {item.text}
+            </a>
+          </li>)}
+        </ul>
+      </details>
+    </nav>
+  </>
+)}

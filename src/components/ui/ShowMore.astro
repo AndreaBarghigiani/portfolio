@@ -36,7 +36,11 @@ const { group, count, noun = 'entries' } = Astro.props;
       const items = document.querySelectorAll<HTMLElement>(`[data-more-group="${group}"]`);
       items.forEach((item) => (item.dataset.shown = ''));
 
-      const entries = [...items].filter((item) => item.hasAttribute('data-entry'));
+      const entries = [...items].flatMap((item) =>
+        item.hasAttribute('data-entry')
+          ? [item]
+          : [...item.querySelectorAll<HTMLElement>('[data-entry]')]
+      );
       const status = document.querySelector(`[data-show-more-status="${group}"]`);
       button.closest('[data-show-more-wrap]')?.remove();
       entries[0]?.querySelector<HTMLElement>('a')?.focus();

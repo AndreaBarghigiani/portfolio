@@ -1,0 +1,36 @@
+---
+/**
+ * Head of a detail page (docs/design-system.md section 9): the "← Back to
+ * {archive}" link and facts in the margin cell, the title and standfirst in
+ * the content cell. Put facts in the `facts` slot; put other margin content
+ * in the default-less `margin` slot. The back link appears here once and once
+ * in the footer, never in the reading bar.
+ */
+import Row from '@/components/layout/Row.astro';
+import ArrowLink from '@/components/ui/ArrowLink.astro';
+
+interface Props {
+  title: string;
+  standfirst?: string;
+  back: { label: string; href: string };
+}
+
+const { title, standfirst, back } = Astro.props;
+---
+
+<Row>
+  <div slot="margin" class="flex flex-col gap-6 normal-case">
+    <ArrowLink href={back.href} direction="back" class="tracking-normal font-sans text-sm">
+      Back to {back.label}
+    </ArrowLink>
+    <slot name="facts" />
+  </div>
+  <h1
+    class="text-4xl font-black tracking-display [overflow-wrap:anywhere] text-ink lg:text-(length:--page-title-size) lg:leading-none"
+  >
+    {title}
+  </h1>
+  {standfirst && <p class="mt-6 max-w-copy text-lg font-light text-accent lg:text-xl">
+    {standfirst}
+  </p>}
+</Row>

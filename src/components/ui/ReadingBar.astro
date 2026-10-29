@@ -1,0 +1,81 @@
+---
+/**
+ * Reading bar for detail pages (docs/design-system.md section 6): the last
+ * child of the `[data-detail]` article wrapper, `position: sticky; bottom: 0`,
+ * so it rests at the end of the article and never overlaps the footer.
+ * 56px desktop / 48px mobile, with a 2px progress line above. It shows the
+ * current section (the nearest preceding h2, else the title; one line with an
+ * ellipsis on mobile), the progress percentage, and "back to top". It does not
+ * repeat the "← Back to …" link. Without JavaScript the label stays the title
+ * and the progress readout and line are hidden.
+ */
+import BackToTop from './BackToTop.astro';
+
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<aside
+  data-reading-bar
+  aria-label="Reading bar"
+  class="sticky bottom-0 z-30 border-t border-rule bg-surface"
+>
+  <div data-progress-line aria-hidden="true" class="absolute inset-x-0 -top-0.5 hidden h-0.5">
+    <div class="h-full origin-left bg-accent" style="transform: scaleX(var(--progress, 0))"></div>
+  </div>
+  <div class="mx-auto flex h-12 w-full max-w-page items-center gap-4 px-6 lg:h-14 lg:px-12">
+    <p data-section-label class="min-w-0 flex-1 truncate text-sm text-ink-muted">{label}</p>
+    <span data-progress class="hidden font-mono text-xs text-ink-subtle">0%</span>
+    <BackToTop />
+  </div>
+</aside>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-reading-bar]');
+  const wrapper = bar?.closest<HTMLElement>('[data-detail]');
+
+  if (bar && wrapper) {
+    document.documentElement.classList.add('has-reading-bar');
+    const sectionLabel = bar.querySelector<HTMLElement>('[data-section-label]')!;
+    const readout = bar.querySelector<HTMLElement>('[data-progress]')!;
+    const line = bar.querySelector<HTMLElement>('[data-progress-line]')!;
+    const title = sectionLabel.textContent ?? '';
+    const headings = [...wrapper.querySelectorAll<HTMLElement>('h2')];
+    readout.classList.remove('hidden');
+    line.classList.remove('hidden');
+
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const rect = wrapper.getBoundingClientRect();
+      const span = rect.height - window.innerHeight;
+      const progress = span > 0 ? Math.min(Math.max(-rect.top / span, 0), 1) : 1;
+      bar.style.setProperty('--progress', String(progress));
+      readout.textContent = `${Math.round(progress * 100)}%`;
+
+      let current = title;
+      for (const heading of headings) {
+        if (heading.getBoundingClientRect().top <= window.innerHeight * 0.35) {
+          current = heading.textContent?.trim() || title;
+        }
+      }
+      if (sectionLabel.textContent !== current) sectionLabel.textContent = current;
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+    window.addEventListener('resize', update);
+    update();
+  }
+</script>

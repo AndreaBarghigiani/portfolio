@@ -1,9 +1,14 @@
 ---
 import { Image } from 'astro:assets';
 import Row from '@/components/layout/Row.astro';
+import DetailHead from '@/components/partials/DetailHead.astro';
+import CodeBlock from '@/components/ui/CodeBlock.astro';
+import Facts from '@/components/ui/Facts.astro';
+import Figure from '@/components/ui/Figure.astro';
+import KeepReading from '@/components/ui/KeepReading.astro';
+import ReadingBar from '@/components/ui/ReadingBar.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getPublishedProjects } from '@/lib/projects';
-import { ArrowLeftIcon, ArrowUpRightIcon } from '@lucide/astro';
 import { render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -19,122 +24,99 @@ const seo = {
   description: entry.data.summary,
   canonicalUrl: `https://cupofcraft.dev/projects/${entry.id}/`,
 };
+const otherProjects = (await getPublishedProjects()).filter((project) => project.id !== entry.id);
+const images = entry.data.media?.filter((item) => item.type === 'image') ?? [];
+const videos = entry.data.media?.filter((item) => item.type !== 'image') ?? [];
 ---
 
 <BaseLayout {seo}>
-  <Row measure="copy" class="flex flex-col gap-8">
-    <article class="flex flex-col gap-8">
-      <header class="flex flex-col gap-4">
-        <a
-          href="/#projects"
-          class="flex min-h-11 w-max items-center gap-2 rounded-sm text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
-        >
-          <ArrowLeftIcon class="size-3" /> Back to projects
-        </a>
+  <article data-detail class="flex flex-1 flex-col">
+    <DetailHead
+      title={entry.data.title}
+      standfirst={entry.data.summary}
+      back={{ label: 'Projects', href: '/#projects' }}
+    >
+      <Facts
+        slot="facts"
+        items={[
+          {
+            label: 'Website',
+            value: entry.data.website ? 'Visit website' : undefined,
+            href: entry.data.website,
+          },
+          {
+            label: 'Source',
+            value: entry.data.github ? 'Source code' : undefined,
+            href: entry.data.github,
+          },
+        ]}
+      />
+    </DetailHead>
+
+    {(entry.data.logo || entry.data.cover || entry.data.media?.length) && <Row>
+      <div class="flex max-w-copy flex-col gap-8">
         {entry.data.logo && (
           <Image
             src={entry.data.logo.src}
             alt={entry.data.logo.alt}
-            class="size-16 rounded-lg object-contain"
+            class="size-16 object-contain"
           />
         )}
-        <h1 class="text-4xl font-semibold tracking-tight text-headings sm:text-5xl">
-          {entry.data.title}
-        </h1>
-        <p class="max-w-2xl text-lg leading-relaxed text-foreground">{entry.data.summary}</p>
-        {(entry.data.website || entry.data.github) && <nav
-          aria-label={`${entry.data.title} links`}
-          class="flex flex-wrap gap-x-6 gap-y-3 pt-1"
-        >
-          {entry.data.website && <a
-            class="inline-flex min-h-11 items-center gap-2 text-headings underline decoration-border underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
-            href={entry.data.website}
-            target="_blank"
-            rel="noopener noreferrer"
+        {entry.data.cover && (
+          <Figure
+            src={entry.data.cover.src}
+            alt={entry.data.cover.alt}
+            caption={entry.data.cover.caption}
+          />
+        )}
+        {images.map((item) => (
+          <Figure src={item.src} alt={item.alt} caption={item.caption} />
+        ))}
+        {videos.map((item) => <section class="flex flex-col gap-3" aria-label={item.title}>
+          <video
+            class="h-auto w-full border border-rule"
+            width={item.width}
+            height={item.height}
+            controls
+            preload="metadata"
+            aria-label={item.title}
           >
-            Website <ArrowUpRightIcon class="size-4" />
-          </a>}
-          {entry.data.github && <a
-            class="inline-flex min-h-11 items-center gap-2 text-headings underline decoration-border underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
-            href={entry.data.github}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Source code <ArrowUpRightIcon class="size-4" />
-          </a>}
-        </nav>}
-      </header>
+            <source src={item.src} />
+            {item.captions && (
+              <track
+                kind="captions"
+                src={item.captions.src}
+                srclang={item.captions.srclang}
+                label={item.captions.label}
+                default
+              />
+            )}
+            Your browser does not support embedded video. Read the transcript below.
+          </video>
+          <details class="border-b border-rule py-3">
+            <summary class="flex min-h-12 cursor-pointer items-center font-medium text-ink">
+              Video transcript
+            </summary>
+            <p class="max-w-prose leading-relaxed text-ink-muted">{item.transcript}</p>
+          </details>
+        </section>)}
+      </div>
+    </Row>}
 
-      {entry.data.cover && <figure class="overflow-hidden rounded-lg border border-border">
-        <Image
-          src={entry.data.cover.src}
-          alt={entry.data.cover.alt}
-          class="h-auto w-full"
-          widths={[640, 960, 1280]}
-          sizes="(max-width: 48rem) 100vw, 48rem"
-        />
-        {entry.data.cover.caption && <figcaption
-          class="px-4 py-3 text-sm leading-relaxed text-foreground"
-        >
-          {entry.data.cover.caption}
-        </figcaption>}
-      </figure>}
+    <Row measure="copy">
+      <div class="prose prose-sheet">
+        <Content components={{ pre: CodeBlock }} />
+      </div>
+    </Row>
 
-      {entry.data.media?.map((item) =>
-        item.type === 'image' ? (
-          <figure class="overflow-hidden rounded-lg border border-border">
-            <Image
-              src={item.src}
-              alt={item.alt}
-              class="h-auto w-full"
-              widths={[640, 960, 1280]}
-              sizes="(max-width: 48rem) 100vw, 48rem"
-            />
-            {item.caption && <figcaption class="px-4 py-3 text-sm leading-relaxed text-foreground">
-              {item.caption}
-            </figcaption>}
-          </figure>
-        ) : (
-          <section class="flex flex-col gap-3" aria-label={item.title}>
-            <video
-              class="h-auto w-full rounded-lg"
-              width={item.width}
-              height={item.height}
-              controls
-              preload="metadata"
-              aria-label={item.title}
-            >
-              <source src={item.src} />
-              {item.captions && (
-                <track
-                  kind="captions"
-                  src={item.captions.src}
-                  srclang={item.captions.srclang}
-                  label={item.captions.label}
-                  default
-                />
-              )}
-              Your browser does not support embedded video. Read the transcript below.
-            </video>
-            <details class="border-b border-border py-3">
-              <summary class="min-h-11 cursor-pointer py-3 font-medium text-headings">
-                Video transcript
-              </summary>
-              <p class="max-w-prose leading-relaxed text-foreground">{item.transcript}</p>
-            </details>
-          </section>
-        )
-      )}
+    <ReadingBar label={entry.data.title} />
+  </article>
 
-      <section class="prose max-w-none prose-coffee dark:prose-invert">
-        <Content />
-      </section>
-      <a
-        href="/#projects"
-        class="flex min-h-11 w-max items-center gap-2 rounded-sm text-sm text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
-      >
-        <ArrowLeftIcon class="size-3" /> Back to projects
-      </a>
-    </article>
-  </Row>
+  <KeepReading
+    title="More projects"
+    items={otherProjects.map((project) => ({
+      href: `/projects/${project.id}/`,
+      title: project.data.title,
+    }))}
+  />
 </BaseLayout>

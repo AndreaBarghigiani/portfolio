@@ -44,7 +44,8 @@ const {
   ...rest
 } = Astro.props;
 
-const hasMarginSlot = Astro.slots.has('margin');
+const marginHtml = Astro.slots.has('margin') ? (await Astro.slots.render('margin')).trim() : '';
+const hasMarginSlot = marginHtml !== '';
 const hasMargin = !noMargin && (Boolean(title) || hasMarginSlot);
 const slug = title
   ?.toLowerCase()
@@ -97,7 +98,7 @@ const Wrapper = title ? 'section' : 'div';
     {hasMarginSlot && <div
       class:list={['font-mono text-label tracking-label uppercase', title && 'mt-3']}
     >
-      <slot name="margin" />
+      <Fragment set:html={marginHtml} />
     </div>}
   </div>}
   <div class:list={['min-w-0 flex-1 px-6 py-8 lg:p-12', t.content]}>

@@ -6,8 +6,13 @@ import type { Seo } from '@/lib/constants';
 import { getLessonRouteInfoFromId, getNotesSlugFromId } from '@/lib/utils';
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
-import CourseNavigation from '@/components/ui/CourseNavigation.astro';
-import AuthorSeparator from '@/components/partials/AuthorSeparator.astro';
+import DetailHead from '@/components/partials/DetailHead.astro';
+import CodeBlock from '@/components/ui/CodeBlock.astro';
+import Facts from '@/components/ui/Facts.astro';
+import KeepReading from '@/components/ui/KeepReading.astro';
+import ReadingBar from '@/components/ui/ReadingBar.astro';
+import Toc from '@/components/ui/Toc.astro';
+import { getCourseModules, lessonHref } from '@/lib/notes';
 
 export async function getStaticPaths() {
   const lessons = await getCollection('lessonNotes');
@@ -51,18 +56,65 @@ const lessonSeo: Seo = {
     lesson.data.description ??
     (courseEntry ? courseEntry.data.description : DEFAULT_CONFIGURATION.seo.description),
 };
+
+const courseSlug = courseEntry
+  ? getNotesSlugFromId(courseEntry.id)
+  : getLessonRouteInfoFromId(lesson.id).courseSlug;
+const modules = await getCourseModules(courseSlug);
+const flat = modules.flatMap((group) => group.lessons);
+const position = flat.findIndex((item) => item.id === lesson.id);
+const currentModule = modules.find((group) => group.lessons.some((item) => item.id === lesson.id));
+const neighbours = [flat[position - 1], flat[position + 1]].filter(
+  (item): item is NonNullable<typeof item> => Boolean(item)
+);
+
+const lessonItems = (currentModule?.lessons ?? []).map((item) => ({
+  href: lessonHref(courseSlug, item),
+  text: item.data.title,
+  current: item.id === lesson.id,
+}));
+const courseHref = `/notes/${courseSlug}/`;
 ---
 
 <BaseLayout seo={lessonSeo}>
-  <Row measure="copy" class="flex flex-col gap-6">
-    <CourseNavigation {lesson} {courseEntry} {moduleEntry} />
+  <article data-detail class="flex flex-1 flex-col">
+    <DetailHead
+      title={lesson.data.title}
+      standfirst={lesson.data.description}
+      back={{
+        label: courseEntry?.data.title ?? 'Notes',
+        href: courseEntry ? courseHref : '/notes/',
+      }}
+    >
+      <Facts
+        slot="facts"
+        items={[
+          { label: 'Module', value: moduleEntry?.data.title },
+          {
+            label: 'Course',
+            value: courseEntry?.data.title,
+            href: courseEntry ? courseHref : undefined,
+          },
+        ]}
+      />
+    </DetailHead>
 
-    <h1 class="text-4xl font-semibold text-headings">{lesson.data.title}</h1>
+    <Row measure="copy">
+      <Toc slot="margin" items={lessonItems} label="In this module" />
+      <div class="prose prose-sheet">
+        <Content components={{ pre: CodeBlock }} />
+      </div>
+    </Row>
 
-    <article class="prose prose-lg prose-coffee dark:prose-invert">
-      <Content />
-    </article>
+    <ReadingBar label={lesson.data.title} />
+  </article>
 
-    <AuthorSeparator />
-  </Row>
+  <KeepReading
+    title="Next up"
+    items={neighbours.map((item) => ({
+      href: lessonHref(courseSlug, item),
+      title: item.data.title,
+      meta: item === flat[position - 1] ? 'Previous' : 'Next',
+    }))}
+  />
 </BaseLayout>

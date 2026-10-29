@@ -1,0 +1,22 @@
+---
+/**
+ * Pull quote for authored content: a raised band with the key phrase large,
+ * light and accent (56px desktop, 34px mobile). Uses a real <blockquote>; pass
+ * `cite` for an attribution. Keep it to a short phrase taken from the text.
+ */
+interface Props {
+  cite?: string;
+  class?: string;
+}
+
+const { cite, class: className } = Astro.props;
+---
+
+<figure class:list={['not-prose my-12 bg-raised px-6 py-12 lg:px-12', className]}>
+  <blockquote class="text-2xl font-light tracking-tight text-accent lg:text-4xl">
+    <slot />
+  </blockquote>
+  {cite && <figcaption class="mt-6 font-mono text-label tracking-label text-ink-subtle uppercase">
+    {cite}
+  </figcaption>}
+</figure>

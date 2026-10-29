@@ -35,13 +35,9 @@ concurrently.
 - Re-check `git status` and `git log` before verifying or completing
   anything; treat committed owner changes as the design contract, not drift.
 - Keep tests green as the contract for owner edits: update tests to the
-  new design when intent is clear, and ask targeted questions when it is
-  not.
+  new design when intent is clear, and ask targeted questions when it is not.
 - Challenge the owner when evidence contradicts a decision. Agreement is
   not the goal; disagreement is a learning signal for both sides.
-- Consult the owner's Basic Memory when relevant to the task (routing
-  lives in `.agents/memory/config.md`) and offer to capture durable
-  knowledge when a session produces it.
 - Default to the repository's integration branch only for mechanical
   chores (submodule bumps, generated-file re-syncs, lockfile refreshes);
   use a branch and pull request for anything else, and state the
@@ -55,6 +51,7 @@ concurrently.
 - Use the harness's selected project, or the session's starting repository and
   agreed task scope, to identify the project boundary. Access, shared memory,
   similar structure, and changing directories do not expand authorization.
+  Respect the harness's workspace binding and preserve existing work.
   Editing a submodule's source is distinct from updating its consumer pin.
   When cross-project work is authorized, read the destination's instructions
   and check whether the change fits its implementation.
@@ -65,3 +62,15 @@ concurrently.
 
 Read `.agents/memory/config.md` before using Basic Memory in this checkout.
 <!-- agent-workflows:memory:end -->
+
+<!-- agent-workflows:reference-only:start -->
+## Shared, not installed
+
+Some one-shot setup skills stay in the library instead of being installed
+into `.agents/skills`. Discovery depends on this pointer existing. Read
+their instructions at the pinned revision; the library's
+`docs/skill-distribution.md` defines the distribution policy.
+
+- dev-remote-inspection: `.agent-workflows/.agents/skills/dev-remote-inspection/SKILL.md`
+- tailscale-web-dev: `.agent-workflows/.agents/skills/tailscale-web-dev/SKILL.md`
+<!-- agent-workflows:reference-only:end -->

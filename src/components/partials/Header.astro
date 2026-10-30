@@ -19,14 +19,6 @@ const wordmark = DEFAULT_CONFIGURATION.author.username ?? 'cupofcraft';
 const drawnBy = DEFAULT_CONFIGURATION.author.name;
 ---
 
-<noscript>
-  <style>
-    [data-submenu-panel][hidden] {
-      display: block;
-    }
-  </style>
-</noscript>
-
 <header
   data-header
   class="sticky top-[-56px] z-50 border-b border-rule bg-surface text-ink transition-transform duration-[180ms] ease-out motion-reduce:transition-none lg:top-0"
@@ -67,7 +59,7 @@ const drawnBy = DEFAULT_CONFIGURATION.author.name;
       <ul class="flex h-12 lg:h-full lg:justify-end">
         <NavLink href="/">Home</NavLink>
 
-        <li class="flex min-w-0" data-submenu>
+        <li class="relative flex min-w-0" data-submenu>
           <button
             type="button"
             data-submenu-trigger
@@ -84,8 +76,7 @@ const drawnBy = DEFAULT_CONFIGURATION.author.name;
           <ul
             id="writing-menu"
             data-submenu-panel
-            hidden
-            class="absolute inset-x-0 top-full z-50 border border-x-0 border-rule bg-surface lg:inset-x-auto lg:right-0 lg:min-w-40 lg:border-x"
+            class="absolute inset-x-0 top-full z-50 border border-x-0 border-rule bg-surface lg:right-auto lg:left-0 lg:min-w-[max(10rem,100%)] lg:border-x"
           >
             {writing.map((item) => {
               const current =
@@ -127,6 +118,13 @@ const drawnBy = DEFAULT_CONFIGURATION.author.name;
   [data-header][data-state='revealed'] {
     box-shadow: 0 2px 0 var(--color-accent);
   }
+  [data-submenu]:hover [data-submenu-panel],
+  [data-submenu]:focus-within [data-submenu-panel] {
+    display: block;
+  }
+  .js [data-submenu]:not(:has([data-submenu-trigger][aria-expanded='true'])) [data-submenu-panel] {
+    display: none;
+  }
 </style>
 
 <script>
@@ -143,7 +141,13 @@ const drawnBy = DEFAULT_CONFIGURATION.author.name;
   };
   const isOpen = () => trigger?.getAttribute('aria-expanded') === 'true';
 
-  trigger?.addEventListener('click', () => setOpen(!isOpen()));
+  trigger?.addEventListener('click', (event) => {
+    if (hoverable.matches && event.detail > 0) {
+      setOpen(true);
+      return;
+    }
+    setOpen(!isOpen());
+  });
   submenu?.addEventListener('mouseenter', () => hoverable.matches && setOpen(true));
   submenu?.addEventListener('mouseleave', () => hoverable.matches && setOpen(false));
   submenu?.addEventListener('keydown', (event) => {

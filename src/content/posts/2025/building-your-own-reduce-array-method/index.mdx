@@ -22,7 +22,7 @@ That's why I have recently focused so much on the <EL isGFE>GreatFrontEnd challe
 
 Enough about the praise for GFE. Let's get real and talk about today's challenge.
 
-### Build your own `reduce` method
+## Build your own `reduce` method
 
 If you have never used it, let me tell you something, you're leaving something powerful on the table.
 
@@ -41,7 +41,7 @@ More than `reduce` itself, when I explain it to a co-worker, I always find that 
 
 But today, we're here to create our own `reduce` method, and I hope everything will be clear with the following explanation.
 
-### The `reduce` signature
+## The `reduce` signature
 
 When I opened the second task of GFE75 this was the TypeScript code I had to work with:
 
@@ -114,7 +114,7 @@ Array.prototype.myReduce = function (callbackFn, initialValue) {
 };
 ```
 
-### What can we learn from this snippet?
+## What can we learn from this snippet?
 
 First and foremost, the solution implements _talking variable names_. Instead of using `initialValue === undefined` or `this.length` as I did in my code, the developer who wrote it made clear the logic behind these checks with names like `noInitialValue` and `len` (for `length`).
 

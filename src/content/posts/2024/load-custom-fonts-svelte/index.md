@@ -28,7 +28,7 @@ I know, I know… You started reading this article because you wanted to know ho
 
 So, let’s skip all the drama — I’ll save it for a future article — and explore how to load local fonts in a SvelteKit application.
 
-# How to load your local fonts in SvelteKit
+## How to load your local fonts in SvelteKit
 
 I am talking specifically about local fonts because that was one of the first things I had to do while porting a Next.js application into SvelteKit.
 

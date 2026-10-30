@@ -103,7 +103,7 @@ Let's break down the steps we need to take:
 
 With this information, I started to work on the... HTML.
 
-### Avoiding CSS hierarchy
+## Avoiding CSS hierarchy
 
 Yes, the first thing I did was add an `id="wrapper"` to the `div` that contained all the content. I did that because I didn't want to mess around with hierarchy, in this case, I chose to go with one of the highest specificity possible.
 
@@ -113,7 +113,7 @@ Yes, the first thing I did was add an `id="wrapper"` to the `div` that contained
 
 Now I could focus on the CSS to create the layout
 
-### Set `header` and `footer` `height`
+## Set `header` and `footer` `height`
 
 Talking about the layout, limiting the `flex` layout to the `div#wrapper` has it's advantages. For example, since `header` and `footer` are semantic elements with a default value for `display` set to `block`, I shouldn't worry about their `width` and focus solely on their `height`.
 
@@ -136,7 +136,7 @@ footer {
 
 The use of <EL href="https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties">CSS custom properties</EL> may seem an overkill here, but later, I'll show you why I decided to use them. Besides, this is just a standard definition for the `height` property of `header` and `footer.`
 
-### Making the real layout
+## Making the real layout
 
 And now for the fun part, it's time to create the three-column layout with elastic `height` to complete the challenge.
 
@@ -151,7 +151,7 @@ div#wrapper {
 
 Now, I hope you see the reason for using CSS custom properties! With them, I created a central place as a source of truth for my values, if the design changes in the future, I could just edit the values in `:root`, and the height of the content will adapt accordingly.
 
-### Set side columns `width`
+## Set side columns `width`
 
 But we are not done yet, while we addressed the column and the height of our layout, we need to fix each column `width` value because right now each column size is defined by its content.
 
@@ -173,7 +173,7 @@ aside {
 
 This declaration is fine with the challenge requirements and aligns with my scope of writing less code and controlling the behaviour from a "central place". But while you're working on it, make sure to let your interviewer know that.
 
-### Let `main` grow!
+## Let `main` grow!
 
 We're almost done. We have fixed-height `header` and `footer`, we set up a three-column layout for the content and set a fixed-width for `nav` and `aside`. All we miss right now is to let `main` expand to fill all the remaining space.
 
@@ -190,7 +190,7 @@ main {
 
 In this case, we could reach the same result with `flex: 1`, but this declaration can lead to strange behaviour and make the code less explicit. So, unless you want `flex: 1` to also set the value of your `flex-basis` (it's a shorthand after all), better stick to `flex-grow`.
 
-### Full code
+## Full code
 
 I just gave you my step-by-step process on how I solved this challenge, before discussing the proposed solution let me share the full code:
 
@@ -272,7 +272,7 @@ footer {
 }
 ```
 
-### Comparing to the proposed solution
+## Comparing to the proposed solution
 
 This task was quite easy in the end, at least it was for me based on my background, so do not expect huge differences.
 

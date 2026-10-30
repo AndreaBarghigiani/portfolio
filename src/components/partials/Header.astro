@@ -118,8 +118,14 @@ const drawnBy = DEFAULT_CONFIGURATION.author.name;
   [data-header][data-state='revealed'] {
     box-shadow: 0 2px 0 var(--color-accent);
   }
+  [data-submenu-panel] {
+    display: none;
+  }
   [data-submenu]:hover [data-submenu-panel],
   [data-submenu]:focus-within [data-submenu-panel] {
+    display: block;
+  }
+  .js [data-submenu]:has([data-submenu-trigger][aria-expanded='true']) [data-submenu-panel] {
     display: block;
   }
   .js [data-submenu]:not(:has([data-submenu-trigger][aria-expanded='true'])) [data-submenu-panel] {

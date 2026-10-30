@@ -24,6 +24,16 @@ export default defineConfig({
               );
             }
           },
+          // github-dark comments (#6A737D) measure about 3:1 on the margin
+          // ground; use ink-subtle to meet 4.5:1 (owner decision, #60).
+          span(node) {
+            if (typeof node.properties.style === 'string') {
+              node.properties.style = node.properties.style.replace(
+                /#6A737D/gi,
+                'var(--ds-ink-subtle)'
+              );
+            }
+          },
         },
       ],
     },

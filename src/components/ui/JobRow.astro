@@ -85,7 +85,7 @@ const toolsId = `job-tools-${entry.id}`;
           <span aria-hidden="true" class="group-open/highlights:hidden">{ARROWS.down}</span>
           <span aria-hidden="true" class="hidden group-open/highlights:inline">{ARROWS.up}</span>
         </summary>
-        <div class="prose prose-sheet pb-2 text-sm [&_li]:text-xs">
+        <div class="job-highlights pb-2 text-xs text-ink-muted">
           <Content components={{ pre: CodeBlock }} />
         </div>
       </details>
@@ -116,3 +116,47 @@ const toolsId = `job-tools-${entry.id}`;
     });
   });
 </script>
+
+<style>
+  .job-highlights :global(ul),
+  .job-highlights :global(ol) {
+    padding-inline-start: 1.25rem;
+  }
+
+  .job-highlights :global(ul) {
+    list-style-type: disc;
+  }
+
+  .job-highlights :global(ol) {
+    list-style-type: decimal;
+  }
+
+  .job-highlights :global(li + li),
+  .job-highlights :global(li > p + p) {
+    margin-block-start: 0.5rem;
+  }
+
+  .job-highlights :global(li::marker) {
+    color: var(--ds-ink-subtle);
+  }
+
+  .job-highlights :global(strong) {
+    color: var(--ds-ink);
+    font-weight: 600;
+  }
+
+  .job-highlights :global(a) {
+    color: var(--ds-accent);
+    text-underline-offset: 0.2em;
+  }
+
+  .job-highlights :global(a:hover),
+  .job-highlights :global(a:focus-visible) {
+    text-decoration: underline;
+  }
+
+  .job-highlights :global(a:focus-visible) {
+    outline: 2px solid var(--ds-accent);
+    outline-offset: 3px;
+  }
+</style>

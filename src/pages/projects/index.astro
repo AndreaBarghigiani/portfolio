@@ -1,0 +1,57 @@
+---
+/**
+ * Projects archive (docs/design-system.md sections 5 and 9): the head with the
+ * back link, INDEX and ORDER facts in the margin, and the page title and
+ * standfirst in the content cell. Then one `ProjectRow` per published project,
+ * in `order`. Index codes P-01… are derived from that order.
+ */
+import Row from '@/components/layout/Row.astro';
+import DetailHead from '@/components/partials/DetailHead.astro';
+import Facts from '@/components/ui/Facts.astro';
+import ProjectRow from '@/components/ui/ProjectRow.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPublishedProjects } from '@/lib/projects';
+
+const projects = await getPublishedProjects();
+const standfirst =
+  'Products and systems I design, build and maintain — each one a place where I learn by shipping.';
+const seo = {
+  title: 'Projects',
+  description: standfirst,
+  canonicalUrl: 'https://cupofcraft.dev/projects/',
+};
+
+const indexCode = (position: number) => `P-${String(position + 1).padStart(2, '0')}`;
+const indexRange =
+  projects.length > 1 ? `${indexCode(0)} — ${indexCode(projects.length - 1)}` : indexCode(0);
+---
+
+<BaseLayout {seo}>
+  <DetailHead title="Projects." {standfirst} back={{ label: 'home', href: '/' }}>
+    <Facts
+      slot="facts"
+      items={[
+        { label: 'Index', value: projects.length > 0 ? indexRange : undefined },
+        { label: 'Order', value: projects.length > 0 ? 'By priority' : undefined },
+      ]}
+    />
+  </DetailHead>
+
+  {projects.length === 0 ? (
+    <Row>
+      <p>No projects found</p>
+    </Row>
+  ) : (
+    <ul>
+      {projects.map((project, index) => (
+        <ProjectRow
+          href={`/projects/${project.id}/`}
+          title={project.data.title}
+          summary={project.data.summary}
+          index={indexCode(index)}
+          website={project.data.website}
+        />
+      ))}
+    </ul>
+  )}
+</BaseLayout>

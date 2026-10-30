@@ -47,6 +47,9 @@
   /* Page-title style (section 4): a one-off step above the type scale */
   --page-title-size: 112px;
 
+  /* Row-title style (section 8 Rows): the projects archive title, one step below the page title */
+  --row-title-size: 72px;
+
   color-scheme: dark;
 }
 

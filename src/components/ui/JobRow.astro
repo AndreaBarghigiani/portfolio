@@ -57,10 +57,10 @@ const toolsId = `job-tools-${entry.id}`;
               data-count={hiddenCount}
               aria-expanded="false"
               aria-controls={toolsId}
-              class="group inline-flex min-h-12 min-w-12 items-start justify-center pt-0 font-mono text-label tracking-label text-accent uppercase focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-accent lg:min-h-6 lg:min-w-0"
+              class="group inline-flex min-h-12 min-w-12 cursor-pointer items-start justify-center pt-0 font-mono text-label tracking-label text-accent uppercase focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-accent lg:min-h-6 lg:min-w-0"
             >
               <span
-                class="inline-flex h-6 items-center border border-accent px-2 group-hover:bg-accent group-hover:text-on-accent"
+                class="corner-marks-interactive relative inline-flex h-6 items-center border border-accent px-2 group-hover:before:opacity-100 group-focus-visible:before:opacity-100 group-hover:after:opacity-100 group-focus-visible:after:opacity-100"
               >
                 <span data-tools-more>
                   +{hiddenCount}

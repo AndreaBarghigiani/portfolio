@@ -11,6 +11,9 @@
  * - `status` adds at most one status tag; `detail` is a small mono suffix
  *   (for example a PR number).
  * - `more` and `group` mark rows that the show-more control reveals.
+ * - The row link owns the cell's horizontal inset so its ground and hairline
+ *   span the content cell; place it in a `flush` Row. Set `inset={false}` in a
+ *   padded Row (home project rows) to keep the cell's own padding.
  */
 import Tag, { type StatusTag } from './Tag.astro';
 import { ARROWS } from '@/lib/links';
@@ -25,6 +28,7 @@ interface Props {
   external?: boolean;
   more?: boolean;
   group?: string;
+  inset?: boolean;
 }
 
 const {
@@ -37,6 +41,7 @@ const {
   external = false,
   more,
   group,
+  inset = true,
 } = Astro.props;
 ---
 
@@ -44,13 +49,16 @@ const {
   data-entry
   data-more={more ? '' : undefined}
   data-more-group={more ? group : undefined}
-  class="border-b border-rule last:border-b-0"
+  class="border-t border-rule first:border-t-0"
 >
   <a
     {href}
     target={external ? '_blank' : undefined}
     rel={external ? 'noopener noreferrer' : undefined}
-    class="group grid min-h-12 grid-cols-[1fr_3rem] items-baseline gap-x-4 py-6 outline-offset-[-2px] outline-accent hover:bg-raised focus-visible:bg-raised focus-visible:outline-2 lg:grid-cols-[8rem_1fr_3rem] lg:gap-x-6"
+    class:list={[
+      'group grid min-h-12 grid-cols-[minmax(0,1fr)_3rem] items-baseline gap-x-4 py-6 outline-offset-[-2px] outline-accent hover:bg-raised focus-visible:bg-raised focus-visible:outline-2 lg:grid-cols-[8rem_minmax(0,1fr)_3rem] lg:gap-x-6',
+      inset && 'px-6 lg:px-12',
+    ]}
   >
     <span
       class="font-mono text-xs text-ink-subtle group-hover:text-accent group-focus-visible:text-accent"
@@ -60,7 +68,7 @@ const {
     <span class="col-start-1 flex flex-col gap-2 lg:col-start-2">
       <span class="flex flex-wrap items-center gap-x-3 gap-y-2">
         <span
-          class="text-xl font-semibold text-ink group-hover:text-accent group-focus-visible:text-accent lg:text-2xl"
+          class="min-w-0 text-xl font-semibold break-words text-ink group-hover:text-accent group-focus-visible:text-accent lg:text-2xl"
         >
           {title}
         </span>

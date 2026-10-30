@@ -22,7 +22,7 @@ const remaining = Math.max(series.length - VISIBLE, 0);
       <p>No posts found</p>
     </Row>
   ) : (
-    <Row>
+    <Row flush>
       <ul>
         {series.map((single, index) => (
           <EntryRow
@@ -35,7 +35,9 @@ const remaining = Math.max(series.length - VISIBLE, 0);
           />
         ))}
       </ul>
-      {remaining > 0 && <ShowMore group="series" count={remaining} noun="series" />}
+      {remaining > 0 && <div class="px-6 lg:px-12">
+        <ShowMore group="series" count={remaining} noun="series" />
+      </div>}
     </Row>
   )}
 </BaseLayout>

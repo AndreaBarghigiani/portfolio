@@ -56,6 +56,7 @@ const remaining = Math.max(seriesPosts.length - VISIBLE, 0);
       <section aria-labelledby="series-entries-title">
         <h2 id="series-entries-title" class="sr-only">Entries in this series</h2>
         {seriesPosts.map((post, index) => <Row
+          flush
           data-more={index >= VISIBLE ? '' : undefined}
           data-more-group={index >= VISIBLE ? group : undefined}
         >

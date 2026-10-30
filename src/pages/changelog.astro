@@ -114,6 +114,7 @@ const remaining = Math.max(seen - VISIBLE, 0);
       {sections.map((section) => {
         const allExtra = section.entries.every((entry) => entry.more);
         return <Row
+          flush
           title={String(section.year)}
           id={`year-${section.year}`}
           data-more={allExtra ? '' : undefined}

@@ -77,7 +77,7 @@ const remaining = Math.max(seriesPosts.length - VISIBLE, 0);
           </ul>
         </Row>)}
         {remaining > 0 && <Row>
-          <ShowMore {group} count={remaining} noun="entries" />
+          <ShowMore {group} count={remaining} noun="entries" singularNoun="entry" />
         </Row>}
       </section>
     )}

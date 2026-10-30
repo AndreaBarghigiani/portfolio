@@ -13,7 +13,13 @@ interface Props {
   [key: string]: unknown;
 }
 
-const { 'data-language': language, class: className, ...attrs } = Astro.props;
+const language = Astro.props['data-language'];
+const className = Astro.props.class;
+const attrs = Object.fromEntries(
+  Object.entries(Astro.props).filter(
+    ([key]) => !['data-language', 'class', 'style', 'tabindex', 'role', 'aria-label'].includes(key)
+  )
+);
 const label = language && language !== 'plaintext' ? language : 'code';
 ---
 

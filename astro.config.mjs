@@ -9,6 +9,25 @@ const tailscaleDev = process.env.ASTRO_TAILSCALE === '1';
 
 export default defineConfig({
   site: 'https://cupofcraft.dev',
+  markdown: {
+    shikiConfig: {
+      transformers: [
+        {
+          pre(node) {
+            node.properties.tabindex = 0;
+            node.properties.role = 'region';
+            node.properties['aria-label'] = 'Code block, scrollable';
+            if (typeof node.properties.style === 'string') {
+              node.properties.style = node.properties.style.replace(
+                /background(?:-color)?\s*:[^;]+;?/gi,
+                ''
+              );
+            }
+          },
+        },
+      ],
+    },
+  },
 
   ...(tailscaleDev && {
     server: {

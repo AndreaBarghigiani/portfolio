@@ -36,7 +36,7 @@ const remaining = Math.max(series.length - VISIBLE, 0);
         ))}
       </ul>
       {remaining > 0 && <div class="px-6 lg:px-12">
-        <ShowMore group="series" count={remaining} noun="series" />
+        <ShowMore group="series" count={remaining} noun="series" singularNoun="series" />
       </div>}
     </Row>
   )}

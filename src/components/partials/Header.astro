@@ -67,15 +67,15 @@ const drawnBy = DEFAULT_CONFIGURATION.author.name;
       <ul class="flex h-12 lg:h-full lg:justify-end">
         <NavLink href="/">Home</NavLink>
 
-        <li class="flex" data-submenu>
+        <li class="flex min-w-0" data-submenu>
           <button
             type="button"
             data-submenu-trigger
             aria-expanded="false"
             aria-controls="writing-menu"
             class:list={[
-              'flex min-h-12 flex-1 items-center justify-center gap-2 px-6 text-sm text-ink-muted transition-colors hover:text-accent-hover max-lg:border-l max-lg:border-rule',
-              inWriting && 'font-bold text-accent',
+              'flex min-h-12 min-w-0 flex-1 items-center justify-center gap-2 px-6 text-sm transition-colors hover:text-accent-hover max-lg:border-l max-lg:border-rule max-[359px]:px-2',
+              inWriting ? 'font-bold text-accent' : 'text-ink-muted',
             ]}
           >
             Writing
@@ -95,8 +95,8 @@ const drawnBy = DEFAULT_CONFIGURATION.author.name;
                   href={item.href}
                   aria-current={isCurrent(pathname, item.href) ? 'page' : undefined}
                   class:list={[
-                    'flex min-h-12 items-center border-b border-rule px-6 text-sm text-ink-muted last:border-b-0 hover:bg-raised hover:text-accent-hover',
-                    current && 'font-bold text-accent',
+                    'flex min-h-12 items-center border-b border-rule px-6 text-sm last:border-b-0 hover:bg-raised hover:text-accent-hover',
+                    current ? 'font-bold text-accent' : 'text-ink-muted',
                   ]}
                 >
                   {item.label}

@@ -99,7 +99,12 @@ const otherCourses = (await getCollection('notes')).filter((course) => course.id
             ))}
           </ul>
           {remaining > 0 && <div class="px-6 lg:px-12">
-            <ShowMore group={`module-${group.moduleKey}`} count={remaining} noun="lessons" />
+            <ShowMore
+              group={`module-${group.moduleKey}`}
+              count={remaining}
+              noun="lessons"
+              singularNoun="lesson"
+            />
           </div>}
         </Row>;
       })

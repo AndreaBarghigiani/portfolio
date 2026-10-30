@@ -11,14 +11,16 @@ const { pathname } = Astro.url;
 const current = isCurrent(pathname, href);
 ---
 
-<li class="flex">
+<li class="flex min-w-0">
   <a
     {href}
     aria-current={current ? 'page' : undefined}
     class:list={[
-      'flex min-h-12 flex-1 items-center justify-center px-6 text-sm text-ink-muted transition-colors hover:text-accent-hover',
+      'flex min-h-12 min-w-0 flex-1 items-center justify-center px-6 text-sm transition-colors hover:text-accent-hover',
+      current ? 'text-accent' : 'text-ink-muted',
+      'max-[359px]:px-2',
       'max-lg:border-l max-lg:border-rule max-lg:first:border-l-0',
-      current && 'font-bold text-accent',
+      current && 'font-bold',
     ]}
   >
     <slot />

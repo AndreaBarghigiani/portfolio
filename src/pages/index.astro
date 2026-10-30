@@ -34,7 +34,9 @@ const [newest, ...nextPosts] = sortPostsByDate(await getCollection('posts')).sli
 const { author } = DEFAULT_CONFIGURATION;
 const postHref = (post: NonNullable<typeof newest>) => `/posts/${getPostSlugFromId(post.id)}/`;
 // Contact actions come from the links collection (the email link is intentionally not in it).
-const contactLinks = allLinks.filter((link) => ['LinkedIn', 'Bluesky'].includes(link.data.label));
+const contactLinks = allLinks.filter((link) =>
+  ['LinkedIn', 'Bluesky', 'Twitter/X'].includes(link.data.label)
+);
 ---
 
 <BaseLayout seo={home.data.seo}>
@@ -52,9 +54,14 @@ const contactLinks = allLinks.filter((link) => ['LinkedIn', 'Bluesky'].includes(
       />
       <div aria-hidden="true"><Annotation>↑ that’s me, mid-refill</Annotation></div>
     </div>
-    <h1 class="tracking-display">
-      <span class="block text-5xl font-light text-ink lg:text-6xl">A little curiosity.</span>
-      <span class="block text-5xl font-black text-accent lg:text-display lg:leading-none">
+    <h1 class="[container-type:inline-size]">
+      <span
+        class="block text-5xl font-light text-ink lg:text-[clamp(56px,10.96cqi,96px)] lg:tracking-display"
+        >A little curiosity.</span
+      >
+      <span
+        class="block text-5xl font-black text-accent lg:text-[clamp(90px,17.83cqi,156px)] lg:leading-none lg:tracking-display"
+      >
         A lot of craft.
       </span>
     </h1>
@@ -185,7 +192,7 @@ const contactLinks = allLinks.filter((link) => ['LinkedIn', 'Bluesky'].includes(
           rel="noopener noreferrer"
           class="inline-flex h-14 w-full items-center justify-center gap-2 border-2 border-on-accent px-8 text-sm font-semibold text-on-accent hover:bg-on-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-on-accent lg:w-auto"
         >
-          {link.data.label}
+          {link.data.label === 'Twitter/X' ? `${link.data.name} on X` : link.data.label}
           <span aria-hidden="true">{ARROWS.external}</span>
           <span class="sr-only"> (opens in a new tab)</span>
         </a>

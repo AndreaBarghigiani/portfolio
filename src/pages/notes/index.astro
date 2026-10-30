@@ -40,7 +40,7 @@ const remaining = Math.max(courses.length - VISIBLE, 0);
           ))}
         </ul>
         {remaining > 0 && <div class="px-6 lg:px-12">
-          <ShowMore group="notes" count={remaining} noun="notes" />
+          <ShowMore group="notes" count={remaining} noun="notes" singularNoun="note" />
         </div>}
       </>
     )}

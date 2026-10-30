@@ -139,7 +139,12 @@ const remaining = Math.max(seen - VISIBLE, 0);
         </Row>;
       })}
       {remaining > 0 && <Row>
-        <ShowMore group="changelog" count={remaining} noun="pull requests" />
+        <ShowMore
+          group="changelog"
+          count={remaining}
+          noun="pull requests"
+          singularNoun="pull request"
+        />
       </Row>}
     </>
   )}

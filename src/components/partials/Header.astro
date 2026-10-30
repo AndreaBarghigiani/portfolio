@@ -19,14 +19,6 @@ const wordmark = DEFAULT_CONFIGURATION.author.username ?? 'cupofcraft';
 const drawnBy = DEFAULT_CONFIGURATION.author.name;
 ---
 
-<noscript>
-  <style>
-    [data-submenu-panel][hidden] {
-      display: block;
-    }
-  </style>
-</noscript>
-
 <header
   data-header
   class="sticky top-[-56px] z-50 border-b border-rule bg-surface text-ink transition-transform duration-[180ms] ease-out motion-reduce:transition-none lg:top-0"
@@ -57,7 +49,7 @@ const drawnBy = DEFAULT_CONFIGURATION.author.name;
     </div>
 
     <div
-      class="hidden flex-col justify-center border-r border-rule px-8 font-mono text-label tracking-label text-ink-subtle uppercase lg:flex"
+      class="hidden flex-col justify-center border-r border-rule px-8 font-mono text-label tracking-label text-ink-subtle uppercase min-[1200px]:flex"
     >
       <span>Drawn by</span>
       <span class="text-xs text-ink">{drawnBy}</span>
@@ -67,15 +59,15 @@ const drawnBy = DEFAULT_CONFIGURATION.author.name;
       <ul class="flex h-12 lg:h-full lg:justify-end">
         <NavLink href="/">Home</NavLink>
 
-        <li class="flex" data-submenu>
+        <li class="flex min-w-0 lg:relative" data-submenu>
           <button
             type="button"
             data-submenu-trigger
             aria-expanded="false"
             aria-controls="writing-menu"
             class:list={[
-              'flex min-h-12 flex-1 items-center justify-center gap-2 px-6 text-sm text-ink-muted transition-colors hover:text-accent-hover max-lg:border-l max-lg:border-rule',
-              inWriting && 'font-bold text-accent',
+              'flex min-h-12 min-w-0 flex-1 items-center justify-center gap-2 px-6 text-sm transition-colors hover:text-accent-hover max-lg:border-l max-lg:border-rule max-[359px]:px-2',
+              inWriting ? 'font-bold text-accent' : 'text-ink-muted',
             ]}
           >
             Writing
@@ -84,8 +76,7 @@ const drawnBy = DEFAULT_CONFIGURATION.author.name;
           <ul
             id="writing-menu"
             data-submenu-panel
-            hidden
-            class="absolute inset-x-0 top-full z-50 border border-x-0 border-rule bg-surface lg:inset-x-auto lg:right-0 lg:min-w-40 lg:border-x"
+            class="absolute inset-x-0 top-full z-50 border border-x-0 border-rule bg-surface lg:right-auto lg:left-0 lg:min-w-[max(10rem,100%)] lg:border-x"
           >
             {writing.map((item) => {
               const current =
@@ -95,8 +86,8 @@ const drawnBy = DEFAULT_CONFIGURATION.author.name;
                   href={item.href}
                   aria-current={isCurrent(pathname, item.href) ? 'page' : undefined}
                   class:list={[
-                    'flex min-h-12 items-center border-b border-rule px-6 text-sm text-ink-muted last:border-b-0 hover:bg-raised hover:text-accent-hover',
-                    current && 'font-bold text-accent',
+                    'flex min-h-12 items-center border-b border-rule px-6 text-sm last:border-b-0 hover:bg-raised hover:text-accent-hover',
+                    current ? 'font-bold text-accent' : 'text-ink-muted',
                   ]}
                 >
                   {item.label}
@@ -127,6 +118,19 @@ const drawnBy = DEFAULT_CONFIGURATION.author.name;
   [data-header][data-state='revealed'] {
     box-shadow: 0 2px 0 var(--color-accent);
   }
+  [data-submenu-panel] {
+    display: none;
+  }
+  [data-submenu]:hover [data-submenu-panel],
+  [data-submenu]:focus-within [data-submenu-panel] {
+    display: block;
+  }
+  .js [data-submenu]:has([data-submenu-trigger][aria-expanded='true']) [data-submenu-panel] {
+    display: block;
+  }
+  .js [data-submenu]:not(:has([data-submenu-trigger][aria-expanded='true'])) [data-submenu-panel] {
+    display: none;
+  }
 </style>
 
 <script>
@@ -143,7 +147,13 @@ const drawnBy = DEFAULT_CONFIGURATION.author.name;
   };
   const isOpen = () => trigger?.getAttribute('aria-expanded') === 'true';
 
-  trigger?.addEventListener('click', () => setOpen(!isOpen()));
+  trigger?.addEventListener('click', (event) => {
+    if (hoverable.matches && event.detail > 0) {
+      setOpen(true);
+      return;
+    }
+    setOpen(!isOpen());
+  });
   submenu?.addEventListener('mouseenter', () => hoverable.matches && setOpen(true));
   submenu?.addEventListener('mouseleave', () => hoverable.matches && setOpen(false));
   submenu?.addEventListener('keydown', (event) => {

@@ -243,6 +243,11 @@
     padding: 0.1em 0.35em;
     background: var(--ds-raised);
     border: 1px solid var(--ds-rule);
+    overflow-wrap: anywhere;
+  }
+  & pre {
+    overflow-x: auto;
+    background: var(--ds-margin) !important;
   }
   & :not(pre) > code::before,
   & :not(pre) > code::after {

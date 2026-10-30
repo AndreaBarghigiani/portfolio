@@ -171,7 +171,7 @@ Below 1024px the desktop margin column must not be shown. The widths between 390
 
 **Established.** The header is a four-cell title block: the wordmark in the margin cell, a `SHEET` cell, a `DRAWN BY` cell, and the navigation (Home, Writing, Changelog) in the last cell. The current page is accent and bold. Writing opens a submenu (see below).
 
-The `SHEET` cell carries the page code. The numbering in the designs is: 01 Home, 02 Article, 03 Writing, 04 Notes, 05 Series, 06 Series entry, 07 Changelog, 08 Course notes, 09 Lesson, 10 Project. Whether this numbering is kept in the build is **Open**; if kept, it must be derived from the route and not hand-maintained.
+The `SHEET` cell carries the page code. The numbering in the designs is: 01 Home, 02 Article, 03 Writing, 04 Notes, 05 Series, 06 Series entry, 07 Changelog, 08 Course notes, 09 Lesson, 10 Project. The numbering is kept in the build (owner decision); it is derived from the route (`src/lib/sheet.ts`) and not hand-maintained.
 
 On mobile the header is two rows: wordmark and sheet code, then a three-cell navigation strip (48px tall).
 

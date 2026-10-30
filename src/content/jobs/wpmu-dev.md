@@ -6,6 +6,12 @@ location: USA
 from: 2020
 to: 2021
 url: https://wpmudev.com/
+tools:
+  - React
+  - Redux
+  - Styled Components
+  - SASS
+  - Axios
 ---
 
 Build the Hub system to help the 900.000+ customers to manage WordPress installations:
@@ -14,5 +20,3 @@ Build the Hub system to help the 900.000+ customers to manage WordPress installa
 - **Reduced bundle size by 40%** through code splitting and lazy loading implementation.
 - Worked closely with the marketing and SEO teams to optimize lead generation and inbound traffic by implementing JSON-LD, enhancing click-through rates and rich snippets in SERPs
 - Mentored 3 junior developers in **React and Redux best practices**, creating a comprehensive internal wiki that became the team's primary reference.
-
-Tools used: _React_, _Redux_, _Styled Components_, _SASS_, _Axios_

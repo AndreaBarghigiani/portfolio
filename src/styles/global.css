@@ -178,6 +178,12 @@
 .js [data-show-more-wrap] {
   display: block;
 }
+[data-tools-control] {
+  display: none;
+}
+.js [data-tools-control] {
+  display: flex;
+}
 
 /*
  * Prose for detail pages (docs/design-system.md sections 4 and 9), dark role

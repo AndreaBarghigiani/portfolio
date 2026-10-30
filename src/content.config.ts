@@ -42,6 +42,7 @@ const jobCollection = defineCollection({
     from: z.number(),
     to: z.number().or(z.enum(['Now'])),
     url: z.string().optional(),
+    tools: z.array(z.string()).optional(),
   }),
 });
 

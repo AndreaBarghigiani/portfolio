@@ -64,7 +64,7 @@ const remaining = Math.max(total - VISIBLE, 0);
   </Row>;
 })}
 
-{(remaining > 0 || pages.length > 1) && <Row>
+{(remaining > 0 || pages.length > 1) && <Row flush>
   {remaining > 0 && <div class="px-6 lg:px-12">
     <ShowMore {group} count={remaining} noun="posts" />
   </div>}

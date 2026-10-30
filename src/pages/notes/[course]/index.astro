@@ -79,11 +79,11 @@ const otherCourses = (await getCollection('notes')).filter((course) => course.id
         const remaining = Math.max(group.lessons.length - VISIBLE, 0);
         return <Row title={group.moduleName} id={`module-${group.moduleKey}`} flush>
           {group.moduleDescription && <p
-            class:list={[group.moduleUrl && 'mb-4', 'px-6 text-sm text-ink-muted lg:px-12']}
+            class:list={[group.moduleUrl && 'mb-4', 'px-6 py-6 text-sm text-ink-muted lg:px-12']}
           >
             {group.moduleDescription}
           </p>}
-          {group.moduleUrl && <p class="px-6 text-sm lg:px-12">
+          {group.moduleUrl && <p class="px-6 py-3 text-sm lg:px-12">
             <ArrowLink href={group.moduleUrl}>Visit module page</ArrowLink>
           </p>}
           <ul class:list={[group.moduleDescription || group.moduleUrl ? 'pt-4' : '']}>

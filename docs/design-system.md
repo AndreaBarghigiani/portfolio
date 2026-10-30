@@ -171,7 +171,7 @@ Below 1024px the desktop margin column must not be shown. The widths between 390
 
 **Established.** The header is a four-cell title block: the wordmark in the margin cell, a `SHEET` cell, a `DRAWN BY` cell, and the navigation (Home, Writing, Changelog) in the last cell. The current page is accent and bold. Writing opens a submenu (see below).
 
-The `SHEET` cell carries the page code. The numbering in the designs is: 01 Home, 02 Article, 03 Writing, 04 Notes, 05 Series, 06 Series entry, 07 Changelog, 08 Course notes, 09 Lesson, 10 Project. Whether this numbering is kept in the build is **Open**; if kept, it must be derived from the route and not hand-maintained.
+The `SHEET` cell carries the page code. The numbering in the designs is: 01 Home, 02 Article, 03 Writing, 04 Notes, 05 Series, 06 Series entry, 07 Changelog, 08 Course notes, 09 Lesson, 10 Project. The numbering is kept in the build (owner decision); it is derived from the route (`src/lib/sheet.ts`) and not hand-maintained.
 
 On mobile the header is two rows: wordmark and sheet code, then a three-cell navigation strip (48px tall).
 
@@ -348,16 +348,18 @@ Do not silently resolve these.
 | Item                       | Question                                                                                                                                      |
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | Light mode                 | Out of scope: the site ships dark-only and the theme toggle is removed. Tokens stay role-named so a theme remains possible later, but nothing is planned. |
-| Tablet widths              | Only 390px and 1440px are drawn.                                                                                                              |
-| Writing submenu design     | The behaviour is decided (section 6) and a simple dropdown ships; its design is not drawn. Does the archive sub-nav stay alongside it?         |
+| Tablet widths              | Deferred: below 1024px the mobile layout ships; a tablet design is deferred (owner decision, 30 October 2026). |
+| Writing submenu design     | The behaviour is decided (section 6) and a simple dropdown ships under Writing; its design is not drawn. Decided: the archive sub-nav stays alongside it (owner decision, 30 October 2026). |
 | Topic tag values           | Decided: show tags when the content has them, as plain text. Values are never invented; older posts, notes, and series may simply have none.   |
 | Author block               | Decided: the author block ships on single articles only (owner decision, 28 October 2026).                                                    |
-| Experience “Tools used”    | The live home lists tools per job. The designed home does not.                                                                                |
+| Experience “Tools used”    | Decided: tools ship as topic tags above “Highlights”, three visible with a “+N” control for the rest (owner decision, 30 October 2026; #76). |
 | Lesson previous / next     | Decided: the previous / next lesson navigation ships (owner decision, 28 October 2026).                                                       |
 | Reading-bar progress       | Decided: show both the percentage and the progress line; the label is a single line with an ellipsis (owner decision, 28 October 2026).      |
 | Sheet numbering            | Decided: the page codes ship, derived from the route (owner decision, 28 October 2026).                                                       |
-| NEW tag                    | An experiment; keep or remove.                                                                                                                |
-| Notes count                | The live site shows four notes; the repository has a fifth note folder. Confirm what is published.                                           |
+| NEW tag                    | Deferred: not shipped (owner decision, 30 October 2026). |
+| Method principles          | Deferred: the home “Method” section is omitted until its copy exists (owner decision, 30 October 2026). |
+| Projects archive           | Decided: a projects archive ships at `/projects/` from the Paper “Projects archive” page (#75). |
+| Notes count                | Resolved: four notes are published; the fifth folder (`fullstack-cloudflare`) has no index file and does not render (30 October 2026). |
 | Paper limits               | Paper does not render `font-family` tokens, so the designs use literal font names. The code export resolves `--font-*`.                       |
 
 ## 12. Handoff checks

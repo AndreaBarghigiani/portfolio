@@ -22,9 +22,9 @@ const remaining = Math.max(courses.length - VISIBLE, 0);
     Explore detailed notes captured while studying courses, workshops, and live trainings.
   </ArchiveHead>
 
-  <Row>
+  <Row flush>
     {courses.length === 0 ? (
-      <p>No notes published yet.</p>
+      <p class="px-6 lg:px-12">No notes published yet.</p>
     ) : (
       <>
         <ul>
@@ -39,7 +39,9 @@ const remaining = Math.max(courses.length - VISIBLE, 0);
             />
           ))}
         </ul>
-        {remaining > 0 && <ShowMore group="notes" count={remaining} noun="notes" />}
+        {remaining > 0 && <div class="px-6 lg:px-12">
+          <ShowMore group="notes" count={remaining} noun="notes" />
+        </div>}
       </>
     )}
   </Row>

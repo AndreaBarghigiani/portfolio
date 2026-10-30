@@ -77,14 +77,16 @@ const otherCourses = (await getCollection('notes')).filter((course) => course.id
     ) : (
       groupedLessons.map((group) => {
         const remaining = Math.max(group.lessons.length - VISIBLE, 0);
-        return <Row title={group.moduleName} id={`module-${group.moduleKey}`}>
-          {group.moduleDescription && <p class="mb-4 text-sm text-ink-muted">
+        return <Row title={group.moduleName} id={`module-${group.moduleKey}`} flush>
+          {group.moduleDescription && <p
+            class:list={[group.moduleUrl && 'mb-4', 'px-6 text-sm text-ink-muted lg:px-12']}
+          >
             {group.moduleDescription}
           </p>}
-          {group.moduleUrl && <p class="mb-4 text-sm">
+          {group.moduleUrl && <p class="px-6 text-sm lg:px-12">
             <ArrowLink href={group.moduleUrl}>Visit module page</ArrowLink>
           </p>}
-          <ul>
+          <ul class:list={[group.moduleDescription || group.moduleUrl ? 'pt-4' : '']}>
             {group.lessons.map((lesson, index) => (
               <EntryRow
                 href={lessonHref(entrySlug, lesson)}
@@ -96,9 +98,9 @@ const otherCourses = (await getCollection('notes')).filter((course) => course.id
               />
             ))}
           </ul>
-          {remaining > 0 && (
+          {remaining > 0 && <div class="px-6 lg:px-12">
             <ShowMore group={`module-${group.moduleKey}`} count={remaining} noun="lessons" />
-          )}
+          </div>}
         </Row>;
       })
     )}

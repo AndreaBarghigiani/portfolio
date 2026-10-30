@@ -39,6 +39,7 @@ const remaining = Math.max(total - VISIBLE, 0);
 {sections.map((section) => {
   const allExtra = section.entries.every((entry) => entry.more);
   return <Row
+    flush
     title={String(section.year)}
     id={`year-${section.year}`}
     data-more={allExtra ? '' : undefined}
@@ -64,6 +65,8 @@ const remaining = Math.max(total - VISIBLE, 0);
 })}
 
 {(remaining > 0 || pages.length > 1) && <Row>
-  {remaining > 0 && <ShowMore {group} count={remaining} noun="posts" />}
-  <Pagination {pages} {current} />
+  {remaining > 0 && <div class="px-6 lg:px-12">
+    <ShowMore {group} count={remaining} noun="posts" />
+  </div>}
+  <div class="px-6 lg:px-12"><Pagination {pages} {current} /></div>
 </Row>}

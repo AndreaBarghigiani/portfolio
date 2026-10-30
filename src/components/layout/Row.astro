@@ -16,7 +16,10 @@
  * DOM order is margin cell first, content second; it is never reordered with
  * CSS, so landmark and heading order do not depend on visual placement.
  * Content fills the cell; set `measure="copy"` to cap it at the 720px reading
- * width. `class` is applied to the wrapper inside the content cell.
+ * width. Set `flush` to remove the content cell's horizontal padding when a
+ * child (such as an archive list) owns its own inset. Give other content in a
+ * flush row matching horizontal padding. `class` is applied to the wrapper
+ * inside the content cell.
  */
 type Tone = 'surface' | 'raised' | 'paper' | 'accent';
 type TitleLevel = 'h1' | 'h2' | 'h3';
@@ -28,6 +31,8 @@ interface Props extends Omit<HTMLAttributes<'div'>, 'title' | 'class'> {
   titleAs?: TitleLevel;
   tone?: Tone;
   noMargin?: boolean;
+  /** Remove horizontal content-cell padding when children provide their own inset. */
+  flush?: boolean;
   /** Place the margin cell after the content in the DOM (visually first on desktop), e.g. a hero figure that should follow the text on mobile. */
   marginAfter?: boolean;
   /** Slogan-sized margin title (56px black) instead of the default section title. */
@@ -42,6 +47,7 @@ const {
   titleAs = 'h2',
   tone = 'surface',
   noMargin = false,
+  flush = false,
   marginAfter = false,
   display = false,
   measure = 'full',
@@ -112,7 +118,7 @@ import RowMargin from './RowMargin.astro';
       {titleClass}
     />
   )}
-  <div class:list={['min-w-0 flex-1 px-6 py-8 lg:p-12', t.content]}>
+  <div class:list={['min-w-0 flex-1 py-8 lg:py-12', !flush && 'px-6 lg:px-12', t.content]}>
     <div class:list={[measure === 'copy' && 'max-w-copy', className]}>
       <slot />
     </div>

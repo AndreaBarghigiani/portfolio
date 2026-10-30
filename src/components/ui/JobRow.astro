@@ -13,6 +13,7 @@
 import ArrowLink from './ArrowLink.astro';
 import CodeBlock from './CodeBlock.astro';
 import Tag from './Tag.astro';
+import { ARROWS } from '@/lib/links';
 import { render, type CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -76,11 +77,13 @@ const toolsId = `job-tools-${entry.id}`;
         </ul>
         <span role="status" aria-live="polite" class="sr-only" data-tools-status></span>
       </div>}
-      <details class="mt-2 max-w-copy">
+      <details class="group/highlights -mt-1 max-w-copy">
         <summary
-          class="flex min-h-12 cursor-pointer items-center text-sm font-semibold text-accent"
+          class="flex min-h-12 cursor-pointer items-center gap-2 text-sm font-semibold text-accent hover:underline focus-visible:underline"
         >
           Highlights
+          <span aria-hidden="true" class="group-open/highlights:hidden">{ARROWS.down}</span>
+          <span aria-hidden="true" class="hidden group-open/highlights:inline">{ARROWS.up}</span>
         </summary>
         <div class="prose prose-sheet pb-2 text-sm">
           <Content components={{ pre: CodeBlock }} />

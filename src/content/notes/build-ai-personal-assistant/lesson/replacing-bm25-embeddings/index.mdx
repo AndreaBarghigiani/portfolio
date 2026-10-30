@@ -37,7 +37,7 @@ We have a cache system, so we do not have to call the model each time we fire th
 
 Let's quickly describe how the process is ran depending on the presence of the cache file.
 
-### First run, we do not have an embed cache file
+## First run, we do not have an embed cache file
 1. we start the dev server with `pnpm run dev` by selecting the exercise
 2. once we selected the exercise we load `main.ts` that calls `embedEmails`
 3. the first thing that `embedEmails` does is to `loadEmails` and then checks if exists the embed cache with `getExistingEmbeddings`
@@ -47,7 +47,7 @@ Let's quickly describe how the process is ran depending on the presence of the c
 7. we store the generated `embeddings` thanks to the `saveEmbeddings` function that leverages the `writeFile` function to write the JSON file that works as cache for our next searches via the chat
 8. once this process is done, we delegate all user interactions to our `chat.ts` endpoint that leverages the `searchEmails` function to answer user queries
 
-### Run with a cache file
+## Run with a cache file
 1. we start the dev server with `pnpm run dev` by selecting the exercise
 2. once we selected the exercise we load `main.ts` that calls `embedEmails`
 3. after calling `loadEmails`, `embedEmails` finds the cache file and does not do anything else

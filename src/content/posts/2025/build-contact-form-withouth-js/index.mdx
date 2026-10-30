@@ -58,7 +58,7 @@ Let's break down the features that we need to implement to solve this challenge:
 
 If you open the <EL isGFE href="/interviews/study/gfe75/questions/user-interface/contact-form/react">challenge on GreatFrontEnd</EL>, you'll see that the brief includes other specs that will help you gather more information on how to solve it. However, I've listed only these three because this is where I want to focus in this article.
 
-### Sending data via HTML
+## Sending data via HTML
 
 Even though the React component has an `onSubmit`, once you open the `submitForm.js` file you'll soon discover that there are some checks in place to make sure the `form` uses standard HTML to send the data.
 
@@ -103,7 +103,7 @@ export default function App() {
 
 I wanted to highlight this step (be aware `form` auto closes for brevity), but it does nothing new that we already analyzed together. We **imported** `SUBMIT_URL` from `submitForm.js` and used for the `action` attribute, and we also explicitly set the `method` to POST.
 
-### `input`s must have a `label`
+## `input`s must have a `label`
 
 The code sample that we had at the beginning had only one `input`, but we need to do a bit better than that.
 
@@ -124,7 +124,7 @@ There's nothing magic here: simple HTML attributes and elements that help our us
 
 On top of that, we already set the correct keys for the information we need to send to the API. Each field has a `name` attribute corresponding to the endpoint provided: `name`, `email`, and `message`.
 
-### The `button` in charge of sending
+## The `button` in charge of sending
 
 I've to be honest here: I lied in the section title because `button` is not the only way we can send the data in our `form`. You can also send the data collected by pressing `Enter` inside any text `input` (sorry, `textarea` goes to a new line).
 
@@ -175,7 +175,7 @@ export default function App() {
 }
 ```
 
-### Comparing to the proposed solution
+## Comparing to the proposed solution
 
 Lucky me, both solutions are similar, which is already a success. Analyzing the code, though, I noticed that my approach was a bit different. I aimed at speed of implementation, like relying on the `style` attribute instead of leveraging the connected stylesheet, while the proposed solution has more *leverage in the basic* approach.
 

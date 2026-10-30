@@ -18,7 +18,7 @@ If it doesn't, well probably you haven't such need yet or maybe you're deep into
 
 It does not even matter. In the third challenge of the GFE 75 interview questions that you can find in the GreatFrontEnd platform, you're gonna **build your own**. All you have to understand now is what this function does.
 
-### What `classnames` package do?
+## What `classnames` package do?
 
 In JSX if you have the need to conditionally apply a `class` to an HTML element, one of the quickest approaches it to turn the `className` string into a template string and use ternaries to add/remove the class based on the component state.
 
@@ -80,7 +80,7 @@ I suggest you to have a look at the [Usage section of the package description](h
 
 Enough talking, let's check with what code we get welcomed from the challenge.
 
-##### Use Cases
+### Use Cases
 
 ```js
 classNames('foo', 'bar'); // 'foo bar'
@@ -267,7 +267,7 @@ export default function classNames(...args: Array<ClassValue>): string {
 }
 ```
 
-### Compare with proposed solutions
+## Compare with proposed solutions
 
 If this is not the first article you have read about my GreatFrontEnd experience, you know that after describing how I came up with my solution, I like to dive deep into the platform's proposed solutions.
 

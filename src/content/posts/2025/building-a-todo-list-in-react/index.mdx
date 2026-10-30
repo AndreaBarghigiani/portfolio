@@ -157,7 +157,7 @@ However, since the list of tasks was pretty stable, meaning **the user could not
 
 Before marking the challenge as complete, I tested the accessibility of my application by simply using the keyboard to add and delete tasks. While this experiment was successful, you'll discover that I missed some improvements that I could have added to the code.
 
-### Comparing to the proposed solution
+## Comparing to the proposed solution
 
 As I told you multiple times, I think that GreatFrontEnd is an amazing platform, and every day that I use it, my feelings get stronger and stronger.
 
@@ -165,7 +165,7 @@ The proposed solution, which you can find the full code for at the end, is simil
 
 > Be aware that the code I am showing you is <EL isGFE href="/questions/user-interface/todo-list/react/solution/improved">based on the **improved solution**</EL> that the developer released after getting feedback on the first solution. I find this especially important to note because it shows that even experienced developers can improve their craft if they are open to feedback.
 
-#### Handling `id` for each item
+### Handling `id` for each item
 
 As I wrote before, I moved quickly to solve the challenge, and while I knew it wasn't the best approach, I decided to keep track of the items I wanted to delete by their indexes.
 
@@ -194,7 +194,7 @@ const groupTwoIds = newID();
 
 Now, `groupOneIds` and `groupTwoIds` will keep track of two separate ID collections while maintaining the custom logic defined by `newID`.
 
-#### Improved accessibility
+### Improved accessibility
 
 While my version had a positive result with my keyboard tests, we have other tools to improve the lives of our disabled users. One of them is the `aria-label` attribute, really useful when your UI does not have space for a `<label>` element.
 
@@ -212,7 +212,7 @@ You can discover more about `aria-live` inside the [specific MDN page,](https:/
 
 Since `ul` is a semantic element that already gets `role="list"`, all we had to do was add `aria-live` attribute to help screen readers notify the user about updates. I decided to use `assertive` because I want the screen reader to notify the user as soon as something gets updated, mainly because the app is so simple that hardly this will ever cause an issue, but if you prefer to discover all the available values jump to the MDN page I previously liked.
 
-#### Safely accept `input` values
+### Safely accept `input` values
 
 Even though in a real app, you probably use a validation library, I use Zod, for example; this does not mean that you should ignore the security part altogether. Checking the validity of the value not only helps us to keep the application secure, but it also ensures that we have something to show. Like this check inside the `onSubmit` function, if there’s no text for the new task, we will not create a new component.
 
@@ -222,13 +222,13 @@ if (newTask.trim() === '') {
 }
 ```
 
-#### Leverage standard API while confirming item deletion
+### Leverage standard API while confirming item deletion
 
 Before sharing the entire solution with you, I wanted to highlight how the developer has leveraged standard JavaScript to ask for confirmation from the user about the item it's about to delete. If `window.confirm` returns `true`, meaning the user has clicked the _OK_ button, we are allowed to remove the item from the state array.
 
 Most of the time, you will need to implement your own modal windows, but this challenge didn't have any UI requirements, and making it work with a standard implementation will make our code more robust and future-proof.
 
-#### The complete proposed solution
+### The complete proposed solution
 
 While there are other aspects where the proposed solution differs from mine, like having a controlled component for the task text, I do not feel the need to explain each of them and I think is worth sharing the entire code for the improved solution.
 

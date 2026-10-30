@@ -31,7 +31,7 @@ const DATA = [
 ];
 ```
 And we `map`, or convert if you wish, into different data formats that then get represented into a different amount of tokens.
-### Converted as MarkDown (53 tokens)
+## Converted as MarkDown (53 tokens)
 ```ts
 const asMarkdown = DATA.map(
   (item) => `- [${item.title}](${item.url})`,
@@ -44,7 +44,7 @@ This produces the following MarkDown syntax:
 - [Matt Pocock](https://mattpocock.com)
 - [Twitter](https://twitter.com/mattpocockuk)
 ```
-### Converted as XML (77 tokens)
+## Converted as XML (77 tokens)
 ```ts
 const asXML = DATA.map(
   (item) =>
@@ -58,7 +58,7 @@ This produces the following XML syntax:
 <item url="https://mattpocock.com" title="Matt Pocock"></item>
 <item url="https://twitter.com/mattpocockuk" title="Twitter"></item>
 ```
-### Converted as JSON (103 tokens)
+## Converted as JSON (103 tokens)
 ```ts
 const asJSON = JSON.stringify(DATA, null, 2);
 ```

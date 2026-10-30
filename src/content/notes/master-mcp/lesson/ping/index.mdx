@@ -15,7 +15,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 const server = new McpServer(serverInfo, options?)
 ```
 This is not the exact code you'll write, because we don't know (yet) what `serverInfo` and `options` are. But if you'll dig into the TS definitions you'll soon discover that these are two objects that `McpServer` accepts to instantiate your server.
-### `serverInfo`
+## `serverInfo`
 It a mandatory object that has the following shape:
 ```ts
 type serverInfo = {
@@ -25,7 +25,7 @@ type serverInfo = {
 }
 ```
 So `name` and `version` are mandatory while `title` can be specified just for UI purposes.
-### `options`
+## `options`
 While optional, this object allow us to specify important aspects of our server:
 ```ts
 type options = {

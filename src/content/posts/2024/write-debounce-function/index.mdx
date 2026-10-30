@@ -54,7 +54,7 @@ I will write more about this kind of function in a separate article. It is impor
 
 And that's what does the trick.
 
-### Clearing the timeout
+## Clearing the timeout
 
 With this knowledge, we know that the body of our `debounce` function looks like this:
 
@@ -79,7 +79,7 @@ The function that we return from `debounce` is the closure we were talking about
 
 Now that we now how to handle the timeout we set for the execution, it's time to properly talk about how we will execute the function itself.
 
-### The proper way to call the `func`
+## The proper way to call the `func`
 
 Knowing the `setTimeout` signature, my first attempt has been the following:
 
@@ -172,7 +172,7 @@ Here, `increment()` gets called without anything chained on the left side, and s
 
 Instead, in the previous failing test, we defined the function that we want to `debounce` with the standard declaration, and after adding it as a method of `obj`, the function was able to access to `this` that was represented by the object it was connected to, the `obj` object to be clear.
 
-### Suggestions and conclusion
+## Suggestions and conclusion
 
 I hope that this article helped you better understand what happens when you use one of the many `debounce` functions found in utility libraries like Lodash.
 

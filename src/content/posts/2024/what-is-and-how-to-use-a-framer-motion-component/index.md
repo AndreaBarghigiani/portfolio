@@ -26,7 +26,7 @@ const Component () => {
 
 It is all that is required to have a Framer Motion component that can accept specific properties that will allow us to run our animations.
 
-### React component as Framer Motion component
+## React component as Framer Motion component
 
 Now I get it. You've installed Framer Motion, and you can't be bothered to refactor all your components to transform them into Framer Motion ones. Well, where it's needed, at least.
 

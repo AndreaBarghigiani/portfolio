@@ -1,0 +1,65 @@
+---
+/**
+ * One project row on the projects archive (docs/design-system.md sections 5
+ * and 8). The row is an `<li>` in a list of rows.
+ *
+ * - Margin cell: the index (mono) and, only when `website` is set, the website
+ *   as an external `ArrowLink`. Desktop shows it in the 420px margin column;
+ *   below `lg` it is a darker band above the row.
+ * - Content cell: one link to the project page that fills the whole cell (tap
+ *   target at least 48px). It holds the title, the summary and a trailing
+ *   arrow in a fixed 48px slot. The website link stays outside that link:
+ *   nested interactive elements are invalid.
+ * - Hover and keyboard focus raise the ground and accent the title; focus adds
+ *   a separate inset outline. The index accent follows the row link through
+ *   `group-has-*`, so nothing depends on hover and no dimension changes.
+ */
+import ArrowLink from './ArrowLink.astro';
+import { ARROWS } from '@/lib/links';
+
+interface Props {
+  href: string;
+  title: string;
+  summary: string;
+  index: string;
+  website?: string;
+}
+
+const { href, title, summary, index, website } = Astro.props;
+const websiteLabel = website ? new URL(website).hostname.replace(/^www\./, '') : undefined;
+---
+
+<li class="group/row flex flex-col border-b border-rule lg:flex-row">
+  <div
+    class="flex flex-row items-center justify-between gap-4 bg-margin px-6 py-4 text-ink-subtle lg:w-label lg:shrink-0 lg:flex-col lg:items-start lg:bg-transparent lg:p-12"
+  >
+    <span
+      class="font-mono text-xs text-ink-subtle group-has-[a[data-project-link]:focus-visible]/row:text-accent group-has-[a[data-project-link]:hover]/row:text-accent"
+    >
+      {index}
+    </span>
+    {website && <ArrowLink href={website} class="font-mono text-label tracking-label uppercase">
+      {websiteLabel}
+    </ArrowLink>}
+  </div>
+  <a
+    data-project-link
+    {href}
+    class="group flex min-h-12 min-w-0 flex-1 items-start gap-6 px-6 py-8 outline-offset-[-2px] outline-accent hover:bg-raised focus-visible:bg-raised focus-visible:outline-2 lg:px-12 lg:py-14"
+  >
+    <div class="flex min-w-0 flex-1 flex-col gap-5">
+      <h2
+        class="text-2xl font-black tracking-display [overflow-wrap:anywhere] text-ink group-hover:text-accent group-focus-visible:text-accent lg:text-(length:--row-title-size) lg:leading-none"
+      >
+        {title}
+      </h2>
+      <p class="max-w-copy text-base text-ink-muted lg:text-lg lg:leading-8">{summary}</p>
+    </div>
+    <span
+      aria-hidden="true"
+      class="flex h-12 w-12 shrink-0 items-center justify-center text-xl font-semibold text-accent lg:mt-3"
+    >
+      {ARROWS.internal}
+    </span>
+  </a>
+</li>

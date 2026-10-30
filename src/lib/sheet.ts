@@ -14,7 +14,7 @@ export type SheetMeta = {
 const WRITING: SheetBack = { label: 'Posts', href: '/posts' };
 const SERIES: SheetBack = { label: 'Series', href: '/series' };
 const NOTES: SheetBack = { label: 'Notes', href: '/notes' };
-const PROJECTS: SheetBack = { label: 'Projects', href: '/#projects' };
+const PROJECTS: SheetBack = { label: 'Projects', href: '/projects/' };
 
 export function getSheetMeta(pathname: string): SheetMeta {
   const segments = pathname.split('/').filter(Boolean);
@@ -34,7 +34,7 @@ export function getSheetMeta(pathname: string): SheetMeta {
     case 'changelog':
       return { code: '07' };
     case 'projects':
-      return { code: '10', back: PROJECTS };
+      return depth === 1 ? { code: '11' } : { code: '10', back: PROJECTS };
     default:
       return { code: '--' };
   }

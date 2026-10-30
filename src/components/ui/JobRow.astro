@@ -1,20 +1,32 @@
 ---
 /**
  * One experience row: period (mono), company with external link, role,
- * company summary, and the job's highlights in a disclosure that works by
- * keyboard and touch. Everything comes from the `jobs` entry; nothing is added.
+ * company summary, the job's tools as topic tags, and the job's highlights in
+ * a disclosure that works by keyboard and touch. Everything comes from the
+ * `jobs` entry; nothing is added.
+ *
+ * Tools show above the highlights. The first three are visible; a `+N` button
+ * reveals the rest in place and can collapse them again. The button keeps
+ * focus, so it needs no focus move. Without JavaScript every tag shows and the
+ * button stays hidden (docs/design-system.md section 8).
  */
 import ArrowLink from './ArrowLink.astro';
 import CodeBlock from './CodeBlock.astro';
+import Tag from './Tag.astro';
 import { render, type CollectionEntry } from 'astro:content';
 
 interface Props {
   entry: CollectionEntry<'jobs'>;
 }
 
+const VISIBLE_TOOLS = 3;
+
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 const { company, title, location, from, to, url, companyIntro } = entry.data;
+const tools = entry.data.tools ?? [];
+const hiddenCount = tools.length - VISIBLE_TOOLS;
+const toolsId = `job-tools-${entry.id}`;
 ---
 
 <li class="border-b border-rule py-8 first:pt-0 last:border-b-0 last:pb-0">
@@ -32,6 +44,33 @@ const { company, title, location, from, to, url, companyIntro } = entry.data;
       </h3>
       <p class="text-sm text-ink">{title} · <span class="text-ink-muted">{location}</span></p>
       {companyIntro && <p class="max-w-copy text-sm text-ink-muted">{companyIntro}</p>}
+      {tools.length > 0 && <div>
+        <ul id={toolsId} aria-label="Tools used" class="flex flex-wrap gap-2">
+          {tools.map((tool, index) => <li data-more={index >= VISIBLE_TOOLS ? '' : undefined}>
+            <Tag kind="topic">{tool}</Tag>
+          </li>)}
+          {hiddenCount > 0 && <li data-tools-control>
+            <button
+              type="button"
+              data-tools-toggle
+              data-count={hiddenCount}
+              aria-expanded="false"
+              aria-controls={toolsId}
+              class="inline-flex min-h-12 min-w-12 items-center justify-center border border-ink-subtle px-2 font-mono text-label tracking-label text-ink-muted uppercase hover:border-accent hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-accent lg:min-h-8 lg:min-w-0"
+            >
+              <span data-tools-more>
+                +{hiddenCount}
+                <span class="sr-only"> more {hiddenCount === 1 ? 'tool' : 'tools'}, show all</span>
+              </span>
+              <span data-tools-less hidden>
+                Show fewer
+                <span class="sr-only"> tools</span>
+              </span>
+            </button>
+          </li>}
+        </ul>
+        <span role="status" aria-live="polite" class="sr-only" data-tools-status></span>
+      </div>}
       <details class="mt-2 max-w-copy">
         <summary
           class="flex min-h-12 cursor-pointer items-center text-sm font-semibold text-accent"
@@ -45,3 +84,27 @@ const { company, title, location, from, to, url, companyIntro } = entry.data;
     </div>
   </div>
 </li>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-tools-toggle]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const expanded = button.getAttribute('aria-expanded') !== 'true';
+      const list = document.getElementById(button.getAttribute('aria-controls') ?? '');
+      const hidden = list?.querySelectorAll<HTMLElement>('[data-more]') ?? [];
+      hidden.forEach((tag) => tag.toggleAttribute('data-shown', expanded));
+
+      button.setAttribute('aria-expanded', String(expanded));
+      button.querySelector('[data-tools-more]')?.toggleAttribute('hidden', expanded);
+      button.querySelector('[data-tools-less]')?.toggleAttribute('hidden', !expanded);
+
+      const status = list?.parentElement?.querySelector<HTMLElement>('[data-tools-status]');
+      const count = Number(button.dataset.count);
+      const noun = count === 1 ? 'tool' : 'tools';
+      if (status) {
+        status.textContent = expanded
+          ? `${count} more ${noun} shown`
+          : `${count} more ${noun} hidden`;
+      }
+    });
+  });
+</script>

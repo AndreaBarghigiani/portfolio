@@ -360,7 +360,7 @@ Do not silently resolve these.
 | Method principles          | Deferred: the home “Method” section is omitted until its copy exists (owner decision, 30 October 2026). |
 | Projects archive           | Decided: a projects archive ships at `/projects/` from the Paper “Projects archive” page (#75). |
 | Notes count                | Resolved: four notes are published; the fifth folder (`fullstack-cloudflare`) has no index file and does not render (30 October 2026). |
-| Paper limits               | Paper does not render `font-family` tokens, so the designs use literal font names. The code export resolves `--font-*`.                       |
+| Paper limits               | Decided: the build uses the installed families through the `--font-*` tokens (`Figtree Variable`, `IBM Plex Mono`, `Caveat Variable`); Paper's literal font names are a design-tool limitation only (owner decision, 30 October 2026). |
 
 ## 12. Handoff checks
 

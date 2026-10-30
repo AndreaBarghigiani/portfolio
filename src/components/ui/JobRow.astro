@@ -56,15 +56,20 @@ const toolsId = `job-tools-${entry.id}`;
               data-count={hiddenCount}
               aria-expanded="false"
               aria-controls={toolsId}
-              class="inline-flex min-h-12 min-w-12 items-center justify-center border border-ink-subtle px-2 font-mono text-label tracking-label text-ink-muted uppercase hover:border-accent hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-accent lg:min-h-8 lg:min-w-0"
+              class="group inline-flex min-h-12 min-w-12 items-start justify-center pt-0 font-mono text-label tracking-label text-accent uppercase focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-accent lg:min-h-6 lg:min-w-0"
             >
-              <span data-tools-more>
-                +{hiddenCount}
-                <span class="sr-only"> more {hiddenCount === 1 ? 'tool' : 'tools'}, show all</span>
-              </span>
-              <span data-tools-less hidden>
-                Show fewer
-                <span class="sr-only"> tools</span>
+              <span
+                class="inline-flex h-6 items-center border border-accent px-2 group-hover:bg-accent group-hover:text-on-accent"
+              >
+                <span data-tools-more>
+                  +{hiddenCount}
+                  <span class="sr-only">
+                    more {hiddenCount === 1 ? 'tool' : 'tools'}, show all</span>
+                </span>
+                <span data-tools-less hidden>
+                  Show fewer
+                  <span class="sr-only"> tools</span>
+                </span>
               </span>
             </button>
           </li>}

@@ -113,8 +113,8 @@ Weights in use: 300 (light), 400, 600, 700, 800, 900 (black).
 | `--text-2xl`     |   34px | Entry titles; mobile section titles; mobile hero light line. |
 | `--text-3xl`     |   44px | Section titles in the margin.                       |
 | `--text-4xl`     |   56px | Section titles, About statement; mobile hero emphasis. |
-| `--text-5xl`     |   64px | Principle numerals.                                 |
-| `--text-6xl`     |   96px | Page titles; hero light line; CTA headline.         |
+| `--text-5xl`     |   64px | Principle numerals; contact headline.               |
+| `--text-6xl`     |   96px | Page titles; hero light line.         |
 | `--text-display` |  156px | Hero emphasis line only.                            |
 
 Page titles on archive and detail pages use `--text-6xl` with a 92px line height, black weight, and display tracking, the same on every page type. On mobile they use `--text-3xl` with a 46px line height (owner decision, 2 November 2026; #70).

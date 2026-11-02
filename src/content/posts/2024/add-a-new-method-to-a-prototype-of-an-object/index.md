@@ -1,7 +1,10 @@
 ---
 title: Add a new method to a prototype of an object
 date: 2024-12-16
-tags: JavaScript, prototype, object
+tags:
+  - JavaScript
+  - Prototype
+  - Object
 seo:
   title: Add a new method to a prototype of an object
   description: Let's discover how it is possible to add a new method inside the prototype of an object

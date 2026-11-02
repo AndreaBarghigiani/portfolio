@@ -1,7 +1,9 @@
 ---
 title: How to know if a CSS animation has ended in JavaScript
 date: 2022-01-07
-tags: til, javascript
+tags:
+  - TIL
+  - JavaScript
 seo:
   title: How to know if a CSS animation has ended in JavaScript
   description: A simple article that explains how to know if a CSS animation is ended with JavaScript and respond to it.

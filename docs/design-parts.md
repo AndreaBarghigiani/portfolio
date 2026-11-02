@@ -22,8 +22,8 @@ never use them.
 
 ## Topic values from content
 
-`getTopics()` in `src/lib/tags.ts` turns content input (the comma-separated
-`tags: til, javascript` string older posts use, or an array) into trimmed,
+`getTopics()` in `src/lib/tags.ts` turns content input (post `tags` are a YAML
+list; it also still accepts a comma-separated string) into trimmed,
 de-duplicated values, and returns `[]` for missing input. It never adds values.
 Topic chips are plain text. Wiring it to routes and adding `tags` to a content
 schema are deliberately left open: tag values for older posts, notes and series

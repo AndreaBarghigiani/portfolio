@@ -67,6 +67,7 @@ const tocItems = headings.map((heading) => ({
         slot="facts"
         items={[
           { label: 'Published', value: formatDate(entry.data.date) },
+          { label: 'Topic', topics: entry.data.tags },
           {
             label: 'Series',
             value: seriesData?.data.title,

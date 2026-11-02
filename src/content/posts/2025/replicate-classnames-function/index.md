@@ -1,7 +1,9 @@
 ---
 title: Replicate the classNames function
 date: 2025-01-09
-tags: JavaScript, GFE 75
+tags:
+  - JavaScript
+  - GFE 75
 seo:
   title: Replicate the classnames function
   description: The classNames function is one of my favourite helpers when I create components. It plays so nicely with Tailwind and thanks to this GFE 75 challenge.

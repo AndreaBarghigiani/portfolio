@@ -2,14 +2,17 @@
 /**
  * Small mono label/value pairs for the margin cell (published, instructor,
  * entries). Pass `href` to make the value a link; external links follow the
- * arrow convention. Items without a value are omitted, never shown empty.
+ * arrow convention. Pass `topics` to show chips as the value. Items without a
+ * value are omitted, never shown empty.
  */
 import ArrowLink from './ArrowLink.astro';
+import TopicTags from './TopicTags.astro';
 
 interface Fact {
   label: string;
   value?: string;
   href?: string;
+  topics?: readonly string[];
 }
 
 interface Props {
@@ -17,14 +20,16 @@ interface Props {
 }
 
 const { items } = Astro.props;
-const facts = items.filter((item) => item.value);
+const facts = items.filter((item) => item.value || item.topics?.length);
 ---
 
 {facts.length > 0 && <dl class="flex flex-col gap-4 normal-case">
   {facts.map((fact) => <div>
     <dt class="font-mono text-label tracking-label text-ink-subtle uppercase">{fact.label}</dt>
     <dd class="tracking-normal text-sm text-ink">
-      {fact.href ? (
+      {fact.topics?.length ? (
+        <TopicTags topics={fact.topics} class="mt-1" />
+      ) : fact.href ? (
         <ArrowLink href={fact.href} class="font-sans">
           {fact.value}
         </ArrowLink>

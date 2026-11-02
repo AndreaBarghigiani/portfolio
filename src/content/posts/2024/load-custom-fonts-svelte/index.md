@@ -1,7 +1,9 @@
 ---
 title: How do I load custom fonts in a Svelte/Kit app
 date: 2024-10-04
-tags: SvelteKit, custom font
+tags:
+  - SvelteKit
+  - Custom font
 seo:
   title: How do I load custom fonts in a Svelte/Kit app
   description: Let's discover how it is possible to load custom fonts in a SvelteKit application

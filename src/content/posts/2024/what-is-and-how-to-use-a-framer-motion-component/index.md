@@ -1,7 +1,9 @@
 ---
 title: What is and how to use a Framer Motion Component
 date: 2024-07-28
-tags: Motion, animation
+tags:
+  - Motion
+  - Animation
 seo:
   title: What is and how to use a Framer Motion Component
   description: A motion component is a standard JSX component that allows us to enhance the React element with props from Framer Motion, which gives our elements special capabilities.

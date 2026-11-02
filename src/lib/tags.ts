@@ -1,7 +1,7 @@
 /**
  * Normalises topic values from content into individual chip values.
- * Accepts the comma-separated string older posts use (`tags: til, javascript`)
- * or an array. It never adds values: unknown or missing input gives `[]`.
+ * Accepts a list (post `tags` are YAML lists) or a comma-separated string.
+ * It never adds values: unknown or missing input gives `[]`.
  * Wiring this to routes, and the content schema, is a later decision (#43).
  */
 export function getTopics(tags?: string | readonly string[] | null): string[] {

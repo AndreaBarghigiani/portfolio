@@ -10,11 +10,13 @@
  * - `external` rows use `↗`, open in a new tab with `rel`, and announce it.
  * - `status` adds at most one status tag; `detail` is a small mono suffix
  *   (for example a PR number).
+ * - `topics` adds plain topic chips below the description.
  * - `more` and `group` mark rows that the show-more control reveals.
  * - The row link owns the cell's horizontal inset so its ground and hairline
  *   span the content cell; place it in a `flush` Row.
  */
 import Tag, { type StatusTag } from './Tag.astro';
+import TopicTags from './TopicTags.astro';
 import { ARROWS } from '@/lib/links';
 
 interface Props {
@@ -24,6 +26,7 @@ interface Props {
   description?: string;
   detail?: string;
   status?: StatusTag;
+  topics?: readonly string[];
   external?: boolean;
   more?: boolean;
   group?: string;
@@ -36,6 +39,7 @@ const {
   description,
   detail,
   status,
+  topics = [],
   external = false,
   more,
   group,
@@ -59,7 +63,7 @@ const {
     >
       {meta}
     </span>
-    <span class="col-start-1 flex flex-col gap-2 lg:col-start-2">
+    <div class="col-start-1 flex flex-col gap-2 lg:col-start-2">
       <span class="flex flex-wrap items-center gap-x-3 gap-y-2">
         <span
           class="min-w-0 text-xl font-semibold break-words text-ink group-hover:text-accent group-focus-visible:text-accent lg:text-2xl"
@@ -70,7 +74,8 @@ const {
         {detail && <span class="font-mono text-xs text-ink-subtle">{detail}</span>}
       </span>
       {description && <span class="text-sm text-ink-muted">{description}</span>}
-    </span>
+      <TopicTags {topics} inLink class="mt-1" />
+    </div>
     <span
       aria-hidden="true"
       class="col-start-2 row-span-2 row-start-1 self-center text-center text-lg text-accent lg:col-start-3 lg:row-span-1"

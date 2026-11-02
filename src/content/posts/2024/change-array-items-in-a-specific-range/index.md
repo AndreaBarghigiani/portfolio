@@ -1,7 +1,9 @@
 ---
 title: Chage array items in a specific range
 date: 2024-12-18
-tags: JavaScript, array
+tags:
+  - JavaScript
+  - Array
 seo:
   title: Chage array items in a specific range
   description: Arrays are powerful data structures, and we have many standard methods to work with them. Let's learn how to create our owns.

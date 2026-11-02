@@ -1,7 +1,9 @@
 ---
 title: Why you need Path Helpers in every Next.js application?
 date: 2023-11-19
-tags: Next.js, utility functions
+tags:
+  - Next.js
+  - Utility functions
 seo:
   title: Why you need Path Helpers in every Next.js application?
   description: How to simplify your life by creating a single source of truth for all the paths in your application

@@ -238,7 +238,7 @@ Two kinds, never filled:
 - **Status** (`NEW`, `LATEST`): accent outline, accent mono text. One per row. `NEW` is an experiment the owner may drop.
 - **Topic** (`AI`, `AGENTS`): neutral outline, one chip per value. Never render several topics as one string.
 
-Topic chips render only where the content already has tags. They are plain text for now: they do not link anywhere, and tag archive pages are deferred. Never invent tags.
+Topic chips render only where the content already has tags. They are plain text for now: they do not link anywhere, and tag archive pages are deferred. Never invent tags. They appear in the home writing band, in the article facts as “Topic”, and on posts archive rows below the description, which Paper does not draw (owner decision, 2 November 2026).
 
 Tags must not carry meaning by colour alone.
 

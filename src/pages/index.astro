@@ -47,7 +47,6 @@ const contactLinks = allLinks.filter((link) =>
       <Figure
         src={author.avatar}
         alt={`Portrait of ${author.name}`}
-        number={1}
         priority
         widths={[320, 480, 640]}
         sizes="(min-width: 1024px) 324px, 240px"
@@ -120,7 +119,15 @@ const contactLinks = allLinks.filter((link) =>
   </Row>}
 
   {newest && <Row tone="paper" title="Thinking out loud." display id="writing">
-    <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-x-12">
+    <div slot="margin" class="font-sans text-base tracking-[normal] normal-case">
+      <a
+        href="/posts/"
+        class="inline-flex min-h-12 items-center gap-2 font-semibold text-paper-ink underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper-ink"
+      >
+        All writing <span aria-hidden="true">{ARROWS.internal}</span>
+      </a>
+    </div>
+    <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:gap-x-12">
       <a
         href={postHref(newest)}
         class="group block border-b border-paper-rule pb-8 outline-offset-4 focus-visible:outline-2 focus-visible:outline-paper-ink lg:border-b-0 lg:pb-0"
@@ -132,15 +139,12 @@ const contactLinks = allLinks.filter((link) =>
           <TopicTags topics={newest.data.tags} tone="kraft" inLink />
         </div>
         <span
-          class="mt-4 block text-3xl font-black tracking-tight break-words text-paper-ink group-hover:underline lg:text-4xl"
+          class="mt-4 block text-3xl font-black tracking-tight wrap-break-word text-paper-ink group-hover:underline lg:text-4xl"
         >
           {newest.data.title}
         </span>
         <span class="mt-4 block max-w-copy text-base text-paper-ink-muted">
           {newest.data.seo.description}
-        </span>
-        <span class="mt-6 inline-flex items-center gap-2 font-semibold text-paper-ink">
-          Read the article <span aria-hidden="true">{ARROWS.internal}</span>
         </span>
       </a>
       <ul>
@@ -158,28 +162,17 @@ const contactLinks = allLinks.filter((link) =>
               <TopicTags topics={post.data.tags} tone="kraft" inLink />
             </div>
             <span
-              class="mt-2 block text-xl font-semibold break-words text-paper-ink group-hover:underline"
+              class="mt-2 block text-xl font-semibold wrap-break-word text-paper-ink group-hover:underline"
             >
               {post.data.title}
             </span>
             <span class="mt-2 block max-w-copy text-base text-paper-ink-muted">
               {post.data.seo.description}
             </span>
-            <span class="mt-4 inline-flex items-center gap-2 font-semibold text-paper-ink">
-              Read the article <span aria-hidden="true">{ARROWS.internal}</span>
-            </span>
           </a>
         </li>)}
       </ul>
     </div>
-    <p class="pt-6">
-      <a
-        href="/posts/"
-        class="inline-flex min-h-12 items-center gap-2 font-semibold text-paper-ink underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper-ink"
-      >
-        All writing <span aria-hidden="true">{ARROWS.internal}</span>
-      </a>
-    </p>
   </Row>}
 
   <Row tone="raised">

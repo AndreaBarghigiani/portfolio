@@ -229,7 +229,7 @@ All parts below are specified, with states, on the **States & parts** and **Part
 
 ### Figure
 
-A framed media slot with corner marks always on, and a mono caption (`FIG. 01 — …`) below or in the margin. The hero portrait is “Fig. 01”.
+A framed media slot with corner marks always on, and a mono caption (`FIG. 01 — …`) below or in the margin. The hero portrait has no caption (owner decision, 2 November 2026).
 
 ### Tags
 

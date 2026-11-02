@@ -152,7 +152,7 @@ Cells use 48px padding (`--spacing-48`). Rows are separated by 1px `--color-rule
 - **Titled sections** (projects, writing, experience, archive years): the title sits in the margin cell.
 - **Untitled sections** (About, contact): the margin cell stays empty. The content carries its own title.
 - **Labels:** a small mono label appears only where it clarifies a section (“You can find me”, “Method”, “On this page”). There is no section numbering.
-- **Tonal play is deliberate and small:** margin one step darker than surface; one raised band (About); one kraft band (writing, “keep reading”, “more projects”, “next up”); one accent band (contact).
+- **Tonal play is deliberate and small:** margin one step darker than surface; one raised band (About); one kraft band (writing, “keep reading”, “more projects”, “more notes”, “next up”); one accent band (contact).
 
 ### Spacing and shape
 
@@ -322,7 +322,7 @@ Title block; head with a Posts / Series / Notes sub-nav in the margin and the pa
 
 ### Detail pages
 
-Title block; head (back link and facts in the margin, title and standfirst in the content cell); body in a 720px reading column; a closing “keep reading” kraft band; footer. The margin carries the table of contents where one applies (“On this page”), or the module’s lesson list on a lesson.
+Title block; head (back link and facts in the margin, title and standfirst in the content cell); body in a 720px reading column; a closing kraft band (“keep reading”, “more notes”, and so on) where neighbouring content exists, so a course closes with its other courses and a lone series has none (owner decision, 2 November 2026; #70); footer. The margin carries the table of contents where one applies (“On this page”), or the module’s lesson list on a lesson.
 
 | Type          | Specifics                                                                                              |
 | ------------- | ------------------------------------------------------------------------------------------------------ |

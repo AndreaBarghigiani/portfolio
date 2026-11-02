@@ -121,6 +121,8 @@ Page titles on archive and detail pages use `--text-6xl` with a 92px line height
 
 Archive year headings are the one exception to the 44px margin section title: 72/72px, black weight, display tracking, a one-off step because four digits fit the margin cell. On mobile they use `--text-2xl` with a 38px line height, black weight, and `--tracking-tight` (owner decision, 2 November 2026; #70).
 
+Series archive titles use the same 72/72px, black weight, and display tracking. On mobile they are `--text-2xl` with a 38px line height, black weight, and display tracking (owner decision, 2 November 2026; #70).
+
 ### Rules
 
 - **Display tracking** `--tracking-display` (−0.05em) at 72px and above; `--tracking-tight` (−0.04em) for 44–64px; about −0.025em for 22–34px.
@@ -264,6 +266,8 @@ Archive, series, course, lesson, and changelog entries use one row family. A row
 | Touch | The whole row is the tap target (at least 48px). Nothing essential depends on hover.                |
 
 The designs show one row in hover state per page as an example. A row is not “selected” by default.
+
+On the series archive each series is a feature row, not an entry row: it stands for a whole collection, so it takes the larger title in section 4, with the index and entry count in the margin cell. Entries inside a series still use the row family above.
 
 ### Show more
 

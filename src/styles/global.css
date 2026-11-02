@@ -272,3 +272,117 @@
 .has-reading-bar {
   scroll-padding-bottom: 4rem;
 }
+
+/*
+ * Band grounds (docs/design-system.md section 5). A horizontal band paints its
+ * own grounds across the full viewport: the left gutter takes `--band-margin`
+ * and the right takes `--band-content`, split at the sheet's margin edge. The
+ * split is a hard stop at max(420px, 50% - 720px + 420px), so it follows the
+ * centred 1440px sheet and sits at 420px wherever there is no gutter. Below lg
+ * the stop is 0 and the band is one solid `--band-content` ground. Each band
+ * sets both variables from its tone's role tokens.
+ */
+@layer components {
+  body {
+    container-type: inline-size;
+  }
+
+  .band-grounds {
+    --band-stop: 0px;
+    background-image: linear-gradient(
+      to right,
+      var(--band-margin) var(--band-stop),
+      var(--band-content) var(--band-stop)
+    );
+  }
+  @media (min-width: 1024px) {
+    .band-grounds {
+      --band-stop: max(
+        theme(--container-label),
+        50% - theme(--container-page) / 2 + theme(--container-label)
+      );
+    }
+  }
+  .band-solid {
+    background-color: var(--band-content);
+  }
+}
+
+@layer components {
+  /* Continue content-cell separators through the right gutter. */
+  .gutter-rule {
+    position: relative;
+  }
+  .gutter-rule:not(:first-child)::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 100%;
+    width: max(0px, 50cqw - theme(--container-page) / 2);
+    border-top: 1px solid var(--color-rule);
+    pointer-events: none;
+  }
+
+  /*
+   * Bottom border of a block that is not a `gutter-rule` row (the home featured
+   * project): its border-bottom continues through the right gutter, on the same
+   * line as the block's own border.
+   */
+  .gutter-rule-below {
+    position: relative;
+  }
+  .gutter-rule-below::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 100%;
+    width: max(0px, 50cqw - theme(--container-page) / 2);
+    border-bottom: 1px solid var(--color-rule);
+    pointer-events: none;
+  }
+
+  /*
+   * Archive right rule (docs/design-system.md section 5, #82). Sheet draws it
+   * only on archive pages (`framed`). It sits just outside the centred 1440px
+   * sheet and is hidden below a 1442px layout width, where there is no gutter
+   * to hold it, so it never causes horizontal scroll. This queries the body
+   * container, not the viewport, because a viewport width includes a classic
+   * scrollbar. Container queries cannot read theme values, hence the literal.
+   */
+  .archive-rule {
+    inset-block: 0;
+    left: calc(50% + theme(--container-page) / 2);
+  }
+
+  /*
+   * List right rule (docs/design-system.md section 5, #82). Row draws it with
+   * `framed`, beside the capped 1440px cells rather than the viewport, so the
+   * rule is a segment alongside a list of rows. It runs to the row's bottom
+   * hairline, so adjacent framed rows join into one line. It follows the same
+   * container query as `.archive-rule`, for the same reason.
+   */
+  .row-rule {
+    position: relative;
+  }
+  .row-rule::after {
+    content: '';
+    top: 0;
+    bottom: -1px;
+    left: 100%;
+  }
+
+  .archive-rule,
+  .row-rule::after {
+    display: none;
+    position: absolute;
+    width: 1px;
+    background-color: var(--color-rule);
+    pointer-events: none;
+  }
+  @container (min-width: 1442px) {
+    .archive-rule,
+    .row-rule::after {
+      display: block;
+    }
+  }
+}

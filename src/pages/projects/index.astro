@@ -26,7 +26,7 @@ const indexRange =
   projects.length > 1 ? `${indexCode(0)} — ${indexCode(projects.length - 1)}` : indexCode(0);
 ---
 
-<BaseLayout {seo}>
+<BaseLayout {seo} framed>
   <DetailHead title="Projects." {standfirst} back={{ label: 'home', href: '/' }}>
     <Facts
       slot="facts"

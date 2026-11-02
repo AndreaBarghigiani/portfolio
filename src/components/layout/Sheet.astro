@@ -2,29 +2,44 @@
 /**
  * Page-level spec-sheet layout (docs/design-system.md section 5).
  *
- * Renders the page's single `<main>` landmark and draws the 420px margin
- * column once, as a decorative layer behind every `Row`, so short pages have
- * no gap. The layer is hidden below `lg`: narrow widths use the margin band
- * that each `Row` renders itself.
+ * Renders the page's single `<main>` landmark. It is full viewport width: each
+ * `Row` paints its own band grounds across the gutters and caps its cells at
+ * the 1440px page width (section 5). `main` carries the default surface band,
+ * so the space below the last row on a short page keeps the same grounds.
+ *
+ * `framed` (archive pages, #82) adds a 1px right rule just outside the sheet
+ * edge above 1440px, so the hovered archive rows are bounded. It is decorative,
+ * is drawn after the rows so their opaque bands cannot cover it, and runs the
+ * full height of `main`. Home and detail pages do not set it: they draw the
+ * list rule per row with `framed` on `Row` instead, and detail prose is framed
+ * by its content.
  *
  * Usage: `<Sheet><Row title="Writing">…</Row></Sheet>`
+ *        `<Sheet framed><Row title="Writing">…</Row></Sheet>`
  */
 interface Props {
   class?: string;
+  framed?: boolean;
 }
 
-const { class: className } = Astro.props;
+const { class: className, framed = false } = Astro.props;
 ---
 
 <main
   id="main"
-  class:list={['relative mx-auto w-full max-w-page flex-1 bg-surface text-ink', className]}
+  class:list={[
+    'band-grounds relative w-full flex-1 text-ink [--band-content:var(--ds-surface)] [--band-margin:var(--ds-margin)]',
+    className,
+  ]}
 >
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute inset-y-0 left-0 hidden w-label border-r border-rule bg-margin lg:block"
-  ></div>
+    class="pointer-events-none absolute inset-x-0 inset-y-0 mx-auto hidden w-full max-w-page lg:block"
+  >
+    <div class="h-full w-label border-r border-rule"></div>
+  </div>
   <div class="relative flex min-h-full flex-col">
     <slot />
   </div>
+  {framed && <div aria-hidden="true" class="archive-rule"></div>}
 </main>

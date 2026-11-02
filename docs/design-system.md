@@ -119,9 +119,11 @@ Weights in use: 300 (light), 400, 600, 700, 800, 900 (black).
 
 Page titles on archive and detail pages use `--text-6xl` with a 92px line height, black weight, and display tracking, the same on every page type. On mobile they use `--text-3xl` with a 46px line height (owner decision, 2 November 2026; #70).
 
+Archive year headings are the one exception to the 44px margin section title: 72/72px, black weight, display tracking, a one-off step because four digits fit the margin cell. On mobile they use `--text-2xl` with a 38px line height, black weight, and `--tracking-tight` (owner decision, 2 November 2026; #70).
+
 ### Rules
 
-- **Display tracking** `--tracking-display` (−0.05em) at 92px and above; `--tracking-tight` (−0.04em) for 44–64px; about −0.025em for 22–34px.
+- **Display tracking** `--tracking-display` (−0.05em) at 72px and above; `--tracking-tight` (−0.04em) for 44–64px; about −0.025em for 22–34px.
 - **Labels** are mono, uppercase, 12px, `--tracking-label` (+0.14em). Never apply negative tracking to a label.
 - **Body leading** is about 160% (28–34px on 18–20px text). Reading text is 20/34px on desktop and 18/30px on mobile.
 - **Reading measure** is 720px (`--container-copy`).

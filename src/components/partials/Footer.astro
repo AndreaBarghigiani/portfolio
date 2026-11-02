@@ -4,7 +4,8 @@ import BackToTop from '@/components/ui/BackToTop.astro';
 import { getSheetMeta } from '@/lib/sheet';
 
 const { back } = getSheetMeta(Astro.url.pathname);
-const wordmark = DEFAULT_CONFIGURATION.author.username ?? 'cupofcraft';
+const wordmark = `${DEFAULT_CONFIGURATION.author.username ?? 'cupofcraft'}.`;
+const { name } = DEFAULT_CONFIGURATION.author;
 const links = [
   { href: '/posts', label: 'Writing' },
   { href: '/notes', label: 'Notes' },
@@ -13,20 +14,22 @@ const links = [
 ---
 
 <footer class="border-t border-rule bg-surface text-ink">
-  <div class="mx-auto flex w-full max-w-page flex-col lg:flex-row">
-    <div class="bg-margin px-6 py-6 lg:w-label lg:shrink-0 lg:border-r lg:border-rule lg:p-12">
-      <p class="text-lg font-semibold tracking-tight">{wordmark}</p>
-      <p class="mt-1 font-mono text-label tracking-label text-ink-subtle">
-        &copy; {new Date().getFullYear()}
+  <div class="mx-auto flex w-full max-w-page flex-col lg:flex-row lg:items-stretch">
+    <div
+      class="bg-margin px-6 py-6 lg:w-label lg:shrink-0 lg:border-r lg:border-rule lg:px-12 lg:py-7"
+    >
+      <p class="text-lg font-black">{wordmark}</p>
+      <p class="mt-1 font-mono text-label tracking-label text-ink-subtle uppercase">
+        &copy; {new Date().getFullYear()}<span class="hidden lg:inline"> {name}</span>
       </p>
     </div>
 
-    <nav aria-label="Footer" class="px-6 py-4 lg:flex lg:items-center lg:px-12 lg:py-12">
+    <nav aria-label="Footer" class="px-6 py-4 lg:flex lg:items-center lg:px-12 lg:py-0">
       <ul class="flex flex-col lg:flex-row lg:gap-8">
         {links.map((link) => <li>
           <a
             href={link.href}
-            class="flex min-h-12 items-center text-sm text-ink-muted hover:text-accent-hover"
+            class="flex min-h-12 items-center text-sm text-ink hover:text-accent-hover"
           >
             {link.label}
           </a>
@@ -34,7 +37,7 @@ const links = [
       </ul>
     </nav>
 
-    <div class="px-6 pb-6 lg:ml-auto lg:flex lg:items-center lg:px-12 lg:py-12">
+    <div class="px-6 pb-6 lg:ml-auto lg:flex lg:items-center lg:px-12 lg:py-0">
       {back ? (
         <a
           href={back.href}

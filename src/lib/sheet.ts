@@ -6,6 +6,7 @@
 export type SheetBack = { label: string; href: string };
 
 export type SheetMeta = {
+  /** Page code and name as drawn in the title block, for example "03 / WRITING". */
   code: string;
   /** Present on detail pages: footer shows "Back to {label}" instead of "back to top". */
   back?: SheetBack;
@@ -23,18 +24,20 @@ export function getSheetMeta(pathname: string): SheetMeta {
 
   switch (section) {
     case undefined:
-      return { code: '01' };
+      return { code: '01 / HOME' };
     case 'posts':
-      return depth === 1 ? { code: '03' } : { code: '02', back: WRITING };
+      return depth === 1 ? { code: '03 / WRITING' } : { code: '02 / ARTICLE', back: WRITING };
     case 'notes':
-      if (depth === 1) return { code: '04' };
-      return third === undefined ? { code: '08', back: NOTES } : { code: '09', back: NOTES };
+      if (depth === 1) return { code: '04 / NOTES' };
+      return third === undefined
+        ? { code: '08 / COURSE NOTES', back: NOTES }
+        : { code: '09 / LESSON', back: NOTES };
     case 'series':
-      return depth === 1 ? { code: '05' } : { code: '06', back: SERIES };
+      return depth === 1 ? { code: '05 / SERIES' } : { code: '06 / SERIES ENTRY', back: SERIES };
     case 'changelog':
-      return { code: '07' };
+      return { code: '07 / CHANGELOG' };
     case 'projects':
-      return depth === 1 ? { code: '11' } : { code: '10', back: PROJECTS };
+      return depth === 1 ? { code: '11 / PROJECTS' } : { code: '10 / PROJECT', back: PROJECTS };
     default:
       return { code: '--' };
   }

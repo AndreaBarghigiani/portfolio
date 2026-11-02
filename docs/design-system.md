@@ -110,8 +110,8 @@ Weights in use: 300 (light), 400, 600, 700, 800, 900 (black).
 | `--text-base`    |   18px | Body, descriptions.                                 |
 | `--text-lg`      |   22px | Lead text, small titles, company names.             |
 | `--text-xl`      |   28px | Mobile entry titles, compact titles, annotation size. |
-| `--text-2xl`     |   34px | Mobile section titles; mobile hero light line.      |
-| `--text-3xl`     |   44px | Section titles in the margin; entry titles.         |
+| `--text-2xl`     |   34px | Entry titles; mobile section titles; mobile hero light line. |
+| `--text-3xl`     |   44px | Section titles in the margin.                       |
 | `--text-4xl`     |   56px | Section titles, About statement; mobile hero emphasis. |
 | `--text-5xl`     |   64px | Principle numerals.                                 |
 | `--text-6xl`     |   96px | Page titles; hero light line; CTA headline.         |
@@ -121,7 +121,7 @@ Page titles on archive and detail pages use `--text-6xl` with a 92px line height
 
 Archive year headings are the one exception to the 44px margin section title: 72/72px, black weight, display tracking, a one-off step because four digits fit the margin cell. On mobile they use `--text-2xl` with a 38px line height, black weight, and `--tracking-tight` (owner decision, 2 November 2026; #70).
 
-Entry titles share one style on every list a visitor browses by title: the posts, notes, series, and projects archives, course lessons, series entries, and the home lead post. They use `--text-3xl` with a 46px line height, black weight, and `--tracking-tight`, with 18/28px descriptions. On mobile they are `--text-xl` with a 34px line height, black weight, and about −0.025em (owner decision, 2 November 2026; #70).
+Entry titles share one style on every list a visitor browses by title: the posts, notes, series, and projects archives, course lessons, series entries, and the home lead post. They use `--text-2xl` with a 38px line height, weight 800, and −0.03em, with 18/28px descriptions, so they sit clearly below a 44px section title in the margin. On mobile they are `--text-xl` with a 34px line height, weight 800, and about −0.025em (owner decision, 2 November 2026; #70).
 
 The changelog is the exception, because it is a log of long pull request titles: 26/32px, weight 800, about −0.025em, and on mobile `--text-lg` with a 28px line height, weight 800, and −0.02em. Compact titles beside a lead item or in narrow cells, such as the other home writing rows and “keep reading”, keep their own smaller size.
 

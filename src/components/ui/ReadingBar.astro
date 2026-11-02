@@ -21,7 +21,7 @@ const { label } = Astro.props;
 <aside
   data-reading-bar
   aria-label="Reading bar"
-  class="sticky bottom-0 z-30 border-t border-rule bg-surface"
+  class="band-solid sticky bottom-0 z-30 border-t border-rule [--band-content:var(--ds-surface)]"
 >
   <div data-progress-line aria-hidden="true" class="absolute inset-x-0 -top-0.5 hidden h-0.5">
     <div class="h-full origin-left bg-accent" style="transform: scaleX(var(--progress, 0))"></div>

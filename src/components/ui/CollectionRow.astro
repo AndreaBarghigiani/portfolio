@@ -39,39 +39,41 @@ const websiteLabel = website ? new URL(website).hostname.replace(/^www\./, '') :
   data-entry
   data-more={more ? '' : undefined}
   data-more-group={more ? group : undefined}
-  class="group/row flex flex-col border-b border-rule lg:flex-row"
+  class="group/row border-b border-rule"
 >
-  <div
-    class="flex flex-row items-center justify-between gap-4 bg-margin px-6 py-4 text-ink-subtle lg:w-label lg:shrink-0 lg:flex-col lg:items-start lg:justify-between lg:bg-transparent lg:p-12"
-  >
-    <span
-      class="font-mono text-xs text-ink-subtle group-has-[a[data-project-link]:focus-visible]/row:text-accent group-has-[a[data-project-link]:hover]/row:text-accent"
+  <div class="mx-auto flex w-full max-w-page flex-col lg:flex-row">
+    <div
+      class="flex flex-row items-center justify-between gap-4 bg-margin px-6 py-4 text-ink-subtle lg:w-label lg:shrink-0 lg:flex-col lg:items-start lg:justify-between lg:bg-transparent lg:p-12"
     >
-      {index}
-    </span>
-    {detail && <span class="font-mono text-label tracking-label uppercase">{detail}</span>}
-    {website && <ArrowLink href={website} class="font-mono text-label tracking-label uppercase">
-      {websiteLabel}
-    </ArrowLink>}
-  </div>
-  <a
-    data-project-link
-    {href}
-    class="group flex min-h-12 min-w-0 flex-1 items-start gap-6 px-6 py-8 outline-offset-[-2px] outline-accent hover:bg-raised focus-visible:bg-raised focus-visible:outline-2 lg:px-12 lg:py-14"
-  >
-    <div class="flex min-w-0 flex-1 flex-col gap-5">
-      <h2
-        class="text-xl font-extrabold tracking-[-0.025em] [overflow-wrap:anywhere] text-ink group-hover:text-accent group-focus-visible:text-accent lg:text-2xl lg:tracking-[-0.03em]"
+      <span
+        class="font-mono text-xs text-ink-subtle group-has-[a[data-project-link]:focus-visible]/row:text-accent group-has-[a[data-project-link]:hover]/row:text-accent"
       >
-        {title}
-      </h2>
-      <p class="max-w-copy text-base text-ink-muted">{summary}</p>
+        {index}
+      </span>
+      {detail && <span class="font-mono text-label tracking-label uppercase">{detail}</span>}
+      {website && <ArrowLink href={website} class="font-mono text-label tracking-label uppercase">
+        {websiteLabel}
+      </ArrowLink>}
     </div>
-    <span
-      aria-hidden="true"
-      class="flex h-12 w-12 shrink-0 items-center justify-center text-xl font-semibold text-accent lg:mt-3"
+    <a
+      data-project-link
+      {href}
+      class="group flex min-h-12 min-w-0 flex-1 items-start gap-6 px-6 py-8 outline-offset-[-2px] outline-accent hover:bg-raised focus-visible:bg-raised focus-visible:outline-2 lg:px-12 lg:py-14"
     >
-      {ARROWS.internal}
-    </span>
-  </a>
+      <div class="flex min-w-0 flex-1 flex-col gap-5">
+        <h2
+          class="text-xl font-extrabold tracking-[-0.025em] [overflow-wrap:anywhere] text-ink group-hover:text-accent group-focus-visible:text-accent lg:text-2xl lg:tracking-[-0.03em]"
+        >
+          {title}
+        </h2>
+        <p class="max-w-copy text-base text-ink-muted">{summary}</p>
+      </div>
+      <span
+        aria-hidden="true"
+        class="flex h-12 w-12 shrink-0 items-center justify-center text-xl font-semibold text-accent lg:mt-3"
+      >
+        {ARROWS.internal}
+      </span>
+    </a>
+  </div>
 </li>

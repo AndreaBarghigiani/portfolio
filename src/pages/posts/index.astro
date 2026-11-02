@@ -17,7 +17,7 @@ const latestId = sortPostsByDate(posts)[0]?.id ?? '';
 const seo = { ...entry.data.seo, canonicalUrl: new URL('/posts/', Astro.site).href };
 ---
 
-<BaseLayout {seo}>
+<BaseLayout {seo} framed>
   {posts.length === 0 ? (
     <p>No posts found</p>
   ) : (

@@ -173,6 +173,30 @@ Use 8–16px inside compact groups, 24–32px inside rows, and 48–96px between
 
 Below 1024px the desktop margin column must not be shown. The widths between 390px and 1024px have not been designed.
 
+### Wide screens: band grounds
+
+**Implemented (#82; not yet accepted by the owner):** above 1440px the sheet stays 1440px wide and centred, and the space either side continues the band it sits in. Every horizontal band (each row, the header, the footer and the reading bar) paints its own grounds across the full viewport:
+
+- the left gutter takes the band's margin ground, and the right gutter takes its content ground (surface, raised, kraft or accent);
+- the split is a hard stop at `max(420px, 50% - 720px + 420px)`, which is the margin edge of the centred sheet. It sits at 420px at 1440px and below, where there are no gutters;
+- row hairlines run the full viewport width;
+- below 1024px the band is one solid content ground, with no gutters.
+
+Each band sets its two grounds from role tokens (`--band-margin`, `--band-content`), and the `band-grounds` utility in `global.css` paints them. The 1440px cap is applied to each band's cells, not to the page. Between rows, a short page's leftover height uses the default surface band, so there is no gap above the footer.
+
+**Margin divider (#82).** From 1024px up, one continuous 1px `--color-rule` divider runs at the 420px margin edge for the full height of the page, including rows with a transparent margin cell (archive collections) and the empty space below the last row on a short page. It is drawn once, as a rule-only layer behind the rows (`Sheet`), capped to the 1440px sheet and centred, and it has no background. This layer draws no right edge; see the list right rule below. Opaque margin cells cover it, so each margin cell draws its own inset right rule with the same colour and position; the kraft and accent bands keep their own toned margin rules. The divider is not drawn below 1024px.
+
+**Reading bar exception (#82).** The reading bar is the one horizontal band that does not split. It is a solid `--color-surface` ground across the full viewport at every width, so the divider never runs through it.
+
+Row hover and focus grounds fill the content cell and stop at the sheet edge at every width, so they never extend across the right gutter.
+
+**List right rule (#82).** Above 1440px a 1px `--color-rule` right rule sits just outside the sheet edge, so wide rows and their hover grounds have a visible right edge. It is drawn in two ways:
+
+- **Archive pages** draw it for the whole page: `framed` on `BaseLayout`, forwarded to `Sheet`, runs the full height of `main`.
+- **Lists of rows on other pages** draw it per row: `framed` on `Row`. This covers the home projects and experience rows, course lesson modules, and series entries (including the show-more row after them). On those pages it is a segment alongside the list, not a full-height line. Adjacent framed rows join into one continuous line across their hairlines.
+
+Article and project detail prose does not draw it, because the content already frames the column. Every other band keeps an open right edge: the raised, kraft and accent bands, and any row without `framed`. The rule is hidden below a 1442px layout width, where there is no gutter to hold it. It is a container query on the body, not a media query, because a viewport width includes a classic scrollbar. Band grounds and hairlines still continue through the gutter on every page.
+
 ## 6. Header, footer, and navigation
 
 ### Title block (header)

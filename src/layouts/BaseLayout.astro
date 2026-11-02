@@ -9,9 +9,11 @@ import type { Seo } from '@/lib/constants';
 
 interface Props {
   seo?: Seo;
+  /** Draw the archive right rule above 1440px (docs/design-system.md section 5, #82). */
+  framed?: boolean;
 }
 
-const { seo } = Astro.props;
+const { seo, framed = false } = Astro.props;
 ---
 
 <html lang="en" class="bg-margin text-ink">
@@ -20,7 +22,7 @@ const { seo } = Astro.props;
   <body id="top" class="relative flex min-h-dvh flex-col bg-margin text-ink">
     <Header />
 
-    <Sheet>
+    <Sheet {framed}>
       <slot />
     </Sheet>
 

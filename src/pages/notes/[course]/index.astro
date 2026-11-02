@@ -85,6 +85,7 @@ const otherCourses = (await getCollection('notes')).filter((course) => course.id
           eyebrow={`Module ${String(moduleIndex + 1).padStart(2, '0')} · ${lessonCount} ${lessonCount === 1 ? 'lesson' : 'lessons'}`}
           id={`module-${group.moduleKey}`}
           flush
+          framed
         >
           {(group.moduleDescription || group.moduleUrl) && <div
             slot="margin"

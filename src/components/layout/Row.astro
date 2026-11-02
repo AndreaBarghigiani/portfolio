@@ -8,10 +8,20 @@
  * - Untitled: omit `title`. The margin cell stays empty on desktop and is
  *   dropped below `lg`. Use the named `margin` slot for a small label or
  *   other margin content instead of a title.
- * - Omitted margin: set `noMargin` for a row whose content spans the full
- *   sheet width and hides the layout-level margin column behind it.
+ * - Omitted margin: set `noMargin` for a row with one solid content ground
+ *   across the full viewport and no margin cell.
  * - `tone` picks the band: `surface` (default), `raised`, `paper` (kraft) or
  *   `accent`. Each tone also picks the matching margin, rule and ink roles.
+ * - `framed` draws the 1px list right rule just outside the 1440px cells above
+ *   1442px (#82). Set it on each row of a list that should show the rule, such
+ *   as home projects and experience, course modules, and series entries. The
+ *   rule is a segment beside that row; it joins the next framed row's rule
+ *   across the hairline. Archive pages use `framed` on the page instead.
+ *
+ * The row is full viewport width. Its grounds come from `band-grounds`
+ * (docs/design-system.md section 5): the margin ground to the left of the
+ * sheet's margin edge, the content ground to the right, across the gutters.
+ * The cells sit in a page-width container, so the 1440px cap is per row.
  *
  * DOM order is margin cell first, content second; it is never reordered with
  * CSS, so landmark and heading order do not depend on visual placement.
@@ -40,6 +50,8 @@ interface Props extends Omit<HTMLAttributes<'div'>, 'title' | 'class'> {
   eyebrow?: string;
   /** Archive year heading (72px black, section 4) instead of the default section title. */
   year?: boolean;
+  /** Draw the list right rule beside this row above 1442px (#82). */
+  framed?: boolean;
   measure?: 'full' | 'copy';
   id?: string;
   class?: string;
@@ -54,6 +66,7 @@ const {
   marginAfter = false,
   display = false,
   year = false,
+  framed = false,
   eyebrow,
   measure = 'full',
   id,
@@ -70,29 +83,41 @@ const slug = title
   .replace(/^-|-$/g, '');
 const headingId = title ? `${id ?? slug}-title` : undefined;
 
-const tones: Record<Tone, { row: string; margin: string; content: string; title: string }> = {
+/*
+ * `band` sets the two grounds the band-grounds utility paints: the margin
+ * ground for the gutter and margin cell, and the content ground for the
+ * gutter and content cell. The content cell itself stays transparent.
+ */
+const tones: Record<
+  Tone,
+  { row: string; band: string; margin: string; content: string; title: string }
+> = {
   surface: {
     row: 'border-rule',
-    margin: 'bg-margin text-ink-subtle lg:bg-transparent',
-    content: noMargin ? 'bg-surface' : '',
+    band: '[--band-margin:var(--ds-margin)] [--band-content:var(--ds-surface)]',
+    margin: 'bg-margin text-ink-subtle lg:[box-shadow:inset_-1px_0_0_var(--ds-rule)]',
+    content: '',
     title: 'text-ink',
   },
   raised: {
     row: 'border-rule',
-    margin: 'bg-margin text-ink-subtle lg:bg-transparent',
-    content: 'bg-raised',
+    band: '[--band-margin:var(--ds-margin)] [--band-content:var(--ds-raised)]',
+    margin: 'bg-margin text-ink-subtle lg:[box-shadow:inset_-1px_0_0_var(--ds-rule)]',
+    content: '',
     title: 'text-ink',
   },
   paper: {
     row: 'border-paper-rule',
+    band: '[--band-margin:var(--ds-paper-margin)] [--band-content:var(--ds-paper)]',
     margin: 'bg-paper-margin text-paper-ink-subtle lg:border-r lg:border-paper-rule',
-    content: 'bg-paper text-paper-ink',
+    content: 'text-paper-ink',
     title: 'text-paper-ink',
   },
   accent: {
     row: 'border-accent-deep',
+    band: '[--band-margin:var(--ds-accent-deep)] [--band-content:var(--ds-accent)]',
     margin: 'bg-accent-deep text-on-accent lg:border-r lg:border-accent-deep',
-    content: 'bg-accent text-on-accent',
+    content: 'text-on-accent',
     title: 'text-on-accent',
   },
 };
@@ -115,37 +140,45 @@ import RowMargin from './RowMargin.astro';
   {...rest}
   {id}
   aria-labelledby={headingId}
-  class:list={['border-b', marginAfter ? 'flex flex-col lg:flex-row' : 'lg:flex', t.row]}
+  class:list={['border-b', noMargin ? 'band-solid' : 'band-grounds', t.band, t.row]}
 >
-  {!noMargin && !marginAfter && (
-    <RowMargin
-      as={titleAs}
-      {title}
-      {eyebrow}
-      {headingId}
-      html={marginHtml}
-      visible={hasMargin}
-      after={false}
-      marginClass={t.margin}
-      {titleClass}
-    />
-  )}
-  <div class:list={['min-w-0 flex-1', !flush && 'px-6 py-8 lg:px-12 lg:py-12', t.content]}>
-    <div class:list={[measure === 'copy' && 'max-w-copy', className]}>
-      <slot />
+  <div
+    class:list={[
+      'mx-auto w-full max-w-page',
+      framed && 'row-rule',
+      marginAfter ? 'flex flex-col lg:flex-row' : 'lg:flex',
+    ]}
+  >
+    {!noMargin && !marginAfter && (
+      <RowMargin
+        as={titleAs}
+        {title}
+        {eyebrow}
+        {headingId}
+        html={marginHtml}
+        visible={hasMargin}
+        after={false}
+        marginClass={t.margin}
+        {titleClass}
+      />
+    )}
+    <div class:list={['min-w-0 flex-1', !flush && 'px-6 py-8 lg:px-12 lg:py-12', t.content]}>
+      <div class:list={[measure === 'copy' && 'max-w-copy', className]}>
+        <slot />
+      </div>
     </div>
+    {!noMargin && marginAfter && (
+      <RowMargin
+        as={titleAs}
+        {title}
+        {eyebrow}
+        {headingId}
+        html={marginHtml}
+        visible={hasMargin}
+        after={true}
+        marginClass={t.margin}
+        {titleClass}
+      />
+    )}
   </div>
-  {!noMargin && marginAfter && (
-    <RowMargin
-      as={titleAs}
-      {title}
-      {eyebrow}
-      {headingId}
-      html={marginHtml}
-      visible={hasMargin}
-      after={true}
-      marginClass={t.margin}
-      {titleClass}
-    />
-  )}
 </Wrapper>

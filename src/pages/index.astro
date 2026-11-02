@@ -72,11 +72,11 @@ const contactLinks = allLinks.filter((link) =>
     </div>
   </Row>
 
-  {links.length > 0 && <Row flush>
+  {links.length > 0 && <Row flush framed>
     <h2 slot="margin" class="text-label font-normal">You can find me</h2>
     <ul class="flex flex-col lg:grid lg:auto-cols-fr lg:grid-flow-col">
       {links.map((link) => <li
-        class="flex flex-col gap-1 border-b border-rule last:border-b-0 lg:border-r lg:border-b-0 lg:last:border-r-0"
+        class="flex flex-col gap-1 border-b border-rule lg:border-r lg:border-b-0 lg:last:border-r-0"
       >
         <ArrowLink
           href={link.data.url}
@@ -91,9 +91,9 @@ const contactLinks = allLinks.filter((link) =>
 
   <!-- "Method" principles are omitted until the owner supplies the copy (#50). -->
 
-  {projects.length > 0 && <Row title="Ideas, put to work." display id="projects" flush>
+  {projects.length > 0 && <Row title="Ideas, put to work." display id="projects" flush framed>
     {featured && <div
-      class="flex flex-col gap-4 border-b border-rule px-6 pt-8 pb-10 lg:px-12 lg:pt-12"
+      class="gutter-rule-below flex flex-col gap-4 border-b border-rule px-6 pt-8 pb-10 lg:px-12 lg:pt-12"
     >
       <h3 class="text-3xl font-black tracking-tight text-ink lg:text-4xl">
         {featured.data.title}
@@ -118,7 +118,7 @@ const contactLinks = allLinks.filter((link) =>
     </ul>}
   </Row>}
 
-  {newest && <Row tone="paper" title="Thinking out loud." display id="writing">
+  {newest && <Row tone="paper" title="Thinking out loud." display id="writing" framed>
     <div slot="margin" class="font-sans text-base tracking-[normal] normal-case">
       <a
         href="/posts/"
@@ -182,7 +182,7 @@ const contactLinks = allLinks.filter((link) =>
     </div>
   </Row>
 
-  {jobs.length > 0 && <Row title="What I've done over the years" id="experience">
+  {jobs.length > 0 && <Row title="What I've done over the years" id="experience" framed flush>
     <ul>
       {jobs.map((job) => (
         <JobRow entry={job} />

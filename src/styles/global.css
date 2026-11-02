@@ -188,7 +188,7 @@
  * set by the container (`max-w-copy`).
  */
 @utility prose-sheet {
-  --tw-prose-body: var(--ds-ink);
+  --tw-prose-body: var(--ds-ink-muted);
   --tw-prose-headings: var(--ds-ink);
   --tw-prose-lead: var(--ds-ink-muted);
   --tw-prose-links: var(--ds-accent);

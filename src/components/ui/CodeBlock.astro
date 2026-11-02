@@ -39,15 +39,3 @@ const label = language && language !== 'plaintext' ? language : 'code';
     aria-label={`${label} code, scrollable`}
   ><slot /></pre>
 </div>
-
-<script>
-  const update = () =>
-    document.querySelectorAll<HTMLElement>('[data-codeblock]').forEach((block) => {
-      const pre = block.querySelector('pre');
-      const cue = block.querySelector<HTMLElement>('[data-scroll-cue]');
-      if (!pre || !cue) return;
-      cue.classList.toggle('hidden', pre.scrollWidth <= pre.clientWidth);
-    });
-  update();
-  window.addEventListener('resize', update);
-</script>

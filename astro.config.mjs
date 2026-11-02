@@ -4,12 +4,14 @@ import icon from 'astro-icon';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import vercel from '@astrojs/vercel';
+import rehypeCodeBlock from './src/lib/rehype-code-block.mjs';
 
 const tailscaleDev = process.env.ASTRO_TAILSCALE === '1';
 
 export default defineConfig({
   site: 'https://cupofcraft.dev',
   markdown: {
+    rehypePlugins: [rehypeCodeBlock],
     shikiConfig: {
       transformers: [
         {

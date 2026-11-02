@@ -1,11 +1,13 @@
 ---
 /**
- * Year-range pagination (docs/design-system.md section 8). Shows the current
- * range ("Page 1 · 2026 — 2024") with Newer and Older links labelled by the
- * range they lead to. Renders nothing for a single page.
+ * Year-range pagination row (docs/design-system.md section 8). The margin cell
+ * shows "Page 1 of 2"; the content cell has Newer, the current range, the
+ * neighbouring range and Older. Below `lg` only Newer and Older stay as cells,
+ * with the current range in the margin band. Renders nothing for a single page.
  */
-import ArrowLink from './ArrowLink.astro';
+import Row from '@/components/layout/Row.astro';
 import type { PostArchivePage } from '@/lib/archive';
+import { ARROWS } from '@/lib/links';
 
 interface Props {
   pages: PostArchivePage[];
@@ -16,17 +18,65 @@ const { pages, current } = Astro.props;
 const page = pages[current - 1];
 const newer = pages[current - 2];
 const older = pages[current];
+const neighbour = older ?? newer;
+const edgeCell =
+  'flex h-14 flex-1 items-center justify-center text-sm font-semibold lg:h-auto lg:flex-none lg:px-8';
+const edgeLink =
+  'text-accent outline-offset-[-2px] outline-accent hover:bg-raised focus-visible:bg-raised focus-visible:outline-2';
+const edgeOff = 'text-ink-subtle opacity-40';
+const rangeCell =
+  'hidden flex-1 flex-col justify-center gap-1 border-r border-rule px-8 py-[22px] lg:flex';
+const rangeTitle = 'text-lg font-extrabold tracking-[-0.02em]';
+const pageLabel = 'font-mono text-label tracking-label uppercase';
 ---
 
-{pages.length > 1 && page && <nav
-  aria-label="Pagination"
-  class="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between"
->
-  <p class="font-mono text-label tracking-label text-ink-subtle uppercase">
-    Page {page.number} · {page.range}
-  </p>
-  <div class="flex flex-col lg:flex-row lg:gap-8">
-    {newer && <ArrowLink href={newer.href} direction="back"> Newer · {newer.range} </ArrowLink>}
-    {older && <ArrowLink href={older.href}>Older · {older.range}</ArrowLink>}
+{pages.length > 1 && page && <Row flush>
+  <div slot="margin" class="text-center lg:-my-5 lg:text-left">
+    <p class="max-lg:text-accent">Page {page.number} of {pages.length}</p>
+    <p
+      class="mt-1 font-sans text-lg font-extrabold tracking-[-0.02em] text-accent normal-case lg:hidden"
+    >
+      {page.range}
+    </p>
   </div>
-</nav>}
+  <nav aria-label="Pagination" class="flex lg:h-full lg:min-h-[92px]">
+    {newer ? (
+      <a href={newer.href} class:list={[edgeCell, edgeLink, 'border-r border-rule']}>
+        <span aria-hidden="true">{ARROWS.back}&nbsp;</span
+        >Newer<span class="sr-only"> · {newer.range}</span>
+      </a>
+    ) : (
+      <span class:list={[edgeCell, edgeOff, 'border-r border-rule']} aria-hidden="true">
+        {ARROWS.back}&nbsp;Newer
+      </span>
+    )}
+    {neighbour === newer && neighbour && <a
+      href={neighbour.href}
+      class:list={[rangeCell, 'text-ink hover:bg-raised']}
+    >
+      <span class:list={[pageLabel, 'text-ink-subtle']}>Page {neighbour.number}</span>
+      <span class={rangeTitle}>{neighbour.range}</span>
+    </a>}
+    <div aria-current="page" class:list={[rangeCell, 'bg-raised text-accent']}>
+      <span class={pageLabel}>Page {page.number} · Current</span>
+      <span class={rangeTitle}>{page.range}</span>
+    </div>
+    {neighbour === older && neighbour && <a
+      href={neighbour.href}
+      class:list={[rangeCell, 'text-ink hover:bg-raised']}
+    >
+      <span class:list={[pageLabel, 'text-ink-subtle']}>Page {neighbour.number}</span>
+      <span class={rangeTitle}>{neighbour.range}</span>
+    </a>}
+    {older ? (
+      <a href={older.href} class:list={[edgeCell, edgeLink]}>
+        Older<span class="sr-only"> · {older.range}</span
+        ><span aria-hidden="true">&nbsp;{ARROWS.internal}</span>
+      </a>
+    ) : (
+      <span class:list={[edgeCell, edgeOff]} aria-hidden="true">
+        Older&nbsp;{ARROWS.internal}
+      </span>
+    )}
+  </nav>
+</Row>}

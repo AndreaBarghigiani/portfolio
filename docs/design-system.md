@@ -289,7 +289,7 @@ On the series and notes archives each item stands for a whole collection, so its
 
 ### Pagination
 
-Archives are grouped by year, at most three years per page, regardless of post count. The control shows the current range (“Page 1 · 2026 — 2024”), the next range, and Newer / Older links. A single-page collection has no pagination row.
+Archives are grouped by year, at most three years per page, regardless of post count. The row shows “Page 1 of 2” in the margin cell, then Newer, the current range, the neighbouring range, and Older as cells; on mobile the current range joins the margin band and only Newer and Older stay as cells. A link with nowhere to go is shown dimmed and not linked. A single-page collection has no pagination row.
 
 ### Arrow convention
 

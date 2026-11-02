@@ -28,19 +28,38 @@ const items = [
 ---
 
 <Row>
-  {current && <nav slot="margin" aria-label="Archives">
-    <ul class="flex flex-col gap-1">
-      {items.map((item) => <li>
+  {current && <nav
+    slot="margin"
+    aria-label="Archives"
+    class="-mx-6 -my-4 font-sans tracking-[normal] normal-case lg:mx-0 lg:mt-auto lg:mb-0"
+  >
+    <p
+      class="mb-4 hidden font-mono text-label tracking-label text-ink-subtle uppercase lg:block"
+      aria-hidden="true"
+    >
+      Writing
+    </p>
+    <ul class="flex lg:flex-col lg:gap-3">
+      {items.map((item) => <li
+        class="min-w-0 flex-1 border-r border-rule last:border-r-0 lg:flex-none lg:border-r-0"
+      >
         <a
           href={item.href}
           aria-current={item.key === current ? 'page' : undefined}
           class:list={[
-            'flex min-h-12 items-center gap-3 hover:text-accent-hover',
-            item.key === current ? 'font-bold text-accent' : 'text-ink-muted',
+            'flex min-h-12 items-center justify-center gap-2 text-sm hover:text-accent-hover lg:min-h-0 lg:justify-between lg:text-base lg:leading-[22px]',
+            item.key === current ? 'font-bold text-accent' : 'text-ink',
           ]}
         >
           {item.label}
-          <span class="text-ink-subtle">{String(item.count).padStart(2, '0')}</span>
+          <span
+            class:list={[
+              'font-mono text-label font-normal',
+              item.key === current ? 'text-accent' : 'text-ink-subtle',
+            ]}
+          >
+            {item.count}
+          </span>
         </a>
       </li>)}
     </ul>

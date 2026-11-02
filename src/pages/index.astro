@@ -43,7 +43,7 @@ const contactLinks = allLinks.filter((link) =>
 <BaseLayout seo={home.data.seo}>
   <!-- Hero: text first in the DOM; the portrait follows on mobile and sits in the margin cell on desktop. -->
   <Row marginAfter>
-    <div slot="margin" class="tracking-normal flex flex-col gap-4 normal-case">
+    <div slot="margin" class="flex flex-col gap-4 tracking-[normal] normal-case">
       <Figure
         src={author.avatar}
         alt={`Portrait of ${author.name}`}
@@ -56,11 +56,11 @@ const contactLinks = allLinks.filter((link) =>
     </div>
     <h1 class="@container">
       <span
-        class="block text-5xl font-light text-ink lg:text-[clamp(56px,10.96cqi,96px)] lg:tracking-display"
+        class="block text-2xl font-light tracking-display text-ink lg:text-[clamp(56px,10.96cqi,96px)] lg:leading-[1.04]"
         >A little curiosity.</span
       >
       <span
-        class="block text-5xl font-black text-accent lg:text-[clamp(90px,17.83cqi,156px)] lg:leading-none lg:tracking-display"
+        class="block text-4xl font-black tracking-display text-accent lg:text-[clamp(90px,17.83cqi,156px)] lg:leading-none"
       >
         A lot of craft.
       </span>
@@ -111,7 +111,7 @@ const contactLinks = allLinks.filter((link) =>
         <EntryRow
           href={`/projects/${project.id}/`}
           title={project.data.title}
-          meta={String(index + 1).padStart(2, '0')}
+          meta={`P-${String(index + (featured ? 2 : 1)).padStart(2, '0')}`}
           description={project.data.summary}
         />
       ))}
@@ -133,13 +133,13 @@ const contactLinks = allLinks.filter((link) =>
         class="group block border-b border-paper-rule pb-8 outline-offset-4 focus-visible:outline-2 focus-visible:outline-paper-ink lg:border-b-0 lg:pb-0"
       >
         <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <span class="font-mono text-xs text-paper-ink-subtle"
-            >{formatDate(newest.data.date)}</span
-          >
+          <span class="font-mono text-label tracking-label text-paper-ink-subtle">
+            {formatDate(newest.data.date)}
+          </span>
           <TopicTags topics={newest.data.tags} tone="kraft" inLink />
         </div>
         <span
-          class="mt-4 block text-3xl font-black tracking-tight wrap-break-word text-paper-ink group-hover:underline lg:text-4xl"
+          class="mt-4 block text-xl font-extrabold tracking-[-0.025em] wrap-break-word text-paper-ink group-hover:underline lg:text-2xl lg:tracking-[-0.03em]"
         >
           {newest.data.title}
         </span>
@@ -156,13 +156,13 @@ const contactLinks = allLinks.filter((link) =>
             class="group block min-h-12 outline-offset-4 focus-visible:outline-2 focus-visible:outline-paper-ink"
           >
             <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <span class="font-mono text-xs text-paper-ink-subtle">
+              <span class="font-mono text-label tracking-label text-paper-ink-subtle">
                 {formatDate(post.data.date)}
               </span>
               <TopicTags topics={post.data.tags} tone="kraft" inLink />
             </div>
             <span
-              class="mt-2 block text-xl font-semibold wrap-break-word text-paper-ink group-hover:underline"
+              class="mt-2 block text-xl font-extrabold tracking-[-0.025em] wrap-break-word text-paper-ink group-hover:underline"
             >
               {post.data.title}
             </span>
@@ -191,7 +191,7 @@ const contactLinks = allLinks.filter((link) =>
   </Row>}
 
   <Row tone="accent">
-    <h2 class="max-w-copy text-4xl font-black tracking-tight text-on-accent lg:text-5xl">
+    <h2 class="text-2xl font-black tracking-tight text-on-accent lg:text-5xl">
       Let's connect and push the boundaries of what's possible
     </h2>
     {contactLinks.length > 0 && <ul class="mt-8 flex flex-col gap-4 lg:flex-row">
@@ -200,7 +200,7 @@ const contactLinks = allLinks.filter((link) =>
           href={link.data.url}
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex h-14 w-full items-center justify-center gap-2 border-2 border-on-accent px-8 text-sm font-semibold text-on-accent hover:bg-on-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-on-accent lg:w-auto"
+          class="inline-flex h-14 w-full items-center justify-center gap-2 bg-on-accent px-7 text-base font-bold text-ink hover:bg-margin focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-on-accent lg:w-auto"
         >
           {link.data.label === 'Twitter/X' ? `${link.data.name} on X` : link.data.label}
           <span aria-hidden="true">{ARROWS.external}</span>

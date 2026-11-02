@@ -10,7 +10,7 @@ import EntryRow from '@/components/ui/EntryRow.astro';
 import Pagination from '@/components/ui/Pagination.astro';
 import ShowMore from '@/components/ui/ShowMore.astro';
 import type { PostArchivePage } from '@/lib/archive';
-import { formatDate, getPostSlugFromId } from '@/lib/utils';
+import { formatDayMonth, getPostSlugFromId } from '@/lib/utils';
 
 interface Props {
   pages: PostArchivePage[];
@@ -40,6 +40,7 @@ const remaining = Math.max(total - VISIBLE, 0);
   const allExtra = section.entries.every((entry) => entry.more);
   return <Row
     flush
+    year
     title={String(section.year)}
     id={`year-${section.year}`}
     data-more={allExtra ? '' : undefined}
@@ -53,7 +54,7 @@ const remaining = Math.max(total - VISIBLE, 0);
         <EntryRow
           href={`/posts/${getPostSlugFromId(post.id)}/`}
           title={post.data.title}
-          meta={formatDate(post.data.date)}
+          meta={formatDayMonth(post.data.date)}
           description={post.data.seo.description}
           status={post.id === latestId ? 'LATEST' : undefined}
           topics={post.data.tags}
@@ -65,9 +66,8 @@ const remaining = Math.max(total - VISIBLE, 0);
   </Row>;
 })}
 
-{(remaining > 0 || pages.length > 1) && <Row flush>
-  {remaining > 0 && <div class="px-6 py-2 lg:px-12">
-    <ShowMore {group} count={remaining} noun="posts" singularNoun="post" />
-  </div>}
-  <div class="px-6 py-6 lg:px-12"><Pagination {pages} {current} /></div>
+{remaining > 0 && <Row>
+  <ShowMore {group} count={remaining} noun="posts" singularNoun="post" />
 </Row>}
+
+<Pagination {pages} {current} />

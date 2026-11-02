@@ -36,6 +36,10 @@ interface Props extends Omit<HTMLAttributes<'div'>, 'title' | 'class'> {
   marginAfter?: boolean;
   /** Slogan-sized margin title (56px black) instead of the default section title. */
   display?: boolean;
+  /** Mono label above the margin title, such as a module number and lesson count. */
+  eyebrow?: string;
+  /** Archive year heading (72px black, section 4) instead of the default section title. */
+  year?: boolean;
   measure?: 'full' | 'copy';
   id?: string;
   class?: string;
@@ -49,6 +53,8 @@ const {
   flush = false,
   marginAfter = false,
   display = false,
+  year = false,
+  eyebrow,
   measure = 'full',
   id,
   class: className,
@@ -92,9 +98,15 @@ const tones: Record<Tone, { row: string; margin: string; content: string; title:
 };
 
 const t = tones[tone];
-const titleClass = display
-  ? `${t.title} text-4xl font-black tracking-tight`
-  : `${t.title} text-xl font-semibold`;
+const titleClass = [
+  t.title,
+  'text-2xl font-black tracking-tight',
+  display && 'lg:text-4xl',
+  year && 'lg:text-(length:--year-title-size) lg:leading-[72px] lg:tracking-display',
+  !display && !year && 'lg:text-3xl',
+]
+  .filter(Boolean)
+  .join(' ');
 const Wrapper = title ? 'section' : 'div';
 import RowMargin from './RowMargin.astro';
 ---
@@ -109,6 +121,7 @@ import RowMargin from './RowMargin.astro';
     <RowMargin
       as={titleAs}
       {title}
+      {eyebrow}
       {headingId}
       html={marginHtml}
       visible={hasMargin}
@@ -126,6 +139,7 @@ import RowMargin from './RowMargin.astro';
     <RowMargin
       as={titleAs}
       {title}
+      {eyebrow}
       {headingId}
       html={marginHtml}
       visible={hasMargin}

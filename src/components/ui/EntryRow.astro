@@ -12,6 +12,8 @@
  *   (for example a PR number).
  * - `topics` adds plain topic chips below the description.
  * - `more` and `group` mark rows that the show-more control reveals.
+ * - `variant`: `log` is the changelog's smaller title with a separate accent
+ *   column for `detail` (section 4).
  * - The row link owns the cell's horizontal inset so its ground and hairline
  *   span the content cell; place it in a `flush` Row.
  */
@@ -30,6 +32,7 @@ interface Props {
   external?: boolean;
   more?: boolean;
   group?: string;
+  variant?: 'default' | 'log';
 }
 
 const {
@@ -43,6 +46,7 @@ const {
   external = false,
   more,
   group,
+  variant = 'default',
 } = Astro.props;
 ---
 
@@ -56,29 +60,50 @@ const {
     {href}
     target={external ? '_blank' : undefined}
     rel={external ? 'noopener noreferrer' : undefined}
-    class="group grid min-h-12 grid-cols-[minmax(0,1fr)_3rem] items-baseline gap-x-4 px-6 py-6 outline-offset-[-2px] outline-accent hover:bg-raised focus-visible:bg-raised focus-visible:outline-2 lg:grid-cols-[8rem_minmax(0,1fr)_3rem] lg:gap-x-6 lg:px-12"
+    class:list={[
+      variant === 'log'
+        ? 'lg:grid-cols-[72px_48px_minmax(0,1fr)_3rem] lg:gap-x-7'
+        : 'lg:grid-cols-[8rem_minmax(0,1fr)_3rem]',
+      'group grid min-h-12 grid-cols-[minmax(0,1fr)_3rem] items-baseline gap-x-4 px-6 py-6 outline-offset-[-2px] outline-accent hover:bg-raised focus-visible:bg-raised focus-visible:outline-2 lg:gap-x-6 lg:px-12',
+    ]}
   >
-    <span
-      class="font-mono text-xs text-ink-subtle group-hover:text-accent group-focus-visible:text-accent"
-    >
-      {meta}
+    <span class="flex gap-3 lg:contents">
+      <span
+        class="font-mono text-xs text-ink-subtle group-hover:text-accent group-focus-visible:text-accent"
+      >
+        {meta}
+      </span>
+      {detail && <span class="font-mono text-xs font-medium text-accent">{detail}</span>}
     </span>
-    <div class="col-start-1 flex flex-col gap-2 lg:col-start-2">
+    <div
+      class:list={[
+        'col-start-1 flex flex-col gap-2',
+        variant === 'log' ? 'lg:col-start-3' : 'lg:col-start-2',
+      ]}
+    >
       <span class="flex flex-wrap items-center gap-x-3 gap-y-2">
         <span
-          class="min-w-0 text-xl font-semibold break-words text-ink group-hover:text-accent group-focus-visible:text-accent lg:text-2xl"
+          class:list={[
+            'min-w-0 break-words text-ink group-hover:text-accent group-focus-visible:text-accent',
+            variant === 'log' &&
+              'text-lg font-extrabold tracking-[-0.02em] lg:text-[26px] lg:leading-8 lg:tracking-[-0.025em]',
+            variant === 'default' &&
+              'text-xl font-extrabold tracking-[-0.025em] lg:text-2xl lg:tracking-[-0.03em]',
+          ]}
         >
           {title}
         </span>
         {status && <Tag kind="status" {status} />}
-        {detail && <span class="font-mono text-xs text-ink-subtle">{detail}</span>}
       </span>
-      {description && <span class="text-sm text-ink-muted">{description}</span>}
+      {description && <span class="text-base text-ink-muted">{description}</span>}
       <TopicTags {topics} inLink class="mt-1" />
     </div>
     <span
       aria-hidden="true"
-      class="col-start-2 row-span-2 row-start-1 self-center text-center text-lg text-accent lg:col-start-3 lg:row-span-1"
+      class:list={[
+        'col-start-2 row-span-2 row-start-1 self-center text-center text-lg text-accent lg:row-span-1',
+        variant === 'log' ? 'lg:col-start-4' : 'lg:col-start-3',
+      ]}
     >
       {external ? ARROWS.external : ARROWS.internal}
     </span>

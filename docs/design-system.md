@@ -109,24 +109,32 @@ Weights in use: 300 (light), 400, 600, 700, 800, 900 (black).
 | `--text-sm`      |   16px | Navigation, buttons, compact text.                  |
 | `--text-base`    |   18px | Body, descriptions.                                 |
 | `--text-lg`      |   22px | Lead text, small titles, company names.             |
-| `--text-xl`      |   28px | Entry titles, annotation size.                      |
-| `--text-2xl`     |   34px | Row titles; mobile section titles.                  |
-| `--text-3xl`     |   44px | Section titles in the margin; large row titles.     |
-| `--text-4xl`     |   56px | Section titles, About statement.                    |
-| `--text-5xl`     |   64px | Principle numerals; mobile hero emphasis.           |
-| `--text-6xl`     |   96px | Hero light line; CTA headline.                      |
+| `--text-xl`      |   28px | Mobile entry titles, compact titles, annotation size. |
+| `--text-2xl`     |   34px | Entry titles; mobile section titles; mobile hero light line. |
+| `--text-3xl`     |   44px | Section titles in the margin.                       |
+| `--text-4xl`     |   56px | Section titles, About statement; mobile hero emphasis. |
+| `--text-5xl`     |   64px | Principle numerals; contact headline.               |
+| `--text-6xl`     |   96px | Page titles; hero light line.         |
 | `--text-display` |  156px | Hero emphasis line only.                            |
 
-Page titles on archive and detail pages use 112px (a one-off step above the scale) with black weight; treat it as a page-title style, not a general size.
+Page titles on archive and detail pages use `--text-6xl` with a 92px line height, black weight, and display tracking, the same on every page type. On mobile they use `--text-3xl` with a 46px line height (owner decision, 2 November 2026; #70).
+
+Archive year headings are the one exception to the 44px margin section title: 72/72px, black weight, display tracking, a one-off step because four digits fit the margin cell. On mobile they use `--text-2xl` with a 38px line height, black weight, and `--tracking-tight` (owner decision, 2 November 2026; #70).
+
+Entry titles share one style on every list a visitor browses by title: the posts, notes, series, and projects archives, course lessons, series entries, and the home lead post. They use `--text-2xl` with a 38px line height, weight 800, and −0.03em, with 18/28px descriptions, so they sit clearly below a 44px section title in the margin. On mobile they are `--text-xl` with a 34px line height, weight 800, and about −0.025em (owner decision, 2 November 2026; #70).
+
+The changelog is the exception, because it is a log of long pull request titles: 26/32px, weight 800, about −0.025em, and on mobile `--text-lg` with a 28px line height, weight 800, and −0.02em. Compact titles beside a lead item or in narrow cells, such as the other home writing rows and “keep reading”, keep their own smaller size.
+
+The mobile hero is two lines at 390px: a light line at 34/38px over a black emphasis line at 56/60px, both with display tracking. At 64px the emphasis line is wider than the 342px column (owner decision, 2 November 2026; #70).
 
 ### Rules
 
-- **Display tracking** `--tracking-display` (−0.05em) at 92px and above; `--tracking-tight` (−0.04em) for 44–64px; about −0.025em for 22–34px.
+- **Display tracking** `--tracking-display` (−0.05em) at 72px and above; `--tracking-tight` (−0.04em) for 44–64px; about −0.025em for 22–34px.
 - **Labels** are mono, uppercase, 12px, `--tracking-label` (+0.14em). Never apply negative tracking to a label.
 - **Body leading** is about 160% (28–34px on 18–20px text). Reading text is 20/34px on desktop and 18/30px on mobile.
 - **Reading measure** is 720px (`--container-copy`).
 - **Hierarchy comes from size, weight, and spacing**, not from reducing opacity.
-- **Standfirsts** (the line under a page title) are light 28px in the accent on desktop, 22px on mobile.
+- **Standfirsts** (the line under a page title) are light 28px in the accent on desktop, 22px on mobile. On desktop they sit 32px below the title, with a 40px line height and −0.01em tracking, and fill the content cell rather than the reading measure (owner decision, 2 November 2026; #70).
 
 ## 5. Layout, rhythm, and surfaces
 
@@ -144,7 +152,7 @@ Cells use 48px padding (`--spacing-48`). Rows are separated by 1px `--color-rule
 - **Titled sections** (projects, writing, experience, archive years): the title sits in the margin cell.
 - **Untitled sections** (About, contact): the margin cell stays empty. The content carries its own title.
 - **Labels:** a small mono label appears only where it clarifies a section (“You can find me”, “Method”, “On this page”). There is no section numbering.
-- **Tonal play is deliberate and small:** margin one step darker than surface; one raised band (About); one kraft band (writing, “keep reading”, “more projects”, “next up”); one accent band (contact).
+- **Tonal play is deliberate and small:** margin one step darker than surface; one raised band (About); one kraft band (writing, “keep reading”, “more projects”, “more notes”, “next up”); one accent band (contact).
 
 ### Spacing and shape
 
@@ -171,7 +179,7 @@ Below 1024px the desktop margin column must not be shown. The widths between 390
 
 **Established.** The header is a four-cell title block: the wordmark in the margin cell, a `SHEET` cell, a `DRAWN BY` cell, and the navigation (Home, Writing, Changelog) in the last cell. The current page is accent and bold. Writing opens a submenu (see below).
 
-The `SHEET` cell carries the page code. The numbering in the designs is: 01 Home, 02 Article, 03 Writing, 04 Notes, 05 Series, 06 Series entry, 07 Changelog, 08 Course notes, 09 Lesson, 10 Project. The numbering is kept in the build (owner decision); it is derived from the route (`src/lib/sheet.ts`) and not hand-maintained.
+The `SHEET` cell carries the page code and name, such as `03 / WRITING`. The numbering in the designs is: 01 Home, 02 Article, 03 Writing, 04 Notes, 05 Series, 06 Series entry, 07 Changelog, 08 Course notes, 09 Lesson, 10 Project, 11 Projects. The numbering is kept in the build (owner decision); it is derived from the route (`src/lib/sheet.ts`) and not hand-maintained.
 
 On mobile the header is two rows: wordmark and sheet code, then a three-cell navigation strip (48px tall).
 
@@ -189,18 +197,13 @@ On mobile the header is two rows: wordmark and sheet code, then a three-cell nav
 
 ### Footer
 
-**Established.** A margin cell with the wordmark and copyright, a link cell (Writing, Notes, Changelog), and a right cell. The right cell differs by page type:
-
-| Page type                                                          | Right cell                                 |
-| ------------------------------------------------------------------ | ------------------------------------------ |
-| Home and archives                                                  | Handwritten “back to top ↑”.               |
-| Detail pages (article, lesson, course, series entry, project)      | “← Back to {archive}” (plain Figtree 16px). |
+**Established.** A margin cell with the wordmark and copyright, a link cell (Writing, Notes, Changelog), and a right cell. On home and archives the right cell holds the handwritten “back to top ↑”. On detail pages it stays empty, because the reading bar just above already has “back to top” (owner decision, 2 November 2026; #70).
 
 On short pages the footer sits at the bottom of the viewport, and the margin column runs the full page height. Draw the column once at layout level, not per row, so short pages do not show a gap.
 
 ### Reading bar
 
-**Requirement.** Detail pages only. A slim bar fixed to the bottom of the viewport, 56px on desktop and 48px on mobile, with a 2px progress line above it. It shows the current section, reading progress, and the handwritten “back to top ↑”. It does not repeat the “← Back to …” link, which appears once in the page head and once at the end of the footer. The bar hides when the footer enters the viewport. Archives have no bar.
+**Requirement.** Detail pages only. A slim bar fixed to the bottom of the viewport, 56px on desktop and 48px on mobile, with a 2px progress line above it. It shows the current section, reading progress, and the handwritten “back to top ↑”. It does not repeat the “← Back to …” link, which appears once in the page head. The bar hides when the footer enters the viewport. Archives have no bar.
 
 “Back to top” keeps its real text for assistive technology even though it is set in the annotation font.
 
@@ -208,9 +211,8 @@ On short pages the footer sits at the bottom of the viewport, and the margin col
 
 Each link appears once per place:
 
-- The page head carries “← Back to {archive}” (detail pages only).
+- The page head carries “← Back to {archive}” (detail pages only). A lesson has none: its “Course” fact is the back link, with the arrow before the course name (owner decision, 2 November 2026; #70).
 - The reading bar carries “back to top”.
-- The detail-page footer ends with “← Back to {archive}”.
 - Archive and home footers carry “back to top”.
 
 ## 8. Parts
@@ -263,6 +265,8 @@ Archive, series, course, lesson, and changelog entries use one row family. A row
 
 The designs show one row in hover state per page as an example. A row is not “selected” by default.
 
+On the series and notes archives each item stands for a whole collection, so its index (and, for a series, the entry count) moves to the margin cell instead of the row. Its title is the same entry title as every other row (section 4).
+
 ### Show more
 
 **Established.** Collections show a few items, then a button reveals the rest of that page in **one click**, with a count (for example “13 more on this page”).
@@ -279,7 +283,7 @@ The designs show one row in hover state per page as an example. A row is not “
 
 ### Pagination
 
-Archives are grouped by year, at most three years per page, regardless of post count. The control shows the current range (“Page 1 · 2026 — 2024”), the next range, and Newer / Older links. A single-page collection has no pagination row.
+Archives are grouped by year, at most three years per page, regardless of post count. The row shows “Page 1 of 2” in the margin cell, then Newer, the current range, the neighbouring range, and Older as cells; on mobile the current range joins the margin band and only Newer and Older stay as cells. A link with nowhere to go is shown dimmed and not linked. A single-page collection has no pagination row.
 
 ### Arrow convention
 
@@ -296,7 +300,7 @@ The glyph is never the only signal. An external link also needs an accessible na
 - **Code block:** margin-tone ground, hairline border, mono header (filename or language), mono body. Horizontal scrolling on mobile is signalled by a “scrolls →” label.
 - **Pull quote:** a full-width raised band, light 56px (34px on mobile) with the key phrase in black accent.
 - **Kraft band:** a section on `--color-paper` with its own margin tone, used for writing and for “keep reading”, “next up”, and “more projects”.
-- **Facts:** small mono label/value pairs in the margin cell (published, reading time, instructor, source, entries).
+- **Facts:** small mono label/value pairs in the margin cell (published, reading time, instructor, source, entries). Reading time is derived from the article's word count at 200 words a minute, never set by hand.
 
 ## 9. Page patterns
 
@@ -312,7 +316,7 @@ Title block; head with a Posts / Series / Notes sub-nav in the margin and the pa
 
 ### Detail pages
 
-Title block; head (back link and facts in the margin, title and standfirst in the content cell); body in a 720px reading column; a closing “keep reading” kraft band; footer. The margin carries the table of contents where one applies (“On this page”), or the module’s lesson list on a lesson.
+Title block; head (back link and facts in the margin, title and standfirst in the content cell); body in a 720px reading column; a closing kraft band (“keep reading”, “more notes”, and so on) where neighbouring content exists, so a course closes with its other courses and a lone series has none (owner decision, 2 November 2026; #70). The arrow sits inline with each title: after it, or before it for an item earlier in a sequence; footer. The margin carries the table of contents where one applies (“On this page”), or the module’s lesson list on a lesson.
 
 | Type          | Specifics                                                                                              |
 | ------------- | ------------------------------------------------------------------------------------------------------ |

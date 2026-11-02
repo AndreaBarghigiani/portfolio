@@ -64,8 +64,10 @@ const otherCourses = (await getCollection('notes')).filter((course) => course.id
       />
     </DetailHead>
 
-    <Row tone="raised" measure="copy">
-      <div class="prose prose-sheet">
+    <Row tone="raised">
+      <div
+        class="prose prose-sheet lg:columns-2 lg:gap-16 [&_h2]:mt-0 [&_h2]:mb-3.5 [&_h2]:text-[26px] [&_h2]:leading-8 [&_h2]:font-extrabold [&_h2:not(:first-child)]:max-lg:mt-8 lg:[&_h2:nth-of-type(2)]:break-before-column [&_p]:text-base"
+      >
         <Content components={{ pre: CodeBlock }} />
       </div>
     </Row>
@@ -75,18 +77,25 @@ const otherCourses = (await getCollection('notes')).filter((course) => course.id
         <p class="text-sm text-ink-muted">No lessons published for this course yet.</p>
       </Row>
     ) : (
-      groupedLessons.map((group) => {
+      groupedLessons.map((group, moduleIndex) => {
         const remaining = Math.max(group.lessons.length - VISIBLE, 0);
-        return <Row title={group.moduleName} id={`module-${group.moduleKey}`} flush>
-          {group.moduleDescription && <p
-            class:list={[group.moduleUrl && 'mb-4', 'px-6 py-6 text-sm text-ink-muted lg:px-12']}
+        const lessonCount = group.lessons.length;
+        return <Row
+          title={group.moduleName}
+          eyebrow={`Module ${String(moduleIndex + 1).padStart(2, '0')} · ${lessonCount} ${lessonCount === 1 ? 'lesson' : 'lessons'}`}
+          id={`module-${group.moduleKey}`}
+          flush
+        >
+          {(group.moduleDescription || group.moduleUrl) && <div
+            slot="margin"
+            class="flex flex-col gap-3 font-sans text-sm leading-[25px] tracking-[normal] text-ink-muted normal-case"
           >
-            {group.moduleDescription}
-          </p>}
-          {group.moduleUrl && <p class="px-6 py-3 text-sm lg:px-12">
-            <ArrowLink href={group.moduleUrl}>Visit module page</ArrowLink>
-          </p>}
-          <ul class:list={[group.moduleDescription || group.moduleUrl ? 'pt-4' : '']}>
+            {group.moduleDescription && <p>{group.moduleDescription}</p>}
+            {group.moduleUrl && <p>
+              <ArrowLink href={group.moduleUrl}>Visit module page</ArrowLink>
+            </p>}
+          </div>}
+          <ul>
             {group.lessons.map((lesson, index) => (
               <EntryRow
                 href={lessonHref(entrySlug, lesson)}

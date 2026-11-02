@@ -1,12 +1,14 @@
 ---
 import Row from '@/components/layout/Row.astro';
 import ArchiveHead from '@/components/partials/ArchiveHead.astro';
-import EntryRow from '@/components/ui/EntryRow.astro';
+import CollectionRow from '@/components/ui/CollectionRow.astro';
 import ShowMore from '@/components/ui/ShowMore.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 const series = await getCollection('series');
+const posts = await getCollection('posts');
+const entryCount = (id: string) => posts.filter((post) => post.data.series?.ref.id === id).length;
 const VISIBLE = 3;
 const remaining = Math.max(series.length - VISIBLE, 0);
 ---
@@ -22,22 +24,23 @@ const remaining = Math.max(series.length - VISIBLE, 0);
       <p>No posts found</p>
     </Row>
   ) : (
-    <Row flush>
+    <>
       <ul>
         {series.map((single, index) => (
-          <EntryRow
+          <CollectionRow
             href={`/series/${single.id}/`}
             title={single.data.title}
-            meta={String(index + 1).padStart(2, '0')}
-            description={single.data.seo.description}
+            summary={single.data.seo.description}
+            index={`S-${String(index + 1).padStart(2, '0')}`}
+            detail={`${entryCount(single.id)} ${entryCount(single.id) === 1 ? 'entry' : 'entries'}`}
             more={index >= VISIBLE}
             group="series"
           />
         ))}
       </ul>
-      {remaining > 0 && <div class="px-6 lg:px-12">
+      {remaining > 0 && <Row>
         <ShowMore group="series" count={remaining} noun="series" singularNoun="series" />
-      </div>}
-    </Row>
+      </Row>}
+    </>
   )}
 </BaseLayout>

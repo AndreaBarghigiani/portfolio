@@ -55,27 +55,28 @@ defined, so the default Tailwind sizes and tracking values no longer exist.
 | `--text-label`   | 0.75rem (12px)  | 1rem (16px)     |
 | `--text-xs`      | 0.875rem (14px) | 1.25rem (20px)  |
 | `--text-sm`      | 1rem (16px)     | 1.5rem (24px)   |
-| `--text-base`    | 1.125rem (18px) | 1.8rem (28.8px) |
+| `--text-base`    | 1.125rem (18px) | 1.75rem (28px)  |
 | `--text-lg`      | 1.375rem (22px) | 1.75rem (28px)  |
 | `--text-xl`      | 1.75rem (28px)  | 2.125rem (34px) |
-| `--text-2xl`     | 2.125rem (34px) | 2.5rem (40px)   |
-| `--text-3xl`     | 2.75rem (44px)  | 3rem (48px)     |
+| `--text-2xl`     | 2.125rem (34px) | 2.375rem (38px) |
+| `--text-3xl`     | 2.75rem (44px)  | 2.875rem (46px) |
 | `--text-4xl`     | 3.5rem (56px)   | 3.75rem (60px)  |
 | `--text-5xl`     | 4rem (64px)     | 4.25rem (68px)  |
-| `--text-6xl`     | 6rem (96px)     | 6.25rem (100px) |
+| `--text-6xl`     | 6rem (96px)     | 5.75rem (92px)  |
 | `--text-display` | 9.75rem (156px) | 9.75rem (156px) |
 
 Line heights for `base` (160%) and the display sizes are the values chosen
 for this implementation; the design system gives only the body ratio.
 
-Page titles (112px, black weight) are not in the scale. Use the plain
-property `--page-title-size: 112px` on `:root`.
+Page titles use `--text-6xl` at black weight. Archive year headings (72px, black
+weight) are not in the scale. Use the plain property `--year-title-size: 72px`
+on `:root`.
 
 ## Tracking
 
 | Token              | Value   | Use                                  |
 | ------------------ | ------- | ------------------------------------ |
-| `--tracking-display` | -0.05em | Display sizes, 92px and above        |
+| `--tracking-display` | -0.05em | Display sizes, 72px and above        |
 | `--tracking-tight`   | -0.04em | 44 to 64px                           |
 | `--tracking-label`   | 0.14em  | Uppercase mono labels                |
 

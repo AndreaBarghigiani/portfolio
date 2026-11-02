@@ -16,8 +16,8 @@ const current = isCurrent(pathname, href);
     {href}
     aria-current={current ? 'page' : undefined}
     class:list={[
-      'flex min-h-12 min-w-0 flex-1 items-center justify-center px-6 text-sm transition-colors hover:text-accent-hover',
-      current ? 'text-accent' : 'text-ink-muted',
+      'flex min-h-12 min-w-0 flex-1 items-center justify-center px-6 text-sm transition-colors hover:text-accent-hover lg:px-[18px]',
+      current ? 'text-accent' : 'text-ink',
       'max-[359px]:px-2',
       'max-lg:border-l max-lg:border-rule max-lg:first:border-l-0',
       current && 'font-bold',

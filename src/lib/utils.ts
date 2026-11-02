@@ -1,16 +1,30 @@
 import type { CollectionEntry } from 'astro:content';
 import { DEFAULT_CONFIGURATION } from './constants';
 
-export const formatDate = (date: Date) => {
-  const formatter = new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    timeZone: 'UTC', // Default to UTC to prevent timezone issues
-  });
+const dateParts = (date: Date) => ({
+  day: String(date.getUTCDate()).padStart(2, '0'),
+  month: date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }).toUpperCase(),
+  year: date.getUTCFullYear(),
+});
 
-  // Ensure we're parsing the date correctly
-  return formatter.format(new Date(date));
+/** Full mono date as drawn in the design, for example "08 MAR 2026". */
+export const formatDate = (date: Date) => {
+  const { day, month, year } = dateParts(date);
+  return `${day} ${month} ${year}`;
+};
+
+/** Date inside a year group, where the margin already shows the year: "08 MAR". */
+export const formatDayMonth = (date: Date) => {
+  const { day, month } = dateParts(date);
+  return `${day} ${month}`;
+};
+
+const WORDS_PER_MINUTE = 200;
+
+/** Reading time derived from the source text, for example "7 MIN". Omitted when there is no text. */
+export const formatReadingTime = (body?: string) => {
+  const words = body?.trim().split(/\s+/).filter(Boolean).length ?? 0;
+  return words > 0 ? `${Math.ceil(words / WORDS_PER_MINUTE)} MIN` : undefined;
 };
 
 export const generateAbsoluteUrl = (path: string) => DEFAULT_CONFIGURATION.baseUrl.concat(path);

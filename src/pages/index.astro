@@ -43,7 +43,7 @@ const contactLinks = allLinks.filter((link) =>
 <BaseLayout seo={home.data.seo}>
   <!-- Hero: text first in the DOM; the portrait follows on mobile and sits in the margin cell on desktop. -->
   <Row marginAfter>
-    <div slot="margin" class="tracking-normal flex flex-col gap-4 normal-case">
+    <div slot="margin" class="flex flex-col gap-4 tracking-[normal] normal-case">
       <Figure
         src={author.avatar}
         alt={`Portrait of ${author.name}`}

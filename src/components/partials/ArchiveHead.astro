@@ -45,12 +45,12 @@ const items = [
       </li>)}
     </ul>
   </nav>}
-  <h1
-    class="text-5xl font-black tracking-display text-ink lg:text-(length:--page-title-size) lg:leading-none"
-  >
+  <h1 class="text-3xl font-black tracking-display [overflow-wrap:anywhere] text-ink lg:text-6xl">
     {title}
   </h1>
-  <div class="mt-6 max-w-copy text-lg font-light text-accent lg:text-xl">
+  <div
+    class="mt-6 text-lg leading-8 font-light text-accent lg:mt-8 lg:text-xl lg:leading-10 lg:tracking-[-0.01em]"
+  >
     <slot />
   </div>
 </Row>

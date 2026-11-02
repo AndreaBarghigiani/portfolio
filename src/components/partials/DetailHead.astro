@@ -20,17 +20,18 @@ const { title, standfirst, back } = Astro.props;
 
 <Row>
   <div slot="margin" class="flex flex-col gap-6 normal-case lg:flex-1 [&>dl]:mt-auto">
-    <ArrowLink href={back.href} direction="back" class="tracking-normal font-sans text-sm">
+    <ArrowLink href={back.href} direction="back" class="font-sans text-sm tracking-[normal]">
       Back to {back.label}
     </ArrowLink>
     <slot name="facts" />
   </div>
-  <h1
-    class="text-4xl font-black tracking-display [overflow-wrap:anywhere] text-ink lg:text-(length:--page-title-size) lg:leading-none"
-  >
+  <h1 class="text-3xl font-black tracking-display [overflow-wrap:anywhere] text-ink lg:text-6xl">
     {title}
   </h1>
-  {standfirst && <p class="mt-6 max-w-copy text-lg font-light text-accent lg:text-xl">
+  {standfirst && <p
+    class="mt-6 text-lg leading-8 font-light text-accent lg:mt-8 lg:text-xl lg:leading-10 lg:tracking-[-0.01em]"
+  >
     {standfirst}
   </p>}
+  <slot name="actions" />
 </Row>

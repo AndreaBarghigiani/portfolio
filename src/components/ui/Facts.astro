@@ -26,7 +26,7 @@ const facts = items.filter((item) => item.value || item.topics?.length);
 {facts.length > 0 && <dl class="flex flex-col gap-4 normal-case">
   {facts.map((fact) => <div>
     <dt class="font-mono text-label tracking-label text-ink-subtle uppercase">{fact.label}</dt>
-    <dd class="tracking-normal text-sm text-ink">
+    <dd class="text-xs tracking-[normal] text-ink">
       {fact.topics?.length ? (
         <TopicTags topics={fact.topics} class="mt-1" />
       ) : fact.href ? (

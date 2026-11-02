@@ -48,3 +48,6 @@ export function buildPostArchivePages(posts: CollectionEntry<'posts'>[]): PostAr
     groups,
   }));
 }
+
+export const POSTS_STANDFIRST =
+  'Writing about my experiences and thoughts. This is the part of my portfolio where you find more structured content, crafted to share my experiences with the focus of helping you learning something new.';

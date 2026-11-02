@@ -6,6 +6,7 @@ dist/
 
 # integrations
 .vercel
+.wrangler/
 
 # dependencies
 node_modules/

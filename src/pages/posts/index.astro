@@ -1,7 +1,7 @@
 ---
 import PostsArchive from '@/components/partials/PostsArchive.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { buildPostArchivePages } from '@/lib/archive';
+import { buildPostArchivePages, POSTS_STANDFIRST } from '@/lib/archive';
 import { sortPostsByDate } from '@/lib/utils';
 import { getCollection, getEntry } from 'astro:content';
 
@@ -26,7 +26,7 @@ const seo = { ...entry.data.seo, canonicalUrl: new URL('/posts/', Astro.site).hr
       current={1}
       {latestId}
       title="Latest posts"
-      description="Writing about my experiences and thoughts. This is the part of my portfolio where you find more structured content, crafted to share my experiences with the focus of helping you learning something new."
+      description={POSTS_STANDFIRST}
     />
   )}
 </BaseLayout>

@@ -126,7 +126,7 @@ const contactLinks = allLinks.filter((link) =>
           <span class="font-mono text-xs text-paper-ink-subtle"
             >{formatDate(newest.data.date)}</span
           >
-          <TopicTags topics={newest.data.tags} tone="kraft" />
+          <TopicTags topics={newest.data.tags} tone="kraft" inLink />
         </div>
         <span
           class="mt-4 block text-3xl font-black tracking-tight break-words text-paper-ink group-hover:underline lg:text-4xl"
@@ -152,7 +152,7 @@ const contactLinks = allLinks.filter((link) =>
               <span class="font-mono text-xs text-paper-ink-subtle">
                 {formatDate(post.data.date)}
               </span>
-              <TopicTags topics={post.data.tags} tone="kraft" />
+              <TopicTags topics={post.data.tags} tone="kraft" inLink />
             </div>
             <span
               class="mt-2 block text-xl font-semibold break-words text-paper-ink group-hover:underline"

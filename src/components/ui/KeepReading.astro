@@ -21,20 +21,26 @@ interface Props {
 const { title = 'Keep reading', items } = Astro.props;
 ---
 
-{items.length > 0 && <Row tone="paper" {title} id="keep-reading">
-  <ul>
-    {items.map((item) => <li class="border-b border-paper-rule last:border-b-0">
+{items.length > 0 && <Row tone="paper" {title} id="keep-reading" flush>
+  <ul class="flex flex-col lg:grid lg:auto-cols-fr lg:grid-flow-col">
+    {items.map((item) => <li
+      class="border-b border-paper-rule last:border-b-0 lg:border-r lg:border-b-0 lg:last:border-r-0"
+    >
       <a
         href={item.href}
-        class="group flex min-h-12 items-center justify-between gap-6 py-6 outline-offset-[-2px] focus-visible:outline-2 focus-visible:outline-paper-ink"
+        class="group flex min-h-12 flex-col gap-3 px-6 py-8 outline-offset-[-2px] focus-visible:outline-2 focus-visible:outline-paper-ink lg:h-full lg:px-9 lg:pt-10 lg:pb-11"
       >
-        <span class="flex flex-col gap-1">
-          {item.meta && <span class="font-mono text-xs text-paper-ink-subtle">{item.meta}</span>}
-          <span class="text-xl font-semibold text-paper-ink group-hover:underline lg:text-2xl">
-            {item.title}
-          </span>
+        {item.meta && <span
+          class="font-mono text-label tracking-label text-paper-ink-subtle uppercase"
+        >
+          {item.meta}
+        </span>}
+        <span
+          class="text-xl leading-8 font-extrabold tracking-[-0.025em] text-paper-ink group-hover:underline"
+        >
+          {item.title}
         </span>
-        <span aria-hidden="true" class="w-12 text-center text-lg text-paper-ink">
+        <span aria-hidden="true" class="text-sm font-bold text-paper-ink">
           {ARROWS.internal}
         </span>
       </a>

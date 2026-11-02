@@ -306,7 +306,7 @@ The glyph is never the only signal. An external link also needs an accessible na
 - **Code block:** margin-tone ground, hairline border, mono header (filename or language), mono body. Horizontal scrolling on mobile is signalled by a “scrolls →” label.
 - **Pull quote:** a full-width raised band, light 56px (34px on mobile) with the key phrase in black accent.
 - **Kraft band:** a section on `--color-paper` with its own margin tone, used for writing and for “keep reading”, “next up”, and “more projects”.
-- **Facts:** small mono label/value pairs in the margin cell (published, reading time, instructor, source, entries).
+- **Facts:** small mono label/value pairs in the margin cell (published, reading time, instructor, source, entries). Reading time is derived from the article's word count at 200 words a minute, never set by hand.
 
 ## 9. Page patterns
 

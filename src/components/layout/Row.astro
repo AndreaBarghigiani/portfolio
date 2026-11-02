@@ -36,6 +36,10 @@ interface Props extends Omit<HTMLAttributes<'div'>, 'title' | 'class'> {
   marginAfter?: boolean;
   /** Slogan-sized margin title (56px black) instead of the default section title. */
   display?: boolean;
+  /** Mono label above the margin title, such as a module number and lesson count. */
+  eyebrow?: string;
+  /** Archive year heading (72px black, section 4) instead of the default section title. */
+  year?: boolean;
   measure?: 'full' | 'copy';
   id?: string;
   class?: string;
@@ -49,6 +53,8 @@ const {
   flush = false,
   marginAfter = false,
   display = false,
+  year = false,
+  eyebrow,
   measure = 'full',
   id,
   class: className,
@@ -115,6 +121,7 @@ import RowMargin from './RowMargin.astro';
     <RowMargin
       as={titleAs}
       {title}
+      {eyebrow}
       {headingId}
       html={marginHtml}
       visible={hasMargin}
@@ -132,6 +139,7 @@ import RowMargin from './RowMargin.astro';
     <RowMargin
       as={titleAs}
       {title}
+      {eyebrow}
       {headingId}
       html={marginHtml}
       visible={hasMargin}

@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import Row from '@/components/layout/Row.astro';
 import DetailHead from '@/components/partials/DetailHead.astro';
+import Button from '@/components/ui/Button.astro';
 import CodeBlock from '@/components/ui/CodeBlock.astro';
 import Facts from '@/components/ui/Facts.astro';
 import Figure from '@/components/ui/Figure.astro';
@@ -51,6 +52,9 @@ const videos = entry.data.media?.filter((item) => item.type !== 'image') ?? [];
           },
         ]}
       />
+      {entry.data.website && <div slot="actions" class="mt-8">
+        <Button href={entry.data.website}>Website</Button>
+      </div>}
     </DetailHead>
 
     {(entry.data.logo || entry.data.cover || entry.data.media?.length) && <Row>
@@ -104,7 +108,9 @@ const videos = entry.data.media?.filter((item) => item.type !== 'image') ?? [];
     </Row>}
 
     <Row measure="copy">
-      <div class="prose prose-sheet">
+      <div
+        class="prose prose-sheet [&>p:first-of-type]:font-light [&>p:first-of-type]:text-ink lg:[&>p:first-of-type]:text-[40px] lg:[&>p:first-of-type]:leading-12 lg:[&>p:first-of-type]:tracking-[-0.03em]"
+      >
         <Content components={{ pre: CodeBlock }} />
       </div>
     </Row>

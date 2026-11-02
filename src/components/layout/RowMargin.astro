@@ -3,6 +3,7 @@
 interface Props {
   as: 'h1' | 'h2' | 'h3';
   title?: string;
+  eyebrow?: string;
   headingId?: string;
   html: string;
   visible: boolean;
@@ -11,7 +12,8 @@ interface Props {
   titleClass: string;
 }
 
-const { as, title, headingId, html, visible, after, marginClass, titleClass } = Astro.props;
+const { as, title, eyebrow, headingId, html, visible, after, marginClass, titleClass } =
+  Astro.props;
 const Tag = as;
 ---
 
@@ -23,6 +25,9 @@ const Tag = as;
     marginClass,
   ]}
 >
+  {eyebrow && <p class="mb-3.5 font-mono text-label tracking-label text-accent uppercase">
+    {eyebrow}
+  </p>}
   {title && <Tag id={headingId} class={titleClass}>{title}</Tag>}
   {html && <div
     class:list={[

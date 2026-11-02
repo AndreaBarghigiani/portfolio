@@ -72,7 +72,7 @@ const postCollection = defineCollection({
       title: z.string(),
       date: z.date(),
       image: image().optional(),
-      tags: z.array(z.string()).optional(),
+      tags: z.array(z.string()).default([]),
       seo: seoSchema(image),
       series: z
         .object({

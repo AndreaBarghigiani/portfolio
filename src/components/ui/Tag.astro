@@ -5,26 +5,33 @@
  * - `status` (`NEW` | `LATEST`): accent outline and accent mono text. Use at
  *   most one per row. `NEW` is an owner experiment; it stays representable.
  * - `topic`: neutral outline. One chip per value; see `TopicTags` for a list.
+ *   `tone="kraft"` uses the paper inks for topic chips on the kraft band; the
+ *   default (`ground`) uses the dark-ground inks everywhere else.
  *
  * The label is always real text, so meaning never depends on colour alone.
  * Chips are plain text: no links and no tag archive pages (owner decision).
  */
 export type StatusTag = 'NEW' | 'LATEST';
+export type TopicTone = 'ground' | 'kraft';
 
 type Props =
   | { kind: 'status'; status: StatusTag; class?: string }
-  | { kind: 'topic'; class?: string };
+  | { kind: 'topic'; tone?: TopicTone; class?: string };
 
 const props = Astro.props;
 const className = props.class;
 const status = props.kind === 'status' ? props.status : undefined;
+const topicClass =
+  props.kind === 'topic' && props.tone === 'kraft'
+    ? 'border-paper-ink-subtle text-paper-ink-muted'
+    : 'border-ink-subtle text-ink-muted';
 ---
 
 <span
   data-tag={props.kind}
   class:list={[
     'inline-flex h-6 items-center border px-2 font-mono text-label tracking-label uppercase',
-    props.kind === 'status' ? 'border-accent text-accent' : 'border-ink-subtle text-ink-muted',
+    props.kind === 'status' ? 'border-accent text-accent' : topicClass,
     className,
   ]}
 >

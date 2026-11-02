@@ -55,7 +55,7 @@ const contactLinks = allLinks.filter((link) =>
       />
       <div aria-hidden="true"><Annotation>↑ that’s me, mid-refill</Annotation></div>
     </div>
-    <h1 class="[container-type:inline-size]">
+    <h1 class="@container">
       <span
         class="block text-5xl font-light text-ink lg:text-[clamp(56px,10.96cqi,96px)] lg:tracking-display"
         >A little curiosity.</span
@@ -73,16 +73,18 @@ const contactLinks = allLinks.filter((link) =>
     </div>
   </Row>
 
-  {links.length > 0 && <Row>
+  {links.length > 0 && <Row flush>
     <h2 slot="margin" class="text-label font-normal">You can find me</h2>
-    <ul class="flex flex-col lg:grid lg:auto-cols-[minmax(0,1fr)] lg:grid-flow-col">
+    <ul class="flex flex-col lg:grid lg:auto-cols-fr lg:grid-flow-col">
       {links.map((link) => <li
-        class="flex flex-col gap-1 border-b border-rule py-2 last:border-b-0 lg:border-r lg:border-b-0 lg:px-6 lg:py-0 lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0"
+        class="flex flex-col gap-1 border-b border-rule last:border-b-0 lg:border-r lg:border-b-0 lg:last:border-r-0"
       >
-        <span class="font-mono text-xs text-ink-subtle">{link.data.label}</span>
-        <ArrowLink href={link.data.url}>
-          {link.data.name}
-          <span class="sr-only"> on {link.data.label}</span>
+        <ArrowLink
+          href={link.data.url}
+          class="w-full justify-center py-6 hover:bg-raised focus:bg-raised lg:py-11"
+        >
+          {link.data.label}
+          <span class="sr-only">{link.data.name} on {link.data.label}</span>
         </ArrowLink>
       </li>)}
     </ul>

@@ -78,14 +78,7 @@ const courseHref = `/notes/${courseSlug}/`;
 
 <BaseLayout seo={lessonSeo}>
   <article data-detail class="flex flex-1 flex-col">
-    <DetailHead
-      title={lesson.data.title}
-      standfirst={lesson.data.description}
-      back={{
-        label: courseEntry?.data.title ?? 'Notes',
-        href: courseEntry ? courseHref : '/notes/',
-      }}
-    >
+    <DetailHead title={lesson.data.title} standfirst={lesson.data.description}>
       <Facts
         slot="facts"
         items={[
@@ -94,6 +87,7 @@ const courseHref = `/notes/${courseSlug}/`;
             label: 'Course',
             value: courseEntry?.data.title,
             href: courseEntry ? courseHref : undefined,
+            direction: 'back',
           },
         ]}
       />
@@ -115,6 +109,7 @@ const courseHref = `/notes/${courseSlug}/`;
       href: lessonHref(courseSlug, item),
       title: item.data.title,
       meta: item === flat[position - 1] ? 'Previous' : 'Next',
+      direction: item === flat[position - 1] ? 'back' : undefined,
     }))}
   />
 </BaseLayout>

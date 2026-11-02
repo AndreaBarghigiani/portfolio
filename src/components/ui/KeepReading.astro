@@ -2,7 +2,9 @@
 /**
  * Closing kraft band ("Keep reading", "Next up", "More projects") from real
  * neighbouring content. Uses the paper tone and paper inks, never the dark
- * theme inks. Renders nothing when there are no items.
+ * theme inks. Renders nothing when there are no items. The arrow sits inline
+ * with the title: after it by default, before it when `direction` is `back`,
+ * for an item that comes earlier in a sequence.
  */
 import Row from '@/components/layout/Row.astro';
 import { ARROWS } from '@/lib/links';
@@ -11,6 +13,7 @@ interface Item {
   href: string;
   title: string;
   meta?: string;
+  direction?: 'back';
 }
 
 interface Props {
@@ -38,10 +41,9 @@ const { title = 'Keep reading', items } = Astro.props;
         <span
           class="text-xl leading-8 font-extrabold tracking-[-0.025em] text-paper-ink group-hover:underline"
         >
+          {item.direction === 'back' && <span aria-hidden="true">{ARROWS.back}&nbsp;</span>}
           {item.title}
-        </span>
-        <span aria-hidden="true" class="text-sm font-bold text-paper-ink">
-          {ARROWS.internal}
+          {item.direction !== 'back' && <span aria-hidden="true">&nbsp;{ARROWS.internal}</span>}
         </span>
       </a>
     </li>)}

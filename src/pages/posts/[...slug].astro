@@ -102,6 +102,7 @@ const tocItems = headings.map((heading) => ({
       href: `/posts/${getPostSlugFromId(post.id)}/`,
       title: post.data.title,
       meta: formatDate(post.data.date),
+      direction: post === ordered[position - 1] ? 'back' : undefined,
     }))}
   />
 </BaseLayout>

@@ -6,12 +6,14 @@
  * value are omitted, never shown empty.
  */
 import ArrowLink from './ArrowLink.astro';
+import type { ArrowDirection } from '@/lib/links';
 import TopicTags from './TopicTags.astro';
 
 interface Fact {
   label: string;
   value?: string;
   href?: string;
+  direction?: ArrowDirection;
   topics?: readonly string[];
 }
 
@@ -30,7 +32,7 @@ const facts = items.filter((item) => item.value || item.topics?.length);
       {fact.topics?.length ? (
         <TopicTags topics={fact.topics} class="mt-1" />
       ) : fact.href ? (
-        <ArrowLink href={fact.href} class="font-sans">
+        <ArrowLink href={fact.href} direction={fact.direction} class="font-sans">
           {fact.value}
         </ArrowLink>
       ) : (

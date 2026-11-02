@@ -216,7 +216,7 @@ On short pages the footer sits at the bottom of the viewport, and the margin col
 
 Each link appears once per place:
 
-- The page head carries “← Back to {archive}” (detail pages only).
+- The page head carries “← Back to {archive}” (detail pages only). A lesson has none: its “Course” fact is the back link, with the arrow before the course name (owner decision, 2 November 2026; #70).
 - The reading bar carries “back to top”.
 - The detail-page footer ends with “← Back to {archive}”.
 - Archive and home footers carry “back to top”.
@@ -322,7 +322,7 @@ Title block; head with a Posts / Series / Notes sub-nav in the margin and the pa
 
 ### Detail pages
 
-Title block; head (back link and facts in the margin, title and standfirst in the content cell); body in a 720px reading column; a closing kraft band (“keep reading”, “more notes”, and so on) where neighbouring content exists, so a course closes with its other courses and a lone series has none (owner decision, 2 November 2026; #70); footer. The margin carries the table of contents where one applies (“On this page”), or the module’s lesson list on a lesson.
+Title block; head (back link and facts in the margin, title and standfirst in the content cell); body in a 720px reading column; a closing kraft band (“keep reading”, “more notes”, and so on) where neighbouring content exists, so a course closes with its other courses and a lone series has none (owner decision, 2 November 2026; #70). The arrow sits inline with each title: after it, or before it for an item earlier in a sequence; footer. The margin carries the table of contents where one applies (“On this page”), or the module’s lesson list on a lesson.
 
 | Type          | Specifics                                                                                              |
 | ------------- | ------------------------------------------------------------------------------------------------------ |

@@ -197,18 +197,13 @@ On mobile the header is two rows: wordmark and sheet code, then a three-cell nav
 
 ### Footer
 
-**Established.** A margin cell with the wordmark and copyright, a link cell (Writing, Notes, Changelog), and a right cell. The right cell differs by page type:
-
-| Page type                                                          | Right cell                                 |
-| ------------------------------------------------------------------ | ------------------------------------------ |
-| Home and archives                                                  | Handwritten “back to top ↑”.               |
-| Detail pages (article, lesson, course, series entry, project)      | “← Back to {archive}” (plain Figtree 16px). |
+**Established.** A margin cell with the wordmark and copyright, a link cell (Writing, Notes, Changelog), and a right cell. On home and archives the right cell holds the handwritten “back to top ↑”. On detail pages it stays empty, because the reading bar just above already has “back to top” (owner decision, 2 November 2026; #70).
 
 On short pages the footer sits at the bottom of the viewport, and the margin column runs the full page height. Draw the column once at layout level, not per row, so short pages do not show a gap.
 
 ### Reading bar
 
-**Requirement.** Detail pages only. A slim bar fixed to the bottom of the viewport, 56px on desktop and 48px on mobile, with a 2px progress line above it. It shows the current section, reading progress, and the handwritten “back to top ↑”. It does not repeat the “← Back to …” link, which appears once in the page head and once at the end of the footer. The bar hides when the footer enters the viewport. Archives have no bar.
+**Requirement.** Detail pages only. A slim bar fixed to the bottom of the viewport, 56px on desktop and 48px on mobile, with a 2px progress line above it. It shows the current section, reading progress, and the handwritten “back to top ↑”. It does not repeat the “← Back to …” link, which appears once in the page head. The bar hides when the footer enters the viewport. Archives have no bar.
 
 “Back to top” keeps its real text for assistive technology even though it is set in the annotation font.
 
@@ -218,7 +213,6 @@ Each link appears once per place:
 
 - The page head carries “← Back to {archive}” (detail pages only). A lesson has none: its “Course” fact is the back link, with the arrow before the course name (owner decision, 2 November 2026; #70).
 - The reading bar carries “back to top”.
-- The detail-page footer ends with “← Back to {archive}”.
 - Archive and home footers carry “back to top”.
 
 ## 8. Parts

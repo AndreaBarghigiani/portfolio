@@ -65,6 +65,20 @@ const seriesCollection = defineCollection({
     }),
 });
 
+// Topic chips. Frontmatter is a comma-separated string (`tags: AI, Agents`), an
+// array, or empty (`tags:` gives null). Everything is normalised here, once:
+// split on commas, trim, drop empties. Values are otherwise kept as authored.
+const postTags = z
+  .union([z.string(), z.array(z.string()), z.null()])
+  .optional()
+  .transform((value): string[] => {
+    const raw = typeof value === 'string' ? [value] : (value ?? []);
+    return raw
+      .flatMap((entry) => entry.split(','))
+      .map((topic) => topic.trim())
+      .filter((topic) => topic.length > 0);
+  });
+
 const postCollection = defineCollection({
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/posts' }),
   schema: ({ image }) =>
@@ -73,6 +87,7 @@ const postCollection = defineCollection({
       date: z.date(),
       image: image().optional(),
       seo: seoSchema(image),
+      tags: postTags,
       series: z
         .object({
           ref: reference('series'),

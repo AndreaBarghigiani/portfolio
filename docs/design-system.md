@@ -114,10 +114,10 @@ Weights in use: 300 (light), 400, 600, 700, 800, 900 (black).
 | `--text-3xl`     |   44px | Section titles in the margin; large row titles.     |
 | `--text-4xl`     |   56px | Section titles, About statement.                    |
 | `--text-5xl`     |   64px | Principle numerals; mobile hero emphasis.           |
-| `--text-6xl`     |   96px | Hero light line; CTA headline.                      |
+| `--text-6xl`     |   96px | Page titles; hero light line; CTA headline.         |
 | `--text-display` |  156px | Hero emphasis line only.                            |
 
-Page titles on archive and detail pages use 112px (a one-off step above the scale) with black weight; treat it as a page-title style, not a general size.
+Page titles on archive and detail pages use `--text-6xl` with a 92px line height, black weight, and display tracking, the same on every page type. On mobile they use `--text-3xl` with a 46px line height (owner decision, 2 November 2026; #70).
 
 ### Rules
 
@@ -126,7 +126,7 @@ Page titles on archive and detail pages use 112px (a one-off step above the scal
 - **Body leading** is about 160% (28–34px on 18–20px text). Reading text is 20/34px on desktop and 18/30px on mobile.
 - **Reading measure** is 720px (`--container-copy`).
 - **Hierarchy comes from size, weight, and spacing**, not from reducing opacity.
-- **Standfirsts** (the line under a page title) are light 28px in the accent on desktop, 22px on mobile.
+- **Standfirsts** (the line under a page title) are light 28px in the accent on desktop, 22px on mobile. On desktop they sit 32px below the title, with a 40px line height and −0.01em tracking, and fill the content cell rather than the reading measure (owner decision, 2 November 2026; #70).
 
 ## 5. Layout, rhythm, and surfaces
 

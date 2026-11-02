@@ -3,7 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
-import vercel from '@astrojs/vercel';
+import cloudflare from '@astrojs/cloudflare';
 import rehypeCodeBlock from './src/lib/rehype-code-block.mjs';
 
 const tailscaleDev = process.env.ASTRO_TAILSCALE === '1';
@@ -64,9 +64,5 @@ export default defineConfig({
   },
 
   integrations: [icon(), sitemap(), mdx()],
-  adapter: vercel({
-    webAnalytics: {
-      enabled: true,
-    },
-  }),
+  adapter: cloudflare({ imageService: 'compile' }),
 });

@@ -2,13 +2,13 @@
 /**
  * Projects archive (docs/design-system.md sections 5 and 9): the head with the
  * back link, INDEX and ORDER facts in the margin, and the page title and
- * standfirst in the content cell. Then one `ProjectRow` per published project,
+ * standfirst in the content cell. Then one `CollectionRow` per published project,
  * in `order`. Index codes P-01… are derived from that order.
  */
 import Row from '@/components/layout/Row.astro';
 import DetailHead from '@/components/partials/DetailHead.astro';
 import Facts from '@/components/ui/Facts.astro';
-import ProjectRow from '@/components/ui/ProjectRow.astro';
+import CollectionRow from '@/components/ui/CollectionRow.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getPublishedProjects } from '@/lib/projects';
 
@@ -44,7 +44,7 @@ const indexRange =
   ) : (
     <ul>
       {projects.map((project, index) => (
-        <ProjectRow
+        <CollectionRow
           href={`/projects/${project.id}/`}
           title={project.data.title}
           summary={project.data.summary}

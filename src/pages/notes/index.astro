@@ -1,7 +1,7 @@
 ---
 import Row from '@/components/layout/Row.astro';
 import ArchiveHead from '@/components/partials/ArchiveHead.astro';
-import EntryRow from '@/components/ui/EntryRow.astro';
+import CollectionRow from '@/components/ui/CollectionRow.astro';
 import ShowMore from '@/components/ui/ShowMore.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getCollection, getEntry } from 'astro:content';
@@ -22,27 +22,27 @@ const remaining = Math.max(courses.length - VISIBLE, 0);
     Explore detailed notes captured while studying courses, workshops, and live trainings.
   </ArchiveHead>
 
-  <Row flush>
-    {courses.length === 0 ? (
-      <p class="px-6 py-8 lg:px-12 lg:py-12">No notes published yet.</p>
-    ) : (
-      <>
-        <ul>
-          {courses.map((course, index) => (
-            <EntryRow
-              href={`/notes/${course.id}/`}
-              title={course.data.title}
-              meta={String(index + 1).padStart(2, '0')}
-              description={course.data.description}
-              more={index >= VISIBLE}
-              group="notes"
-            />
-          ))}
-        </ul>
-        {remaining > 0 && <div class="px-6 lg:px-12">
-          <ShowMore group="notes" count={remaining} noun="notes" singularNoun="note" />
-        </div>}
-      </>
-    )}
-  </Row>
+  {courses.length === 0 ? (
+    <Row>
+      <p>No notes published yet.</p>
+    </Row>
+  ) : (
+    <>
+      <ul>
+        {courses.map((course, index) => (
+          <CollectionRow
+            href={`/notes/${course.id}/`}
+            title={course.data.title}
+            summary={course.data.description}
+            index={`N-${String(index + 1).padStart(2, '0')}`}
+            more={index >= VISIBLE}
+            group="notes"
+          />
+        ))}
+      </ul>
+      {remaining > 0 && <Row>
+        <ShowMore group="notes" count={remaining} noun="notes" singularNoun="note" />
+      </Row>}
+    </>
+  )}
 </BaseLayout>

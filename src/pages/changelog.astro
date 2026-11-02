@@ -7,7 +7,7 @@ import EntryRow from '@/components/ui/EntryRow.astro';
 import ShowMore from '@/components/ui/ShowMore.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { groupByYear } from '@/lib/archive';
-import { formatDate } from '@/lib/utils';
+import { formatDayMonth } from '@/lib/utils';
 import type { Seo } from '@/lib/constants';
 
 const owner = 'AndreaBarghigiani';
@@ -129,9 +129,10 @@ const remaining = Math.max(seen - VISIBLE, 0);
               <EntryRow
                 href={pr.html_url}
                 title={pr.title}
-                meta={formatDate(new Date(pr.merged_at!))}
+                meta={formatDayMonth(new Date(pr.merged_at!))}
                 detail={`#${pr.number}`}
                 external
+                variant="log"
                 {more}
                 group="changelog"
               />

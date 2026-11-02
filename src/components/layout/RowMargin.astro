@@ -17,14 +17,19 @@ const Tag = as;
 
 <div
   class:list={[
-    'px-6 py-4 lg:block lg:w-label lg:shrink-0 lg:p-12',
+    'px-6 py-4 lg:flex lg:w-label lg:shrink-0 lg:flex-col lg:p-12',
     visible ? 'block' : 'hidden',
     after && 'lg:order-first',
     marginClass,
   ]}
 >
   {title && <Tag id={headingId} class={titleClass}>{title}</Tag>}
-  {html && <div class:list={['font-mono text-label tracking-label uppercase', title && 'mt-3']}>
+  {html && <div
+    class:list={[
+      'font-mono text-label tracking-label uppercase lg:flex lg:flex-1 lg:flex-col',
+      title && 'mt-3',
+    ]}
+  >
     <Fragment set:html={html} />
   </div>}
 </div>

@@ -3,7 +3,10 @@
  * Margin navigation list: "On this page" or a module's lesson list. A sticky
  * list on desktop and a closed disclosure with a 48px summary row on mobile.
  * `current` marks the active item with `aria-current="page"` and bold accent.
- * Renders nothing when empty.
+ * In-page links follow the reading position with `aria-current="location"`,
+ * using the reading bar's threshold; without JavaScript nothing is marked.
+ * A list taller than the space between the header and the reading bar scrolls
+ * on its own. Renders nothing when empty.
  */
 interface Item {
   href: string;
@@ -19,19 +22,22 @@ interface Props {
 
 const { items, label = 'On this page' } = Astro.props;
 
-const linkClass = (item: Item) => (item.current ? 'font-bold text-accent' : 'text-ink-muted');
+const linkClass = 'text-ink-muted aria-[current]:font-bold aria-[current]:text-accent';
 ---
 
 {items.length > 0 && (
   <>
     <nav aria-label={label} class="hidden normal-case lg:sticky lg:top-28 lg:block">
-      <p class="mb-3 font-mono text-label tracking-label text-ink-subtle uppercase">{label}</p>
-      <ul class="tracking-normal flex flex-col gap-2 text-sm">
+      <p class="mb-5 font-mono text-label tracking-label text-ink-subtle uppercase">{label}</p>
+      <ul
+        data-toc-list
+        class="flex max-h-[calc(100dvh-14.25rem)] flex-col gap-2 overflow-y-auto overscroll-contain font-sans text-xs leading-[18px] tracking-[normal]"
+      >
         {items.map((item) => <li class:list={[item.depth === 3 && 'ps-4']}>
           <a
             href={item.href}
             aria-current={item.current ? 'page' : undefined}
-            class:list={['hover:text-accent-hover', linkClass(item)]}
+            class:list={['outline-offset-[-2px] hover:text-accent-hover', linkClass]}
           >
             {item.text}
           </a>
@@ -45,12 +51,12 @@ const linkClass = (item: Item) => (item.current ? 'font-bold text-accent' : 'tex
         >
           {label}
         </summary>
-        <ul class="tracking-normal flex flex-col pb-2 text-sm">
+        <ul class="flex flex-col pb-2 font-sans text-xs leading-[18px] tracking-[normal]">
           {items.map((item) => <li class:list={[item.depth === 3 && 'ps-4']}>
             <a
               href={item.href}
               aria-current={item.current ? 'page' : undefined}
-              class:list={['flex min-h-12 items-center', linkClass(item)]}
+              class:list={['flex min-h-12 items-center', linkClass]}
             >
               {item.text}
             </a>
@@ -60,3 +66,57 @@ const linkClass = (item: Item) => (item.current ? 'font-bold text-accent' : 'tex
     </nav>
   </>
 )}
+
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('nav a[href^="#"]')]
+    .filter((link) => link.closest('[data-toc-list], details'))
+    .map((link) => ({
+      link,
+      heading: document.getElementById(decodeURIComponent(link.hash.slice(1))),
+    }))
+    .filter((entry): entry is { link: HTMLAnchorElement; heading: HTMLElement } =>
+      Boolean(entry.heading)
+    );
+
+  if (links.length > 0) {
+    let active: HTMLElement | undefined;
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      let current = links[0]!.heading;
+      for (const { heading } of links) {
+        if (heading.getBoundingClientRect().top <= window.innerHeight * 0.35) current = heading;
+      }
+      if (current === active) return;
+      active = current;
+
+      for (const { link, heading } of links) {
+        if (heading === current) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+
+        const list = link.closest<HTMLElement>('[data-toc-list]');
+        if (heading === current && list && list.scrollHeight > list.clientHeight) {
+          const box = list.getBoundingClientRect();
+          const item = link.getBoundingClientRect();
+          if (item.top < box.top || item.bottom > box.bottom) {
+            list.scrollTop += item.top - box.top - box.height / 2;
+          }
+        }
+      }
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+    window.addEventListener('resize', update);
+    update();
+  }
+</script>

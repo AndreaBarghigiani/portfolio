@@ -19,7 +19,7 @@ const { title, standfirst, back } = Astro.props;
 ---
 
 <Row>
-  <div slot="margin" class="flex flex-col gap-6 normal-case">
+  <div slot="margin" class="flex flex-col gap-6 normal-case lg:flex-1 [&>dl]:mt-auto">
     <ArrowLink href={back.href} direction="back" class="tracking-normal font-sans text-sm">
       Back to {back.label}
     </ArrowLink>

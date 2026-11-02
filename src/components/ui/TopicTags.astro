@@ -5,18 +5,25 @@
  * joined into one string. Use `getTopics()` from `@/lib/tags` to normalise
  * content input.
  */
-import Tag from './Tag.astro';
+import Tag, { type TopicTone } from './Tag.astro';
 
 interface Props {
   topics: readonly string[];
+  /** `kraft` for chips placed on the kraft band (see `Tag`). */
+  tone?: TopicTone;
+  /** Inside a link, an aria-label replaces the chip text in the link's name, so omit it. */
+  inLink?: boolean;
   class?: string;
 }
 
-const { topics, class: className } = Astro.props;
+const { topics, tone, inLink = false, class: className } = Astro.props;
 ---
 
-{topics.length > 0 && <ul aria-label="Topics" class:list={['flex flex-wrap gap-2', className]}>
+{topics.length > 0 && <ul
+  aria-label={inLink ? undefined : 'Topics'}
+  class:list={['flex flex-wrap gap-2', className]}
+>
   {topics.map((topic) => <li>
-    <Tag kind="topic">{topic}</Tag>
+    <Tag kind="topic" {tone}>{topic}</Tag>
   </li>)}
 </ul>}

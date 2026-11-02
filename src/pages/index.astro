@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button.astro';
 import EntryRow from '@/components/ui/EntryRow.astro';
 import Figure from '@/components/ui/Figure.astro';
 import JobRow from '@/components/ui/JobRow.astro';
+import TopicTags from '@/components/ui/TopicTags.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { DEFAULT_CONFIGURATION } from '@/lib/constants';
 import { ARROWS } from '@/lib/links';
@@ -46,7 +47,6 @@ const contactLinks = allLinks.filter((link) =>
       <Figure
         src={author.avatar}
         alt={`Portrait of ${author.name}`}
-        number={1}
         priority
         widths={[320, 480, 640]}
         sizes="(min-width: 1024px) 324px, 240px"
@@ -54,7 +54,7 @@ const contactLinks = allLinks.filter((link) =>
       />
       <div aria-hidden="true"><Annotation>↑ that’s me, mid-refill</Annotation></div>
     </div>
-    <h1 class="[container-type:inline-size]">
+    <h1 class="@container">
       <span
         class="block text-5xl font-light text-ink lg:text-[clamp(56px,10.96cqi,96px)] lg:tracking-display"
         >A little curiosity.</span
@@ -72,16 +72,18 @@ const contactLinks = allLinks.filter((link) =>
     </div>
   </Row>
 
-  {links.length > 0 && <Row>
+  {links.length > 0 && <Row flush>
     <h2 slot="margin" class="text-label font-normal">You can find me</h2>
-    <ul class="flex flex-col">
+    <ul class="flex flex-col lg:grid lg:auto-cols-fr lg:grid-flow-col">
       {links.map((link) => <li
-        class="flex flex-col gap-1 border-b border-rule py-2 last:border-b-0 lg:flex-row lg:items-center lg:gap-8"
+        class="flex flex-col gap-1 border-b border-rule last:border-b-0 lg:border-r lg:border-b-0 lg:last:border-r-0"
       >
-        <span class="font-mono text-xs text-ink-subtle lg:w-32">{link.data.label}</span>
-        <ArrowLink href={link.data.url}>
-          {link.data.name}
-          <span class="sr-only"> on {link.data.label}</span>
+        <ArrowLink
+          href={link.data.url}
+          class="w-full justify-center py-6 hover:bg-raised focus:bg-raised lg:py-11"
+        >
+          {link.data.label}
+          <span class="sr-only">{link.data.name} on {link.data.label}</span>
         </ArrowLink>
       </li>)}
     </ul>
@@ -89,8 +91,10 @@ const contactLinks = allLinks.filter((link) =>
 
   <!-- "Method" principles are omitted until the owner supplies the copy (#50). -->
 
-  {projects.length > 0 && <Row title="Ideas, put to work." display id="projects">
-    {featured && <div class="flex flex-col gap-4 border-b border-rule pb-10">
+  {projects.length > 0 && <Row title="Ideas, put to work." display id="projects" flush>
+    {featured && <div
+      class="flex flex-col gap-4 border-b border-rule px-6 pt-8 pb-10 lg:px-12 lg:pt-12"
+    >
       <h3 class="text-3xl font-black tracking-tight text-ink lg:text-4xl">
         {featured.data.title}
       </h3>
@@ -109,60 +113,66 @@ const contactLinks = allLinks.filter((link) =>
           title={project.data.title}
           meta={String(index + 1).padStart(2, '0')}
           description={project.data.summary}
-          inset={false}
         />
       ))}
     </ul>}
   </Row>}
 
   {newest && <Row tone="paper" title="Thinking out loud." display id="writing">
-    <a
-      href={postHref(newest)}
-      class="group block border-b border-paper-rule pb-8 outline-offset-4 focus-visible:outline-2 focus-visible:outline-paper-ink"
-    >
-      <span class="font-mono text-xs text-paper-ink-subtle">{formatDate(newest.data.date)}</span>
-      <span class="mt-2 flex items-start justify-between gap-6">
-        <span
-          class="text-3xl font-black tracking-tight text-paper-ink group-hover:underline lg:text-4xl"
-        >
-          {newest.data.title}
-        </span>
-        <span aria-hidden="true" class="w-12 shrink-0 text-center text-lg text-paper-ink">
-          {ARROWS.internal}
-        </span>
-      </span>
-      <span class="mt-4 block max-w-copy text-base text-paper-ink-muted">
-        {newest.data.seo.description}
-      </span>
-    </a>
-    <ul>
-      {nextPosts.map((post) => <li class="border-b border-paper-rule last:border-b-0">
-        <a
-          href={postHref(post)}
-          class="group flex min-h-12 items-center justify-between gap-6 py-6 outline-offset-[-2px] focus-visible:outline-2 focus-visible:outline-paper-ink"
-        >
-          <span class="flex flex-col gap-1">
-            <span class="font-mono text-xs text-paper-ink-subtle">
-              {formatDate(post.data.date)}
-            </span>
-            <span class="text-xl font-semibold text-paper-ink group-hover:underline">
-              {post.data.title}
-            </span>
-          </span>
-          <span aria-hidden="true" class="w-12 shrink-0 text-center text-lg text-paper-ink">
-            {ARROWS.internal}
-          </span>
-        </a>
-      </li>)}
-    </ul>
-    <p class="pt-6">
+    <div slot="margin" class="font-sans text-base tracking-[normal] normal-case">
       <a
         href="/posts/"
-        class="inline-flex min-h-12 items-center gap-2 font-semibold text-paper-ink underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper-ink"
+        class="inline-flex min-h-12 items-center gap-2 font-semibold text-paper-ink underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper-ink"
       >
         All writing <span aria-hidden="true">{ARROWS.internal}</span>
       </a>
-    </p>
+    </div>
+    <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center lg:gap-x-12">
+      <a
+        href={postHref(newest)}
+        class="group block border-b border-paper-rule pb-8 outline-offset-4 focus-visible:outline-2 focus-visible:outline-paper-ink lg:border-b-0 lg:pb-0"
+      >
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <span class="font-mono text-xs text-paper-ink-subtle"
+            >{formatDate(newest.data.date)}</span
+          >
+          <TopicTags topics={newest.data.tags} tone="kraft" inLink />
+        </div>
+        <span
+          class="mt-4 block text-3xl font-black tracking-tight wrap-break-word text-paper-ink group-hover:underline lg:text-4xl"
+        >
+          {newest.data.title}
+        </span>
+        <span class="mt-4 block max-w-copy text-base text-paper-ink-muted">
+          {newest.data.seo.description}
+        </span>
+      </a>
+      <ul>
+        {nextPosts.map((post) => <li
+          class="border-b border-paper-rule py-6 first:pt-0 last:border-b-0"
+        >
+          <a
+            href={postHref(post)}
+            class="group block min-h-12 outline-offset-4 focus-visible:outline-2 focus-visible:outline-paper-ink"
+          >
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <span class="font-mono text-xs text-paper-ink-subtle">
+                {formatDate(post.data.date)}
+              </span>
+              <TopicTags topics={post.data.tags} tone="kraft" inLink />
+            </div>
+            <span
+              class="mt-2 block text-xl font-semibold wrap-break-word text-paper-ink group-hover:underline"
+            >
+              {post.data.title}
+            </span>
+            <span class="mt-2 block max-w-copy text-base text-paper-ink-muted">
+              {post.data.seo.description}
+            </span>
+          </a>
+        </li>)}
+      </ul>
+    </div>
   </Row>}
 
   <Row tone="raised">
